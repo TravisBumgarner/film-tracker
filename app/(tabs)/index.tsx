@@ -1,7 +1,9 @@
 import * as React from 'react'
 import Typography from '@/shared/components/Typography'
-import { SafeAreaView, StyleSheet } from 'react-native'
+import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native'
 import DropDown from 'react-native-paper-dropdown'
+import { Phase } from '@/shared/types'
+import FilmPreviewListItem from '@/components/FilmPreviewListItem'
 
 const cameraList = [
   {
@@ -17,20 +19,30 @@ const cameraList = [
 const phaseList = [
   {
     label: 'Exposing',
-    value: 'exposing',
+    value: Phase.Exposing,
   },
   {
     label: 'Exposed',
-    value: 'exposed',
+    value: Phase.Exposed,
   },
   {
     label: 'Developed',
-    value: 'developed',
+    value: Phase.Developed,
   },
   {
     label: 'Archived',
-    value: 'archived',
+    value: Phase.Archived,
   },
+]
+
+const data = [
+  { film: 'Film1', camera: 'Camera1', notes: 0, phase: Phase.Exposing, iso: 400, startDate: '2021-01-01' },
+  { film: 'Film2', camera: 'Camera2', notes: 1, phase: Phase.Developed, iso: 200, startDate: '2021-02-01' },
+  { film: 'Film3', camera: 'Camera2', notes: 1, phase: Phase.Developed, iso: 200, startDate: '2021-02-01' },
+  { film: 'Film4', camera: 'Camera2', notes: 1, phase: Phase.Developed, iso: 200, startDate: '2021-02-01' },
+  { film: 'Film5', camera: 'Camera2', notes: 1, phase: Phase.Developed, iso: 200, startDate: '2021-02-01' },
+  { film: 'Film6', camera: 'Camera2', notes: 1, phase: Phase.Developed, iso: 200, startDate: '2021-02-01' },
+  // Add more items here...
 ]
 
 const Rolls = () => {
@@ -61,6 +73,13 @@ const Rolls = () => {
         value={activePhase}
         setValue={setActivePhase}
         list={phaseList}
+      />
+      <FlatList
+        data={data}
+        keyExtractor={item => item.film}
+        renderItem={({ item }) => (
+          <FilmPreviewListItem film={item.film} camera={item.camera} notes={item.notes} phase={item.phase} iso={item.iso} startDate={item.startDate} />
+        )}
       />
     </SafeAreaView>
   )
