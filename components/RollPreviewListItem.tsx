@@ -4,16 +4,16 @@ import { Phase } from '@/shared/types'
 import { StyleSheet, View } from 'react-native'
 
 type Props = {
-  film: string
+  roll: string
   camera: string
-  notes: number
+  notesCount: number
   phase: Phase
   iso: number
   startDate: string
   endDate?: string
 }
 
-const FilmPreviewListItem = ({ film, camera, notes, phase, iso, startDate, endDate }: Props) => {
+const RollPreviewListItem = ({ roll, camera, notesCount, phase, iso, startDate, endDate }: Props) => {
   const containerStyle = {
     ...styles.container,
     backgroundColor: PHASE_TO_COLOR_NAME[phase].transparent,
@@ -22,9 +22,9 @@ const FilmPreviewListItem = ({ film, camera, notes, phase, iso, startDate, endDa
 
   return (
     <View style={containerStyle}>
-      <Typography variant="h2">{film}</Typography>
+      <Typography variant="h2">{roll}</Typography>
       <Typography variant="body1">{camera}</Typography>
-      <Typography variant="body1">{notes} Notes</Typography>
+      <Typography variant="body1">{notesCount} Notes</Typography>
       <Typography variant="body1">{phase}</Typography>
       <Typography variant="body1">{iso} ISO</Typography>
       <Typography variant="body1">{startDate}</Typography>
@@ -43,4 +43,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default FilmPreviewListItem
+export default RollPreviewListItem

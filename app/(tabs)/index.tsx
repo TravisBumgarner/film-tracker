@@ -1,24 +1,15 @@
 import * as React from 'react'
 import Typography from '@/shared/components/Typography'
-import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native'
-import { Phase } from '@/shared/types'
-import FilmPreviewListItem from '@/components/FilmPreviewListItem'
+import { FlatList, SafeAreaView, StyleSheet } from 'react-native'
+import { Phase, RollPreviewListItemData } from '@/shared/types'
+import RollPreviewListItem from '@/components/RollPreviewListItem'
 import Button from '@/shared/components/Button'
 import ButtonWrapper from '@/shared/components/ButtonWrapper'
 import { COLORS } from '@/shared/theme'
 import Dropdown from '@/shared/components/Dropdown'
 import DropdownWrapper from '@/shared/components/DropdownWrapper'
-
-const cameraList = [
-  {
-    label: 'Yaschica',
-    value: 'yascshica',
-  },
-  {
-    label: 'Olympus',
-    value: 'olyumpus',
-  },
-]
+import queries from '@/db/queries'
+import { useAsyncEffect } from 'use-async-effect'
 
 const phaseList = [
   {
@@ -39,21 +30,56 @@ const phaseList = [
   },
 ]
 
-const data = [
-  { film: 'Film1', camera: 'Camera1', notes: 0, phase: Phase.Exposing, iso: 400, startDate: '2021-01-01' },
-  { film: 'Film2', camera: 'Camera2', notes: 1, phase: Phase.Developed, iso: 200, startDate: '2021-02-01' },
-  { film: 'Film3', camera: 'Camera2', notes: 1, phase: Phase.Developed, iso: 200, startDate: '2021-02-01' },
-  { film: 'Film4', camera: 'Camera2', notes: 1, phase: Phase.Developed, iso: 200, startDate: '2021-02-01' },
-  { film: 'Film5', camera: 'Camera2', notes: 1, phase: Phase.Developed, iso: 200, startDate: '2021-02-01' },
-  { film: 'Film6', camera: 'Camera2', notes: 1, phase: Phase.Developed, iso: 200, startDate: '2021-02-01' },
-  // Add more items here...
-]
-
 const Rolls = () => {
+  const [cameraList, setCameraList] = React.useState<{ label: string; value: string }[]>([])
+  const [rollsList, setRollsList] = React.useState<RollPreviewListItemData[]>([])
   const [showFilterByCameraDropdown, setShowFilterByCameraDropdown] = React.useState(false)
   const [showFilterByPhaseDropdown, setShowFilterByPhaseDropdown] = React.useState(false)
   const [activeCamera, setActiveCamera] = React.useState('all')
   const [activePhase, setActivePhase] = React.useState('all')
+
+  // const insertInsertData = async () => {
+  //   const camera = await queries.insert.camera({ model: 'Yaschica' })
+  //   console.log('inserted', camera)
+  //   await queries.insert.roll({
+  //     cameraId: camera.uuid,
+  //     roll: 'Film1',
+  //     iso: 400,
+  //     phase: Phase.Exposing,
+  //   })
+
+  //   await queries.insert.roll({
+  //     cameraId: camera.uuid,
+  //     roll: 'Film2',
+  //     iso: 400,
+  //     phase: Phase.Exposed,
+  //   })
+
+  //   await queries.insert.roll({
+  //     cameraId: camera.uuid,
+  //     roll: 'Film1',
+  //     iso: 400,
+  //     phase: Phase.Archived,
+  //   })
+  // }
+
+  // useAsyncEffect(async () => {
+  //   console.log('I run')
+  //   await insertInsertData()
+  // }, [insertInsertData])
+
+  // React.useEffect(() => {
+  //   setTimeout(() => {
+  //     queries.select.rolls().then(console.log)
+  //   }, 1000)
+  // }, [])
+
+  useAsyncEffect(async () => {
+    const cameras = await queries.select.cameras()
+    const rolls = await queries.select.rolls()
+    setRollsList(rolls)
+    setCameraList(cameras.map(camera => ({ label: camera.model, value: camera.uuid })))
+  }, [])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -81,10 +107,17 @@ const Rolls = () => {
         }
       />
       <FlatList
-        data={data}
-        keyExtractor={item => item.film}
+        data={rollsList}
+        keyExtractor={item => item.uuid}
         renderItem={({ item }) => (
-          <FilmPreviewListItem film={item.film} camera={item.camera} notes={item.notes} phase={item.phase} iso={item.iso} startDate={item.startDate} />
+          <RollPreviewListItem
+            roll={item.roll}
+            camera={item.cameraModel}
+            notesCount={item.notesCount}
+            phase={item.phase}
+            iso={item.iso}
+            createdAt={item.createdAt}
+          />
         )}
       />
       <ButtonWrapper
@@ -102,10 +135,6 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: COLORS.dark.opaque,
     flex: 1,
-  },
-  filterContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
   },
 })
 
