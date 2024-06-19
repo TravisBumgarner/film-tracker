@@ -18,33 +18,12 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Brainstorm',
+          title: 'Rolls',
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
               name={focused ? 'bulb-sharp' : 'bulb-outline'}
               color={color}
             />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="history"
-        options={{
-          title: 'History',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? 'list-circle-sharp' : 'list-circle-outline'}
-              color={color}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: 'Settings',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'bug' : 'bug-outline'} color={color} />
           ),
         }}
       />
