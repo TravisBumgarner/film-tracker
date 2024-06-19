@@ -1,12 +1,13 @@
 import * as React from 'react'
 import Typography from '@/shared/components/Typography'
-import { FlatList, SafeAreaView, StyleSheet } from 'react-native'
+import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native'
 import { Phase } from '@/shared/types'
 import FilmPreviewListItem from '@/components/FilmPreviewListItem'
 import Button from '@/shared/components/Button'
 import ButtonWrapper from '@/shared/components/ButtonWrapper'
 import { COLORS } from '@/shared/theme'
 import Dropdown from '@/shared/components/Dropdown'
+import DropdownWrapper from '@/shared/components/DropdownWrapper'
 
 const cameraList = [
   {
@@ -57,21 +58,27 @@ const Rolls = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Typography variant="h1">Rolls</Typography>
-      <Dropdown
-        label={'Filter By Camera'}
-        isVisible={showFilterByCameraDropdown}
-        setIsVisible={setShowFilterByCameraDropdown}
-        value={activeCamera}
-        setValue={setActiveCamera}
-        list={cameraList}
-      />
-      <Dropdown
-        label={'Filter By Phase'}
-        isVisible={showFilterByPhaseDropdown}
-        setIsVisible={setShowFilterByPhaseDropdown}
-        value={activePhase}
-        setValue={setActivePhase}
-        list={phaseList}
+      <DropdownWrapper
+        left={
+          <Dropdown
+            label={'By Camera'}
+            isVisible={showFilterByCameraDropdown}
+            setIsVisible={setShowFilterByCameraDropdown}
+            value={activeCamera}
+            setValue={setActiveCamera}
+            list={cameraList}
+          />
+        }
+        right={
+          <Dropdown
+            label={'By Phase'}
+            isVisible={showFilterByPhaseDropdown}
+            setIsVisible={setShowFilterByPhaseDropdown}
+            value={activePhase}
+            setValue={setActivePhase}
+            list={phaseList}
+          />
+        }
       />
       <FlatList
         data={data}
@@ -95,6 +102,10 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: COLORS.dark.opaque,
     flex: 1,
+  },
+  filterContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 })
 
