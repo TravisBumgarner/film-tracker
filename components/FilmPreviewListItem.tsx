@@ -20,8 +20,6 @@ const FilmPreviewListItem = ({ film, camera, notes, phase, iso, startDate, endDa
     borderColor: PHASE_TO_COLOR_NAME[phase].opaque,
   }
 
-  console.log('containerStyle', containerStyle)
-
   return (
     <View style={containerStyle}>
       <Typography variant="h2">{film}</Typography>
