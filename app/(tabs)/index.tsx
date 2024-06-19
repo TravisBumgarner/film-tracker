@@ -1,12 +1,12 @@
 import * as React from 'react'
 import Typography from '@/shared/components/Typography'
 import { FlatList, SafeAreaView, StyleSheet } from 'react-native'
-import DropDown from 'react-native-paper-dropdown'
 import { Phase } from '@/shared/types'
 import FilmPreviewListItem from '@/components/FilmPreviewListItem'
 import Button from '@/shared/components/Button'
 import ButtonWrapper from '@/shared/components/ButtonWrapper'
 import { COLORS } from '@/shared/theme'
+import Dropdown from '@/shared/components/Dropdown'
 
 const cameraList = [
   {
@@ -57,22 +57,18 @@ const Rolls = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Typography variant="h1">Rolls</Typography>
-      <DropDown
+      <Dropdown
         label={'Filter By Camera'}
-        mode={'outlined'}
-        visible={showFilterByCameraDropdown}
-        showDropDown={() => setShowFilterByCameraDropdown(true)}
-        onDismiss={() => setShowFilterByCameraDropdown(false)}
+        isVisible={showFilterByCameraDropdown}
+        setIsVisible={setShowFilterByCameraDropdown}
         value={activeCamera}
         setValue={setActiveCamera}
         list={cameraList}
       />
-      <DropDown
+      <Dropdown
         label={'Filter By Phase'}
-        mode={'outlined'}
-        visible={showFilterByPhaseDropdown}
-        showDropDown={() => setShowFilterByPhaseDropdown(true)}
-        onDismiss={() => setShowFilterByPhaseDropdown(false)}
+        isVisible={showFilterByPhaseDropdown}
+        setIsVisible={setShowFilterByPhaseDropdown}
         value={activePhase}
         setValue={setActivePhase}
         list={phaseList}
