@@ -116,7 +116,8 @@ const Rolls = () => {
             notesCount={item.notesCount}
             phase={item.phase}
             iso={item.iso}
-            createdAt={item.createdAt}
+            insertedIntoCameraAt={item.insertedIntoCameraAt}
+            removedFromCameraAt={item.removedFromCameraAt}
           />
         )}
       />

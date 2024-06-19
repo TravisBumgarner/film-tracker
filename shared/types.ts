@@ -15,4 +15,6 @@ export type RollPreviewListItemData = {
   phase: Phase
   cameraModel: string
   notesCount: number
+  insertedIntoCameraAt: string
+  removedFromCameraAt: string | null
 }

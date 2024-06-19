@@ -11,6 +11,8 @@ export const RollsTable = sqliteTable('roll', {
     .references(() => CamerasTable.uuid)
     .notNull(),
   phase: text('phase').notNull(), // Sqlite does not have an enum type
+  insertedIntoCameraAt: text('insertedIntoCameraAt'),
+  removedFromCameraAt: text('removedFromCameraAt'),
 })
 
 export const CamerasTable = sqliteTable('camera', {
