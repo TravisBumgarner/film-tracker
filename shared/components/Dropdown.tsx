@@ -3,6 +3,8 @@ import { StyleSheet, View } from 'react-native'
 import DropDownRNPD from 'react-native-paper-dropdown'
 import { MD3DarkTheme } from 'react-native-paper'
 
+import { COLORS } from '../theme'
+
 type DropdownProps = {
   label: string
   isVisible: boolean
@@ -14,28 +16,25 @@ type DropdownProps = {
 
 const Dropdown: React.FC<DropdownProps> = ({ label, setIsVisible, isVisible, value, setValue, list }) => {
   return (
-    <View style={styles.container}>
-      <DropDownRNPD
-        label={label}
-        mode={'outlined'}
-        visible={isVisible}
-        showDropDown={() => setIsVisible(true)}
-        onDismiss={() => setIsVisible(false)}
-        value={value}
-        setValue={setValue}
-        list={list}
-        dropDownStyle={styles.dropDownStyle}
-        theme={MD3DarkTheme}
-      />
-    </View>
+    <DropDownRNPD
+      label={label}
+      mode={'outlined'}
+      visible={isVisible}
+      showDropDown={() => setIsVisible(true)}
+      onDismiss={() => setIsVisible(false)}
+      value={value}
+      setValue={setValue}
+      list={list}
+      dropDownItemTextStyle={styles.dropDownItemTextStyle}
+      theme={MD3DarkTheme}
+    />
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    margin: 10,
+  dropDownItemTextStyle: {
+    color: COLORS.light.opaque,
   },
-  dropDownStyle: {},
 })
 
 export default Dropdown
