@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useEffect,
-  useReducer,
-  useState,
-  type Dispatch,
-} from 'react'
+import { createContext, useEffect, useReducer, useState, type Dispatch } from 'react'
 import { Text } from 'react-native-paper'
 
 import { getValueFromKeyStore, saveValueToKeyStore } from './utilities'
@@ -26,10 +20,7 @@ const EMPTY_STATE: State = {
 
 const initialSetup = () => {
   Object.keys(EMPTY_STATE.settings).forEach(key => {
-    saveValueToKeyStore(
-      key as keyof (typeof EMPTY_STATE)['settings'],
-      EMPTY_STATE.settings[key as keyof (typeof EMPTY_STATE)['settings']]
-    )
+    saveValueToKeyStore(key as keyof (typeof EMPTY_STATE)['settings'], EMPTY_STATE.settings[key as keyof (typeof EMPTY_STATE)['settings']])
   })
 
   saveValueToKeyStore(HAS_DONE_WARM_START, TRUE)
