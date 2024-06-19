@@ -16,8 +16,8 @@ type Props = {
 const FilmPreviewListItem = ({ film, camera, notes, phase, iso, startDate, endDate }: Props) => {
   const containerStyle = {
     ...styles.container,
-    backgroundColor: PHASE_TO_COLOR_NAME[phase].background,
-    borderColor: PHASE_TO_COLOR_NAME[phase].foreground,
+    backgroundColor: PHASE_TO_COLOR_NAME[phase].transparent,
+    borderColor: PHASE_TO_COLOR_NAME[phase].opaque,
   }
 
   console.log('containerStyle', containerStyle)

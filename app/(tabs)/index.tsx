@@ -1,9 +1,11 @@
 import * as React from 'react'
 import Typography from '@/shared/components/Typography'
-import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native'
+import { FlatList, SafeAreaView, StyleSheet } from 'react-native'
 import DropDown from 'react-native-paper-dropdown'
 import { Phase } from '@/shared/types'
 import FilmPreviewListItem from '@/components/FilmPreviewListItem'
+import Button from '@/shared/components/Button'
+import ButtonWrapper from '@/shared/components/ButtonWrapper'
 
 const cameraList = [
   {
@@ -81,6 +83,13 @@ const Rolls = () => {
           <FilmPreviewListItem film={item.film} camera={item.camera} notes={item.notes} phase={item.phase} iso={item.iso} startDate={item.startDate} />
         )}
       />
+      <ButtonWrapper
+        right={
+          <Button variant="primary" callback={() => console.log('clicked')}>
+            Add Roll
+          </Button>
+        }
+      ></ButtonWrapper>
     </SafeAreaView>
   )
 }
