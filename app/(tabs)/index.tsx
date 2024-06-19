@@ -6,6 +6,7 @@ import { Phase } from '@/shared/types'
 import FilmPreviewListItem from '@/components/FilmPreviewListItem'
 import Button from '@/shared/components/Button'
 import ButtonWrapper from '@/shared/components/ButtonWrapper'
+import { COLORS } from '@/shared/theme'
 
 const cameraList = [
   {
@@ -96,6 +97,7 @@ const Rolls = () => {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: COLORS.dark.opaque,
     flex: 1,
   },
 })
