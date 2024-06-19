@@ -4,17 +4,16 @@ import { useContext, useEffect } from 'react'
 import 'react-native-reanimated'
 import * as SplashScreen from 'expo-splash-screen'
 import { MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper'
-// import { db } from '@/db/client'
-// import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator'
-// import migrations from '@/db/migrations/migrations'
+import { db } from '@/db/client'
+import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator'
 import Context, { context } from '@/shared/context'
+import migrations from '@/db/migrations/migrations'
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync()
 
 function App() {
-  // const { success: haveMigrationsRun, error: haveMigrationsErrored } =
-  //   useMigrations(db, migrations)
+  const { success: haveMigrationsRun, error: haveMigrationsErrored } = useMigrations(db, migrations)
   const {
     state: {
       settings: { colorTheme },
@@ -25,14 +24,9 @@ function App() {
     Comfortaa: require('../assets/fonts/Comfortaa.ttf'),
   })
 
-  const hasLoaded = [
-    haveFontsLoaded,
-    // haveMigrationsRun
-  ].every(i => i)
+  const hasLoaded = [haveFontsLoaded, haveMigrationsRun].every(i => i)
 
-  const hasErrored = [
-    // haveMigrationsErrored
-  ].some(i => i)
+  const hasErrored = [haveMigrationsErrored].some(i => i)
   const paperTheme = colorTheme === 'dark' ? MD3DarkTheme : MD3LightTheme
 
   useEffect(() => {

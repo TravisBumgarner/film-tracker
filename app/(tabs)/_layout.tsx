@@ -19,12 +19,14 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Rolls',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? 'bulb-sharp' : 'bulb-outline'}
-              color={color}
-            />
-          ),
+          tabBarIcon: ({ color, focused }) => <TabBarIcon name={focused ? 'bulb-sharp' : 'bulb-outline'} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: 'Settings',
+          tabBarIcon: ({ color, focused }) => <TabBarIcon name={focused ? 'bug' : 'bug-outline'} color={color} />,
         }}
       />
     </Tabs>
