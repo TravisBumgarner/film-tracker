@@ -21,7 +21,6 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.0",
-    "@fontsource/montserrat": "^5.0.18",
     "@react-native-async-storage/async-storage": "^1.23.1",
     "@react-navigation/native": "^6.0.2",
     "drizzle-orm": "^0.31.0",
