@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleProp, StyleSheet, TextStyle, ViewStyle } from 'react-native'
+import { StyleProp, StyleSheet, TextStyle } from 'react-native'
 import { Text } from 'react-native-paper'
 
 import { COLORS } from '../theme'
@@ -14,19 +14,19 @@ const Typography: React.FC<TypographyProps> = ({ children, variant, style: style
   switch (variant) {
     case 'h1':
       return (
-        <Text style={StyleSheet.flatten([styleProp, styles.base, styles.h1])} variant="displayLarge">
+        <Text style={StyleSheet.flatten([styles.base, styles.h1, styleProp])} variant="displayLarge">
           {children}
         </Text>
       )
     case 'h2':
       return (
-        <Text style={StyleSheet.flatten([styleProp, styles.base, styles.h2])} variant="displayMedium">
+        <Text style={StyleSheet.flatten([styles.base, styles.h2, styleProp])} variant="displayMedium">
           {children}
         </Text>
       )
     case 'body1':
       return (
-        <Text style={StyleSheet.flatten([styleProp, styles.base, styles.body1])} variant="bodyLarge">
+        <Text style={StyleSheet.flatten([styles.base, styles.body1, styleProp])} variant="bodyLarge">
           {children}
         </Text>
       )

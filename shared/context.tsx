@@ -10,12 +10,14 @@ export interface State {
   settings: {
     colorTheme: 'dark' | 'light'
   }
+  alertMessage: string | null
 }
 
 const EMPTY_STATE: State = {
   settings: {
     colorTheme: 'light',
   },
+  alertMessage: null,
 }
 
 const initialSetup = () => {
@@ -52,7 +54,16 @@ interface EditUserSettings {
   payload: State['settings']
 }
 
-export type Action = EditUserSettings | HydrateUserSettings
+interface AddAlertMessage {
+  type: 'ADD_ALERT_MESSAGE'
+  payload: string
+}
+
+interface ClearAlertMessage {
+  type: 'CLEAR_ALERT_MESSAGE'
+}
+
+export type Action = EditUserSettings | HydrateUserSettings | AddAlertMessage | ClearAlertMessage
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -64,6 +75,12 @@ const reducer = (state: State, action: Action): State => {
         saveValueToKeyStore(key as SettingsKey, value)
       })
       return { ...state, settings: { ...state.settings, ...action.payload } }
+    }
+    case 'ADD_ALERT_MESSAGE': {
+      return { ...state, alertMessage: action.payload }
+    }
+    case 'CLEAR_ALERT_MESSAGE': {
+      return { ...state, alertMessage: null }
     }
     default:
       throw new Error('Unexpected action')
@@ -78,7 +95,7 @@ const context = createContext({
   dispatch: Dispatch<Action>
 })
 
-const ResultsContext = ({ children }: { children: JSX.Element }) => {
+const ResultsContext = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(reducer, EMPTY_STATE)
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
