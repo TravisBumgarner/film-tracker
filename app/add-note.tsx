@@ -3,12 +3,14 @@ import Button from '@/shared/components/Button'
 import ButtonWrapper from '@/shared/components/ButtonWrapper'
 import PageWrapper from '@/shared/components/PageWrapper'
 import TextInput from '@/shared/components/TextInput'
+import { context } from '@/shared/context'
 import { URLParams } from '@/shared/types'
 import { router, useLocalSearchParams } from 'expo-router'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 
 const AddNote = () => {
+  const { dispatch } = useContext(context)
   const [newNoteText, setNewNoteText] = useState('')
   const params = useLocalSearchParams<URLParams['add-note']>()
 
@@ -18,8 +20,7 @@ const AddNote = () => {
 
   const handleAddNote = useCallback(async () => {
     if (!params.rollId) {
-      // SSP-238
-      console.log('no roll Id found')
+      dispatch({ type: 'ADD_ALERT_MESSAGE', payload: 'Roll ID is required' })
       return
     }
 
@@ -28,7 +29,7 @@ const AddNote = () => {
       rollId: params.rollId,
     })
     router.navigate(`/roll/${params.rollId}`)
-  }, [newNoteText, params])
+  }, [newNoteText, params, dispatch])
 
   return (
     <PageWrapper title="Add Roll">
