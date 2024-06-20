@@ -1,14 +1,14 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "0d116d7f-85f9-48c1-b01b-030350c24758",
+  "id": "04bdc14a-a0f5-4921-a9b5-343250fb91a5",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "camera": {
       "name": "camera",
       "columns": {
-        "uuid": {
-          "name": "uuid",
+        "id": {
+          "name": "id",
           "type": "text",
           "primaryKey": true,
           "notNull": true,
@@ -37,10 +37,10 @@
         }
       },
       "indexes": {
-        "camera_uuid_unique": {
-          "name": "camera_uuid_unique",
+        "camera_id_unique": {
+          "name": "camera_id_unique",
           "columns": [
-            "uuid"
+            "id"
           ],
           "isUnique": true
         }
@@ -52,8 +52,8 @@
     "note": {
       "name": "note",
       "columns": {
-        "uuid": {
-          "name": "uuid",
+        "id": {
+          "name": "id",
           "type": "text",
           "primaryKey": true,
           "notNull": true,
@@ -89,24 +89,24 @@
         }
       },
       "indexes": {
-        "note_uuid_unique": {
-          "name": "note_uuid_unique",
+        "note_id_unique": {
+          "name": "note_id_unique",
           "columns": [
-            "uuid"
+            "id"
           ],
           "isUnique": true
         }
       },
       "foreignKeys": {
-        "note_rollId_roll_uuid_fk": {
-          "name": "note_rollId_roll_uuid_fk",
+        "note_rollId_roll_id_fk": {
+          "name": "note_rollId_roll_id_fk",
           "tableFrom": "note",
           "tableTo": "roll",
           "columnsFrom": [
             "rollId"
           ],
           "columnsTo": [
-            "uuid"
+            "id"
           ],
           "onDelete": "no action",
           "onUpdate": "no action"
@@ -118,8 +118,8 @@
     "roll": {
       "name": "roll",
       "columns": {
-        "uuid": {
-          "name": "uuid",
+        "id": {
+          "name": "id",
           "type": "text",
           "primaryKey": true,
           "notNull": true,
@@ -148,7 +148,7 @@
         },
         "iso": {
           "name": "iso",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -166,27 +166,41 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "insertedIntoCameraAt": {
+          "name": "insertedIntoCameraAt",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "removedFromCameraAt": {
+          "name": "removedFromCameraAt",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         }
       },
       "indexes": {
-        "roll_uuid_unique": {
-          "name": "roll_uuid_unique",
+        "roll_id_unique": {
+          "name": "roll_id_unique",
           "columns": [
-            "uuid"
+            "id"
           ],
           "isUnique": true
         }
       },
       "foreignKeys": {
-        "roll_cameraId_camera_uuid_fk": {
-          "name": "roll_cameraId_camera_uuid_fk",
+        "roll_cameraId_camera_id_fk": {
+          "name": "roll_cameraId_camera_id_fk",
           "tableFrom": "roll",
           "tableTo": "camera",
           "columnsFrom": [
             "cameraId"
           ],
           "columnsTo": [
-            "uuid"
+            "id"
           ],
           "onDelete": "no action",
           "onUpdate": "no action"

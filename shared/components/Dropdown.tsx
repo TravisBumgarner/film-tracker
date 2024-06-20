@@ -16,22 +16,27 @@ type DropdownProps = {
 
 const Dropdown: React.FC<DropdownProps> = ({ label, setIsVisible, isVisible, value, setValue, list }) => {
   return (
-    <DropDownRNPD
-      label={label}
-      mode={'outlined'}
-      visible={isVisible}
-      showDropDown={() => setIsVisible(true)}
-      onDismiss={() => setIsVisible(false)}
-      value={value}
-      setValue={setValue}
-      list={list}
-      dropDownItemTextStyle={styles.dropDownItemTextStyle}
-      theme={MD3DarkTheme}
-    />
+    <View style={styles.container}>
+      <DropDownRNPD
+        label={label}
+        mode={'outlined'}
+        visible={isVisible}
+        showDropDown={() => setIsVisible(true)}
+        onDismiss={() => setIsVisible(false)}
+        value={value}
+        setValue={setValue}
+        list={list}
+        dropDownItemTextStyle={styles.dropDownItemTextStyle}
+        theme={MD3DarkTheme}
+      />
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
+  container: {
+    margin: 10,
+  },
   dropDownItemTextStyle: {
     color: COLORS.light.opaque,
   },

@@ -8,7 +8,7 @@ type Props = {
   camera: string
   notesCount: number
   phase: Phase
-  iso: number
+  iso: string
   insertedIntoCameraAt: string
   removedFromCameraAt: string | null
 }

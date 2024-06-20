@@ -1,6 +1,6 @@
 # About
 
-This is a brainstorming iOS and Android App. It's minimalistic, just the way I want it to be. 
+This is an app for tracking film photography roll exposure in iOS and Android. It's minimalistic, just the way I want it to be. 
 
 I develop on Mac/iPhone so no comments on any other variation of computer/phone os.
 
@@ -44,3 +44,10 @@ This still requires a connection to the macbook and local dev running in VS COde
 - Internal distribution - EAS feature that allows developers to share a URL to install app
 
 1. `yarn run build:ios:internal`
+
+# SQLite
+
+1. `cd /Users/travisbumgarner/Library/Developer/CoreSimulator/Devices`
+2. `find . -name filmtracker.db`
+3. `open [pathname]`
+4. Should open in SQLite Browser

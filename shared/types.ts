@@ -6,11 +6,11 @@ export enum Phase {
 }
 
 export type RollPreviewListItemData = {
-  uuid: string
+  id: string
   roll: string
   createdAt: string
   updatedAt: string | null
-  iso: number
+  iso: string
   cameraId: string
   phase: Phase
   cameraModel: string
@@ -18,3 +18,5 @@ export type RollPreviewListItemData = {
   insertedIntoCameraAt: string
   removedFromCameraAt: string | null
 }
+
+export type PartialWithRequiredKeys<T, K extends keyof T> = Partial<T> & Pick<T, K>

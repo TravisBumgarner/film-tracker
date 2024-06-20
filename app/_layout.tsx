@@ -51,6 +51,7 @@ function App() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
         <Stack.Screen name="error" />
+        <Stack.Screen name="add-roll" options={{ headerShown: false }} />
       </Stack>
     </PaperProvider>
   )

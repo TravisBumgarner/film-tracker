@@ -1,15 +1,16 @@
-import * as React from 'react'
-import Typography from '@/shared/components/Typography'
-import { FlatList, SafeAreaView, StyleSheet } from 'react-native'
-import { Phase, RollPreviewListItemData } from '@/shared/types'
 import RollPreviewListItem from '@/components/RollPreviewListItem'
+import queries from '@/db/queries'
 import Button from '@/shared/components/Button'
 import ButtonWrapper from '@/shared/components/ButtonWrapper'
-import { COLORS } from '@/shared/theme'
 import Dropdown from '@/shared/components/Dropdown'
 import DropdownWrapper from '@/shared/components/DropdownWrapper'
-import queries from '@/db/queries'
-import { useAsyncEffect } from 'use-async-effect'
+import PageWrapper from '@/shared/components/PageWrapper'
+import { Phase, RollPreviewListItemData } from '@/shared/types'
+import { router, useFocusEffect } from 'expo-router'
+import * as React from 'react'
+import { FlatList } from 'react-native'
+import { en, registerTranslation } from 'react-native-paper-dates'
+registerTranslation('en', en)
 
 const phaseList = [
   {
@@ -38,52 +39,26 @@ const Rolls = () => {
   const [activeCamera, setActiveCamera] = React.useState('all')
   const [activePhase, setActivePhase] = React.useState('all')
 
-  // const insertInsertData = async () => {
-  //   const camera = await queries.insert.camera({ model: 'Yaschica' })
-  //   console.log('inserted', camera)
-  //   await queries.insert.roll({
-  //     cameraId: camera.uuid,
-  //     roll: 'Film1',
-  //     iso: 400,
-  //     phase: Phase.Exposing,
-  //   })
+  console.log('rolllist', rollsList)
 
-  //   await queries.insert.roll({
-  //     cameraId: camera.uuid,
-  //     roll: 'Film2',
-  //     iso: 400,
-  //     phase: Phase.Exposed,
-  //   })
-
-  //   await queries.insert.roll({
-  //     cameraId: camera.uuid,
-  //     roll: 'Film1',
-  //     iso: 400,
-  //     phase: Phase.Archived,
-  //   })
-  // }
-
-  // useAsyncEffect(async () => {
-  //   console.log('I run')
-  //   await insertInsertData()
-  // }, [insertInsertData])
-
-  // React.useEffect(() => {
-  //   setTimeout(() => {
-  //     queries.select.rolls().then(console.log)
-  //   }, 1000)
-  // }, [])
-
-  useAsyncEffect(async () => {
-    const cameras = await queries.select.cameras()
-    const rolls = await queries.select.rolls()
-    setRollsList(rolls)
-    setCameraList(cameras.map(camera => ({ label: camera.model, value: camera.uuid })))
+  const addRollCallback = React.useCallback(() => {
+    router.push('add-roll')
   }, [])
 
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchAsyncData = async () => {
+        const cameras = await queries.select.cameras()
+        const rolls = await queries.select.rolls()
+        setRollsList(rolls)
+        setCameraList(cameras.map(camera => ({ label: camera.model, value: camera.id })))
+      }
+
+      fetchAsyncData()
+    }, [])
+  )
   return (
-    <SafeAreaView style={styles.container}>
-      <Typography variant="h1">Rolls</Typography>
+    <PageWrapper title="Rolls">
       <DropdownWrapper
         left={
           <Dropdown
@@ -108,7 +83,7 @@ const Rolls = () => {
       />
       <FlatList
         data={rollsList}
-        keyExtractor={item => item.uuid}
+        keyExtractor={item => item.id}
         renderItem={({ item }) => (
           <RollPreviewListItem
             roll={item.roll}
@@ -123,20 +98,13 @@ const Rolls = () => {
       />
       <ButtonWrapper
         right={
-          <Button variant="primary" callback={() => console.log('clicked')}>
+          <Button variant="primary" callback={addRollCallback}>
             Add Roll
           </Button>
         }
       ></ButtonWrapper>
-    </SafeAreaView>
+    </PageWrapper>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: COLORS.dark.opaque,
-    flex: 1,
-  },
-})
 
 export default Rolls

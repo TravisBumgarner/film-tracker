@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "brainstorm-app",
-    "slug": "brainstorm-app",
+    "name": "film-tracker-app",
+    "slug": "film-tracker-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.tbumgarner.brainstormapp"
+      "bundleIdentifier": "com.tbumgarner.filmtrackerapp"
     },
     "android": {
       "adaptiveIcon": {
@@ -39,7 +39,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "9cda37b6-928c-4684-aecc-636ea8f8a69f"
+        "projectId": "5a7a8c6a-cd24-4ec0-8504-37c853285037"
       }
     }
   }
