@@ -1,34 +1,34 @@
 import { Phase } from '@/shared/types'
-import { sqliteTable, text, int } from 'drizzle-orm/sqlite-core'
+import { sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 export const RollsTable = sqliteTable('roll', {
-  uuid: text('uuid').primaryKey().unique().notNull(),
+  id: text('id').primaryKey().unique().notNull(),
   roll: text('roll').notNull(),
   createdAt: text('date').notNull(),
   updatedAt: text('updatedAt'),
-  iso: int('iso').notNull(),
+  iso: text('iso').notNull(),
   cameraId: text('cameraId')
-    .references(() => CamerasTable.uuid)
+    .references(() => CamerasTable.id)
     .notNull(),
   phase: text('phase').notNull(), // Sqlite does not have an enum type
-  insertedIntoCameraAt: text('insertedIntoCameraAt'),
+  insertedIntoCameraAt: text('insertedIntoCameraAt').notNull(),
   removedFromCameraAt: text('removedFromCameraAt'),
 })
 
 export const CamerasTable = sqliteTable('camera', {
-  uuid: text('uuid').primaryKey().unique().notNull(),
+  id: text('id').primaryKey().unique().notNull(),
   createdAt: text('date').notNull(),
   updatedAt: text('updatedAt'),
   model: text('model').notNull(),
 })
 
 export const NotesTable = sqliteTable('note', {
-  uuid: text('uuid').primaryKey().unique().notNull(),
+  id: text('id').primaryKey().unique().notNull(),
   createdAt: text('date').notNull(),
   updatedAt: text('updatedAt'),
   text: text('text').notNull(),
   rollId: text('rollId')
-    .references(() => RollsTable.uuid)
+    .references(() => RollsTable.id)
     .notNull(),
 })
 

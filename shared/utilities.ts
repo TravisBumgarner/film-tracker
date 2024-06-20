@@ -1,15 +1,14 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { router } from 'expo-router'
+
+import { URLParams } from './types'
 
 export const areSameDay = (date1: Date | null, date2: Date | null) => {
   if (!date1 || !date2) {
     return false
   }
 
-  return (
-    date1.getFullYear() === date2.getFullYear() &&
-    date1.getMonth() === date2.getMonth() &&
-    date1.getDate() === date2.getDate()
-  )
+  return date1.getFullYear() === date2.getFullYear() && date1.getMonth() === date2.getMonth() && date1.getDate() === date2.getDate()
 }
 
 export const formatDisplayDate = (date: Date): string => {
@@ -38,4 +37,9 @@ export const getValueFromKeyStore = async (key: string) => {
   } catch (e) {
     return null
   }
+}
+
+export const navigateWithParams = <T extends keyof URLParams>(route: T, params: URLParams[T]) => {
+  router.push(route)
+  router.setParams(params)
 }

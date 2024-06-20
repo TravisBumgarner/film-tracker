@@ -1,13 +1,14 @@
 import { db } from '@/db/client'
-import { count, eq } from 'drizzle-orm'
 import { RollPreviewListItemData } from '@/shared/types'
+import { desc, eq, sql } from 'drizzle-orm'
 
-import { RollsTable, NotesTable, CamerasTable, SelectCamera, SelectNote } from '../schema'
+import { CamerasTable, NotesTable, RollsTable, SelectCamera, SelectNote, SelectRoll } from '../schema'
 
 const rolls = async (): Promise<RollPreviewListItemData[]> => {
+  // TODO - not sure if this query works.
   return (await db
     .select({
-      uuid: RollsTable.uuid,
+      id: RollsTable.id,
       roll: RollsTable.roll,
       createdAt: RollsTable.createdAt,
       updatedAt: RollsTable.updatedAt,
@@ -15,25 +16,34 @@ const rolls = async (): Promise<RollPreviewListItemData[]> => {
       cameraId: RollsTable.cameraId,
       phase: RollsTable.phase,
       cameraModel: CamerasTable.model,
-      notesCount: count(NotesTable),
+      notesCount: sql<number>`count(${NotesTable.id})`,
       insertedIntoCameraAt: RollsTable.insertedIntoCameraAt,
       removedFromCameraAt: RollsTable.removedFromCameraAt,
     })
     .from(RollsTable)
-    .leftJoin(CamerasTable, eq(RollsTable.cameraId, CamerasTable.uuid))
-    .leftJoin(NotesTable, eq(RollsTable.uuid, NotesTable.rollId))) as RollPreviewListItemData[]
+    .leftJoin(CamerasTable, eq(RollsTable.cameraId, CamerasTable.id))
+    .leftJoin(NotesTable, eq(RollsTable.id, NotesTable.rollId))
+    .groupBy(RollsTable.id)) as RollPreviewListItemData[]
+  // For some reason the joins make an extra row with null values, so we filter them out
+  // .filter(roll => roll.id !== null) as RollPreviewListItemData[]
 }
 
 const cameras = async (): Promise<SelectCamera[]> => {
   return await db.select().from(CamerasTable)
 }
 
+const rollById = async (id: string): Promise<SelectRoll> => {
+  const result = (await db.select().from(RollsTable).where(eq(RollsTable.id, id)))[0] as SelectRoll
+  return result
+}
+
 const notesByRollId = async (rollId: string): Promise<SelectNote[]> => {
-  return await db.select().from(NotesTable).where(eq(NotesTable.rollId, rollId))
+  return await db.select().from(NotesTable).where(eq(NotesTable.rollId, rollId)).orderBy(desc(NotesTable.createdAt))
 }
 
 export default {
   rolls,
   cameras,
   notesByRollId,
+  rollById,
 }
