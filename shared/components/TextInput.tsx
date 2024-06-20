@@ -4,7 +4,7 @@ import { TextInput as TextInputRNP } from 'react-native-paper'
 
 import { COLORS } from '../theme'
 
-const TextInput: React.FC<{ label: string; value: string; onChangeText: (value: string) => void }> = ({ label, value, onChangeText }) => {
+const TextInput: React.FC<{ label?: string; value: string; onChangeText: (value: string) => void }> = ({ label, value, onChangeText }) => {
   return <TextInputRNP style={styles.inputStyle} contentStyle={styles.inputContentStyle} label={label} value={value} onChangeText={onChangeText} />
 }
 

@@ -49,13 +49,15 @@ const AddRoll = () => {
       newCameraId = result.id
     }
 
-    queries.insert.roll({
+    const result = await queries.insert.roll({
       cameraId: newCameraId,
       roll: newRollInput,
       insertedIntoCameraAt: date.toISOString(),
       iso: newISOInput,
       phase: Phase.Exposing,
     })
+
+    router.navigate(`/roll/${result.id}`)
   }, [activeCamera, date, newISOInput, newRollInput, newCameraInput])
 
   return (

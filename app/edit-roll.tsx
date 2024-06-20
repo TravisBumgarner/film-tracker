@@ -3,13 +3,13 @@ import Button from '@/shared/components/Button'
 import ButtonWrapper from '@/shared/components/ButtonWrapper'
 import DatePickerModal from '@/shared/components/DatePicker'
 import Dropdown from '@/shared/components/Dropdown'
+import Loading from '@/shared/components/Loading'
 import PageWrapper from '@/shared/components/PageWrapper'
 import TextInput from '@/shared/components/TextInput'
-import { Phase } from '@/shared/types'
-import { router } from 'expo-router'
+import { Phase, URLParams } from '@/shared/types'
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router'
 import React, { useCallback, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { useAsyncEffect } from 'use-async-effect'
 
 const ADD_NEW_CAMERA_MENU_OPTION = {
   label: 'Add new Camera',
@@ -17,24 +17,47 @@ const ADD_NEW_CAMERA_MENU_OPTION = {
 }
 
 const EditRoll = () => {
+  const [editId, setEditId] = useState('')
   const [isCameraDropdownVisible, setIsCameraDropdownVisible] = useState(false)
   const [cameraList, setCameraList] = useState<{ label: string; value: string }[]>([ADD_NEW_CAMERA_MENU_OPTION])
   const [activeCamera, setActiveCamera] = useState('')
   const [newCameraInput, setNewCameraInput] = useState('')
-  const [newRollInput, setNewRollInput] = useState('')
-  const [date, setDate] = useState<Date>(new Date())
-  const [newISOInput, setNewISOInput] = useState('')
+  const [editRollInput, setEditRollInput] = useState('')
+  const [editDate, setEditDate] = useState<Date>(new Date())
+  const [editISOInput, setEditISOInput] = useState('')
+  const params = useLocalSearchParams<URLParams['edit-roll']>()
+  const [isLoading, setIsLoading] = useState(true)
 
-  useAsyncEffect(async () => {
-    const cameras = await queries.select.cameras()
-    setCameraList([ADD_NEW_CAMERA_MENU_OPTION, ...cameras.map(camera => ({ label: camera.model, value: camera.id }))])
+  useFocusEffect(
+    useCallback(() => {
+      async function fetchData() {
+        if (!params.rollId) {
+          console.log('no roll Id found')
+          setIsLoading(false) // set loading to false even if rollId is not present
+          return
+        }
 
-    if (cameras.length > 0) {
-      setActiveCamera(cameras[0].id)
-    } else {
-      setActiveCamera('')
-    }
-  }, [])
+        try {
+          const cameras = await queries.select.cameras()
+          const roll = await queries.select.rollById(params.rollId)
+
+          setEditRollInput(roll.roll)
+          setEditISOInput(roll.iso)
+          setEditDate(new Date(roll.insertedIntoCameraAt))
+          setActiveCamera(roll.cameraId)
+          setEditId(roll.id)
+
+          setCameraList([ADD_NEW_CAMERA_MENU_OPTION, ...cameras.map(camera => ({ label: camera.model, value: camera.id }))])
+        } catch (error) {
+          console.error('Error fetching data:', error)
+        }
+
+        setIsLoading(false)
+      }
+      if (!isLoading) return
+      fetchData()
+    }, [params, isLoading])
+  )
 
   const handleCancel = useCallback(() => {
     router.navigate('/')
@@ -49,17 +72,22 @@ const EditRoll = () => {
       newCameraId = result.id
     }
 
-    queries.insert.roll({
+    await queries.update.roll(editId, {
       cameraId: newCameraId,
-      roll: newRollInput,
-      insertedIntoCameraAt: date.toISOString(),
-      iso: newISOInput,
+      roll: editRollInput,
+      insertedIntoCameraAt: editDate.toISOString(),
+      iso: editISOInput,
       phase: Phase.Exposing,
     })
-  }, [activeCamera, date, newISOInput, newRollInput, newCameraInput])
+    router.navigate(`/roll/${editId}`)
+  }, [activeCamera, editDate, editISOInput, editRollInput, newCameraInput, editId])
+
+  if (isLoading) {
+    return <Loading />
+  }
 
   return (
-    <PageWrapper title="Add Roll">
+    <PageWrapper title="Edit Roll">
       <View style={styles.formWrapper}>
         <Dropdown
           label={'Select a Camera'}
@@ -72,9 +100,9 @@ const EditRoll = () => {
         {activeCamera === ADD_NEW_CAMERA_MENU_OPTION.value ? (
           <TextInput label="Add a new Camera" value={newCameraInput} onChangeText={setNewCameraInput} />
         ) : null}
-        <TextInput label="Roll Name" value={newRollInput} onChangeText={setNewRollInput} />
-        <DatePickerModal date={date} setDate={setDate} />
-        <TextInput label="ISO" value={newISOInput} onChangeText={setNewISOInput} />
+        <TextInput label="Roll Name" value={editRollInput} onChangeText={setEditRollInput} />
+        <DatePickerModal date={editDate} setDate={setEditDate} />
+        <TextInput label="ISO" value={editISOInput} onChangeText={setEditISOInput} />
       </View>
       <ButtonWrapper
         left={

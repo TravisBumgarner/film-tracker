@@ -1,13 +1,13 @@
+import { db } from '@/db/client'
+import migrations from '@/db/migrations/migrations'
+import Context, { context } from '@/shared/context'
+import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator'
 import { useFonts } from 'expo-font'
 import { Stack, router } from 'expo-router'
-import { useContext, useEffect } from 'react'
-import 'react-native-reanimated'
 import * as SplashScreen from 'expo-splash-screen'
+import { useContext, useEffect } from 'react'
 import { MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper'
-import { db } from '@/db/client'
-import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator'
-import Context, { context } from '@/shared/context'
-import migrations from '@/db/migrations/migrations'
+import 'react-native-reanimated'
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync()
@@ -52,6 +52,7 @@ function App() {
         <Stack.Screen name="+not-found" />
         <Stack.Screen name="error" />
         <Stack.Screen name="add-roll" options={{ headerShown: false }} />
+        <Stack.Screen name="add-note" options={{ headerShown: false }} />
       </Stack>
     </PaperProvider>
   )

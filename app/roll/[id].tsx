@@ -1,35 +1,67 @@
 import NoteListItem from '@/components/NoteListItem'
 import queries from '@/db/queries'
 import { SelectNote, SelectRoll } from '@/db/schema'
+import Button from '@/shared/components/Button'
+import ButtonWrapper from '@/shared/components/ButtonWrapper'
+import Loading from '@/shared/components/Loading'
 import PageWrapper from '@/shared/components/PageWrapper'
 import Typography from '@/shared/components/Typography'
-import { useLocalSearchParams } from 'expo-router'
+import { navigateWithParams } from '@/shared/utilities'
+import { useFocusEffect, useLocalSearchParams } from 'expo-router'
 import * as React from 'react'
 import { FlatList, View } from 'react-native'
-import { ActivityIndicator } from 'react-native-paper'
 import { en, registerTranslation } from 'react-native-paper-dates'
-import { useAsyncEffect } from 'use-async-effect'
 registerTranslation('en', en)
 
 const RollView = () => {
-  const { id } = useLocalSearchParams<{ id: string }>()
+  const params = useLocalSearchParams<{ id: string }>()
   const [notesList, setNotesList] = React.useState<SelectNote[]>([])
   const [roll, setRoll] = React.useState<SelectRoll | null>(null)
   const [isLoading, setIsLoading] = React.useState(true)
 
-  useAsyncEffect(async () => {
-    if (!id) return
-    const rollResult = await queries.select.rollById(id)
-    const notesResult = await queries.select.notesByRollId(id)
-    setNotesList(notesResult)
-    setRoll(rollResult)
-  }, [])
+  useFocusEffect(
+    React.useCallback(() => {
+      async function fetchData() {
+        if (!params.id) {
+          // SSP-238
+          return
+        }
+        const rollResult = await queries.select.rollById(params.id)
+        const notesResult = await queries.select.notesByRollId(params.id)
+        setNotesList(notesResult)
+        setRoll(rollResult)
+        setIsLoading(false)
+      }
+
+      fetchData()
+    }, [params.id])
+  )
+
+  const editRoll = React.useCallback(() => {
+    if (!params.id) {
+      // SSP-238
+      return
+    }
+
+    navigateWithParams('edit-roll', { rollId: params.id })
+  }, [params.id])
+
+  const addNote = React.useCallback(() => {
+    if (!params.id) {
+      // SSP-238
+      return
+    }
+
+    navigateWithParams('add-note', { rollId: params.id })
+    if (!params.id) return
+    // const urlParams: URLParams['add-note'] = { rollId: id }
+  }, [params.id])
 
   if (isLoading) {
-    return <ActivityIndicator />
+    return <Loading />
   }
 
-  if (!id || !roll) {
+  if (!params.id || !roll) {
     return (
       <View>
         <Typography variant="body1">Roll missing.</Typography>
@@ -38,11 +70,23 @@ const RollView = () => {
   }
 
   return (
-    <PageWrapper title="Rolls">
+    <PageWrapper title={roll.roll}>
       <FlatList
         data={notesList}
         keyExtractor={item => item.id}
         renderItem={({ item }) => <NoteListItem text={item.text} roll={roll?.roll} date={item.createdAt} />}
+      />
+      <ButtonWrapper
+        left={
+          <Button variant="secondary" callback={editRoll}>
+            Edit Roll
+          </Button>
+        }
+        right={
+          <Button variant="primary" callback={addNote}>
+            Add Note
+          </Button>
+        }
       />
     </PageWrapper>
   )

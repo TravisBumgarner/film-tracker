@@ -1,6 +1,6 @@
 import { db } from '@/db/client'
 import { RollPreviewListItemData } from '@/shared/types'
-import { eq, sql } from 'drizzle-orm'
+import { desc, eq, sql } from 'drizzle-orm'
 
 import { CamerasTable, NotesTable, RollsTable, SelectCamera, SelectNote, SelectRoll } from '../schema'
 
@@ -33,11 +33,12 @@ const cameras = async (): Promise<SelectCamera[]> => {
 }
 
 const rollById = async (id: string): Promise<SelectRoll> => {
-  return (await db.select().from(RollsTable).where(eq(RollsTable.id, id)))[0] as SelectRoll
+  const result = (await db.select().from(RollsTable).where(eq(RollsTable.id, id)))[0] as SelectRoll
+  return result
 }
 
 const notesByRollId = async (rollId: string): Promise<SelectNote[]> => {
-  return await db.select().from(NotesTable).where(eq(NotesTable.rollId, rollId))
+  return await db.select().from(NotesTable).where(eq(NotesTable.rollId, rollId)).orderBy(desc(NotesTable.createdAt))
 }
 
 export default {

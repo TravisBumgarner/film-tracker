@@ -39,8 +39,6 @@ const Rolls = () => {
   const [activeCamera, setActiveCamera] = React.useState('all')
   const [activePhase, setActivePhase] = React.useState('all')
 
-  console.log('rolllist', rollsList)
-
   const addRollCallback = React.useCallback(() => {
     router.push('add-roll')
   }, [])
@@ -86,6 +84,7 @@ const Rolls = () => {
         keyExtractor={item => item.id}
         renderItem={({ item }) => (
           <RollPreviewListItem
+            id={item.id}
             roll={item.roll}
             camera={item.cameraModel}
             notesCount={item.notesCount}

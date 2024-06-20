@@ -18,7 +18,6 @@ const camera = async (camera: Omit<NewCamera, 'id' | 'createdAt'>): Promise<NewC
 }
 
 const roll = async (roll: Omit<NewRoll, 'id' | 'createdAt'>): Promise<NewRoll> => {
-  console.log('roll', roll)
   return (
     await db
       .insert(RollsTable)
