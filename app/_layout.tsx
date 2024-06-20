@@ -1,3 +1,4 @@
+import Alert from '@/components/Alert'
 import { db } from '@/db/client'
 import migrations from '@/db/migrations/migrations'
 import Context, { context } from '@/shared/context'
@@ -61,6 +62,7 @@ function App() {
 const AppWrapper = () => {
   return (
     <Context>
+      <Alert />
       <App />
     </Context>
   )
