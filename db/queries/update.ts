@@ -1,8 +1,7 @@
 import { db } from '@/db/client'
-import 'react-native-get-random-values'
-import { v4 as uuidv4 } from 'uuid'
-import { eq } from 'drizzle-orm'
 import { PartialWithRequiredKeys } from '@/shared/types'
+import { eq } from 'drizzle-orm'
+import 'react-native-get-random-values'
 
 import { NewRoll, RollsTable } from '../schema'
 
@@ -13,7 +12,6 @@ const roll = async (id: string, roll: Partial<NewRoll>): Promise<PartialWithRequ
       .update(RollsTable)
       .set({
         ...roll,
-        id: uuidv4(),
         createdAt: new Date().toISOString(),
       })
       .where(eq(RollsTable.id, id))

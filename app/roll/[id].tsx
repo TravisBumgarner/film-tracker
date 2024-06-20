@@ -8,21 +8,24 @@ import PageWrapper from '@/shared/components/PageWrapper'
 import Typography from '@/shared/components/Typography'
 import { navigateWithParams } from '@/shared/utilities'
 import { useFocusEffect, useLocalSearchParams } from 'expo-router'
-import * as React from 'react'
+import React, { useCallback, useState } from 'react'
 import { FlatList, View } from 'react-native'
 import { en, registerTranslation } from 'react-native-paper-dates'
 registerTranslation('en', en)
 
 const RollView = () => {
   const params = useLocalSearchParams<{ id: string }>()
-  const [notesList, setNotesList] = React.useState<SelectNote[]>([])
-  const [roll, setRoll] = React.useState<SelectRoll | null>(null)
-  const [isLoading, setIsLoading] = React.useState(true)
+  const [notesList, setNotesList] = useState<SelectNote[]>([])
+  const [roll, setRoll] = useState<SelectRoll | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+
+  console.log('RollView', params.id)
 
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       async function fetchData() {
         if (!params.id) {
+          console.log('RollView', 'no id')
           // SSP-238
           return
         }
@@ -37,7 +40,7 @@ const RollView = () => {
     }, [params.id])
   )
 
-  const editRoll = React.useCallback(() => {
+  const editRoll = useCallback(() => {
     if (!params.id) {
       // SSP-238
       return
@@ -46,7 +49,7 @@ const RollView = () => {
     navigateWithParams('edit-roll', { rollId: params.id })
   }, [params.id])
 
-  const addNote = React.useCallback(() => {
+  const addNote = useCallback(() => {
     if (!params.id) {
       // SSP-238
       return
@@ -64,7 +67,7 @@ const RollView = () => {
   if (!params.id || !roll) {
     return (
       <View>
-        <Typography variant="body1">Roll missing.</Typography>
+        <Typography variant="body1">Roll missing. - {params.id}</Typography>
       </View>
     )
   }

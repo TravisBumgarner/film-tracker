@@ -3,12 +3,11 @@ import { COLORS } from '@/shared/theme'
 import { StyleSheet, View } from 'react-native'
 
 type Props = {
-  roll: string
   text: string
   date: string
 }
 
-const NoteListItem = ({ text, date, roll }: Props) => {
+const NoteListItem = ({ text, date }: Props) => {
   const containerStyle = {
     ...styles.container,
     backgroundColor: COLORS.light.transparent,
@@ -17,7 +16,6 @@ const NoteListItem = ({ text, date, roll }: Props) => {
 
   return (
     <View style={containerStyle}>
-      <Typography variant="h2">{roll}</Typography>
       <Typography variant="body1">{text}</Typography>
       <Typography variant="body1">{date}</Typography>
     </View>
