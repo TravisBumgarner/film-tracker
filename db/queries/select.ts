@@ -12,7 +12,6 @@ const rolls = async (): Promise<RollPreviewListItemData[]> => {
       roll: RollsTable.roll,
       createdAt: RollsTable.createdAt,
       updatedAt: RollsTable.updatedAt,
-      iso: RollsTable.iso,
       cameraId: RollsTable.cameraId,
       phase: RollsTable.phase,
       cameraModel: CamerasTable.model,
@@ -41,9 +40,14 @@ const notesByRollId = async (rollId: string): Promise<SelectNote[]> => {
   return await db.select().from(NotesTable).where(eq(NotesTable.rollId, rollId)).orderBy(desc(NotesTable.createdAt))
 }
 
+const noteByNoteId = async (noteId: string): Promise<SelectNote> => {
+  return (await db.select().from(NotesTable).where(eq(NotesTable.id, noteId)))[0]
+}
+
 export default {
   rolls,
   cameras,
   notesByRollId,
+  noteByNoteId,
   rollById,
 }

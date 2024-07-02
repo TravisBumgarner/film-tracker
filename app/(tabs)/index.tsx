@@ -5,14 +5,19 @@ import ButtonWrapper from '@/shared/components/ButtonWrapper'
 import Dropdown from '@/shared/components/Dropdown'
 import DropdownWrapper from '@/shared/components/DropdownWrapper'
 import PageWrapper from '@/shared/components/PageWrapper'
+import Typography from '@/shared/components/Typography'
 import { Phase, RollPreviewListItemData } from '@/shared/types'
 import { router, useFocusEffect } from 'expo-router'
 import * as React from 'react'
-import { FlatList } from 'react-native'
+import { FlatList, View } from 'react-native'
 import { en, registerTranslation } from 'react-native-paper-dates'
 registerTranslation('en', en)
 
 const phaseList = [
+  {
+    label: 'All',
+    value: '',
+  },
   {
     label: 'Exposing',
     value: Phase.Exposing,
@@ -36,8 +41,8 @@ const Rolls = () => {
   const [rollsList, setRollsList] = React.useState<RollPreviewListItemData[]>([])
   const [showFilterByCameraDropdown, setShowFilterByCameraDropdown] = React.useState(false)
   const [showFilterByPhaseDropdown, setShowFilterByPhaseDropdown] = React.useState(false)
-  const [activeCamera, setActiveCamera] = React.useState('all')
-  const [activePhase, setActivePhase] = React.useState('all')
+  const [activeCamera, setActiveCamera] = React.useState('')
+  const [activePhase, setActivePhase] = React.useState('')
 
   const addRollCallback = React.useCallback(() => {
     router.push('add-roll')
@@ -49,12 +54,43 @@ const Rolls = () => {
         const cameras = await queries.select.cameras()
         const rolls = await queries.select.rolls()
         setRollsList(rolls)
-        setCameraList(cameras.map(camera => ({ label: camera.model, value: camera.id })))
+        setCameraList([{ label: 'All', value: '' }, ...cameras.map(camera => ({ label: camera.model, value: camera.id }))])
       }
 
       fetchAsyncData()
     }, [])
   )
+
+  const filteredRollList = React.useMemo(() => {
+    return rollsList.filter(roll => {
+      if (activeCamera && roll.cameraId !== activeCamera) {
+        return false
+      }
+
+      if (activePhase && roll.phase !== activePhase) {
+        return false
+      }
+
+      return true
+    })
+  }, [rollsList, activeCamera, activePhase])
+
+  if (rollsList.length === 0) {
+    return (
+      <PageWrapper
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignContent: 'center',
+        }}
+      >
+        <Button variant="primary" onPress={addRollCallback}>
+          Add Your First Roll
+        </Button>
+      </PageWrapper>
+    )
+  }
+
   return (
     <PageWrapper title="Rolls">
       <DropdownWrapper
@@ -79,25 +115,32 @@ const Rolls = () => {
           />
         }
       />
-      <FlatList
-        data={rollsList}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => (
-          <RollPreviewListItem
-            id={item.id}
-            roll={item.roll}
-            camera={item.cameraModel}
-            notesCount={item.notesCount}
-            phase={item.phase}
-            iso={item.iso}
-            insertedIntoCameraAt={item.insertedIntoCameraAt}
-            removedFromCameraAt={item.removedFromCameraAt}
-          />
-        )}
-      />
+      {filteredRollList.length === 0 ? (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Typography variant="h2">No rolls found</Typography>
+          <Typography variant="body1">Too many filters applied. </Typography>
+        </View>
+      ) : (
+        <FlatList
+          data={filteredRollList}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => (
+            <RollPreviewListItem
+              id={item.id}
+              roll={item.roll}
+              camera={item.cameraModel}
+              notesCount={item.notesCount}
+              phase={item.phase}
+              iso={item.iso}
+              insertedIntoCameraAt={item.insertedIntoCameraAt}
+              removedFromCameraAt={item.removedFromCameraAt}
+            />
+          )}
+        />
+      )}
       <ButtonWrapper
         right={
-          <Button variant="primary" callback={addRollCallback}>
+          <Button variant="primary" onPress={addRollCallback}>
             Add Roll
           </Button>
         }

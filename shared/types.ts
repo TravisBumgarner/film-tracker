@@ -1,8 +1,8 @@
 export enum Phase {
-  Exposing = 'exposing',
-  Exposed = 'exposed',
-  Developed = 'developed',
-  Archived = 'archived',
+  Exposing = 'Exposing',
+  Exposed = 'Exposed',
+  Developed = 'Developed',
+  Archived = 'Archived',
 }
 
 export type RollPreviewListItemData = {
@@ -10,7 +10,6 @@ export type RollPreviewListItemData = {
   roll: string
   createdAt: string
   updatedAt: string | null
-  iso: string
   cameraId: string
   phase: Phase
   cameraModel: string
@@ -22,6 +21,7 @@ export type RollPreviewListItemData = {
 export type URLParams = {
   'add-note': { rollId: string }
   'edit-roll': { rollId: string }
+  'edit-note': { noteId: string; rollId: string }
 }
 
 export type PartialWithRequiredKeys<T, K extends keyof T> = Partial<T> & Pick<T, K>

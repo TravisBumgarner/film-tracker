@@ -6,7 +6,6 @@ export const RollsTable = sqliteTable('roll', {
   roll: text('roll').notNull(),
   createdAt: text('date').notNull(),
   updatedAt: text('updatedAt'),
-  iso: text('iso').notNull(),
   cameraId: text('cameraId')
     .references(() => CamerasTable.id)
     .notNull(),

@@ -22,7 +22,6 @@ const styles = StyleSheet.create({
   },
   dropdownBase: {
     flex: 1,
-    margin: 10,
   },
   dropdownLeft: {
     marginRight: 5,

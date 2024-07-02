@@ -7,7 +7,7 @@ import { context } from '@/shared/context'
 import { URLParams } from '@/shared/types'
 import { router, useLocalSearchParams } from 'expo-router'
 import React, { useCallback, useContext, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { ScrollView, StyleSheet } from 'react-native'
 
 const AddNote = () => {
   const { dispatch } = useContext(context)
@@ -15,8 +15,8 @@ const AddNote = () => {
   const params = useLocalSearchParams<URLParams['add-note']>()
 
   const handleCancel = useCallback(() => {
-    router.navigate('/')
-  }, [])
+    router.navigate(`roll/${params.rollId}`)
+  }, [params.rollId])
 
   const handleAddNote = useCallback(async () => {
     if (!params.rollId) {
@@ -32,18 +32,18 @@ const AddNote = () => {
   }, [newNoteText, params, dispatch])
 
   return (
-    <PageWrapper title="Add Roll">
-      <View style={styles.formWrapper}>
+    <PageWrapper title="Add Note">
+      <ScrollView style={styles.formWrapper}>
         <TextInput value={newNoteText} onChangeText={setNewNoteText} />
-      </View>
+      </ScrollView>
       <ButtonWrapper
         left={
-          <Button variant="warning" callback={handleCancel}>
+          <Button variant="warning" onPress={handleCancel}>
             Cancel
           </Button>
         }
         right={
-          <Button variant="primary" callback={handleAddNote}>
+          <Button disabled={newNoteText.length === 0} variant="primary" onPress={handleAddNote}>
             Submit
           </Button>
         }

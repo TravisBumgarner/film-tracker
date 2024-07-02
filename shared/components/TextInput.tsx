@@ -2,7 +2,7 @@ import * as React from 'react'
 import { StyleSheet } from 'react-native'
 import { TextInput as TextInputRNP } from 'react-native-paper'
 
-import { COLORS } from '../theme'
+import { COLORS, SPACING } from '../theme'
 
 const TextInput: React.FC<{ label?: string; value: string; onChangeText: (value: string) => void }> = ({ label, value, onChangeText }) => {
   return <TextInputRNP style={styles.inputStyle} contentStyle={styles.inputContentStyle} label={label} value={value} onChangeText={onChangeText} />
@@ -14,7 +14,8 @@ const styles = StyleSheet.create({
     color: COLORS.light.opaque,
   },
   inputStyle: {
-    margin: 10,
+    marginBottom: SPACING.md,
+    marginTop: SPACING.md,
   },
 })
 

@@ -6,7 +6,7 @@ import { COLORS } from '../theme'
 
 type TypographyProps = {
   children: React.ReactNode
-  variant: 'h1' | 'h2' | 'body1'
+  variant: 'h1' | 'h2' | 'body1' | 'body2'
   style?: StyleProp<TextStyle>
 }
 
@@ -30,6 +30,12 @@ const Typography: React.FC<TypographyProps> = ({ children, variant, style: style
           {children}
         </Text>
       )
+    case 'body2':
+      return (
+        <Text style={StyleSheet.flatten([styles.base, styles.body2, styleProp])} variant="bodySmall">
+          {children}
+        </Text>
+      )
   }
 }
 
@@ -39,6 +45,9 @@ const styles = StyleSheet.create({
   },
   body1: {
     fontSize: 16,
+  },
+  body2: {
+    fontSize: 12,
   },
   h1: {
     fontSize: 24,

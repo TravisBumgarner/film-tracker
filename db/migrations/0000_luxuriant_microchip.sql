@@ -19,7 +19,6 @@ CREATE TABLE `roll` (
 	`roll` text NOT NULL,
 	`date` text NOT NULL,
 	`updatedAt` text,
-	`iso` text NOT NULL,
 	`cameraId` text NOT NULL,
 	`phase` text NOT NULL,
 	`insertedIntoCameraAt` text NOT NULL,

@@ -21,23 +21,23 @@ const RollView = () => {
   const [roll, setRoll] = useState<SelectRoll | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
+  const fetchFromDB = useCallback(async () => {
+    if (!params.id) {
+      dispatch({ type: 'ADD_ALERT_MESSAGE', payload: 'Roll ID is required' })
+      return
+    }
+
+    const rollResult = await queries.select.rollById(params.id)
+    const notesResult = await queries.select.notesByRollId(params.id)
+    setNotesList(notesResult)
+    setRoll(rollResult)
+    setIsLoading(false)
+  }, [params.id, dispatch])
+
   useFocusEffect(
     useCallback(() => {
-      async function fetchData() {
-        if (!params.id) {
-          dispatch({ type: 'ADD_ALERT_MESSAGE', payload: 'Roll ID is required' })
-          return
-        }
-
-        const rollResult = await queries.select.rollById(params.id)
-        const notesResult = await queries.select.notesByRollId(params.id)
-        setNotesList(notesResult)
-        setRoll(rollResult)
-        setIsLoading(false)
-      }
-
-      fetchData()
-    }, [params.id, dispatch])
+      fetchFromDB()
+    }, [fetchFromDB])
   )
 
   const editRoll = useCallback(() => {
@@ -75,16 +75,16 @@ const RollView = () => {
       <FlatList
         data={notesList}
         keyExtractor={item => item.id}
-        renderItem={({ item }) => <NoteListItem text={item.text} roll={roll?.roll} date={item.createdAt} />}
+        renderItem={({ item }) => <NoteListItem onDeleteCallback={fetchFromDB} id={item.id} rollId={roll.id} text={item.text} date={item.createdAt} />}
       />
       <ButtonWrapper
         left={
-          <Button variant="secondary" callback={editRoll}>
+          <Button variant="secondary" onPress={editRoll}>
             Edit Roll
           </Button>
         }
         right={
-          <Button variant="primary" callback={addNote}>
+          <Button variant="primary" onPress={addNote}>
             Add Note
           </Button>
         }

@@ -3,7 +3,7 @@ import { PartialWithRequiredKeys } from '@/shared/types'
 import { eq } from 'drizzle-orm'
 import 'react-native-get-random-values'
 
-import { NewRoll, RollsTable } from '../schema'
+import { NewNote, NewRoll, NotesTable, RollsTable } from '../schema'
 
 const roll = async (id: string, roll: Partial<NewRoll>): Promise<PartialWithRequiredKeys<NewRoll, 'id'>> => {
   return {
@@ -19,8 +19,22 @@ const roll = async (id: string, roll: Partial<NewRoll>): Promise<PartialWithRequ
   }
 }
 
+const note = async (id: string, note: Partial<NewNote>): Promise<PartialWithRequiredKeys<NewNote, 'id'>> => {
+  return {
+    id,
+    ...(await db
+      .update(NotesTable)
+      .set({
+        ...note,
+        updatedAt: new Date().toISOString(),
+      })
+      .where(eq(NotesTable.id, id))
+      .returning()),
+  }
+}
+
 export default {
   roll,
   // camera,
-  // note,
+  note,
 }
