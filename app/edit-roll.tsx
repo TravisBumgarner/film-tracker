@@ -9,7 +9,7 @@ import TextInput from '@/shared/components/TextInput'
 import { Phase, URLParams } from '@/shared/types'
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router'
 import React, { useCallback, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { ScrollView, StyleSheet } from 'react-native'
 
 const ADD_NEW_CAMERA_MENU_OPTION = {
   label: 'Add new Camera',
@@ -24,9 +24,10 @@ const EditRoll = () => {
   const [newCameraInput, setNewCameraInput] = useState('')
   const [editRollInput, setEditRollInput] = useState('')
   const [editDate, setEditDate] = useState<Date>(new Date())
-  const [editISOInput, setEditISOInput] = useState('')
   const params = useLocalSearchParams<URLParams['edit-roll']>()
   const [isLoading, setIsLoading] = useState(true)
+
+  const disabledSubmit = !activeCamera || !editRollInput || (activeCamera === ADD_NEW_CAMERA_MENU_OPTION.value && !newCameraInput) || !editDate
 
   useFocusEffect(
     useCallback(() => {
@@ -42,7 +43,6 @@ const EditRoll = () => {
           const roll = await queries.select.rollById(params.rollId)
 
           setEditRollInput(roll.roll)
-          setEditISOInput(roll.iso)
           setEditDate(new Date(roll.insertedIntoCameraAt))
           setActiveCamera(roll.cameraId)
           setEditId(roll.id)
@@ -60,8 +60,8 @@ const EditRoll = () => {
   )
 
   const handleCancel = useCallback(() => {
-    router.navigate('/')
-  }, [])
+    router.navigate(`/roll/${editId}`)
+  }, [editId])
 
   const handleEditRoll = useCallback(async () => {
     let newCameraId = activeCamera
@@ -76,11 +76,10 @@ const EditRoll = () => {
       cameraId: newCameraId,
       roll: editRollInput,
       insertedIntoCameraAt: editDate.toISOString(),
-      iso: editISOInput,
       phase: Phase.Exposing,
     })
     router.navigate(`/roll/${editId}`)
-  }, [activeCamera, editDate, editISOInput, editRollInput, newCameraInput, editId])
+  }, [activeCamera, editDate, editRollInput, newCameraInput, editId])
 
   if (isLoading) {
     return <Loading />
@@ -88,7 +87,7 @@ const EditRoll = () => {
 
   return (
     <PageWrapper title="Edit Roll">
-      <View style={styles.formWrapper}>
+      <ScrollView style={styles.formWrapper}>
         <Dropdown
           label={'Select a Camera'}
           isVisible={isCameraDropdownVisible}
@@ -102,16 +101,15 @@ const EditRoll = () => {
         ) : null}
         <TextInput label="Roll Name" value={editRollInput} onChangeText={setEditRollInput} />
         <DatePickerModal date={editDate} setDate={setEditDate} />
-        <TextInput label="ISO" value={editISOInput} onChangeText={setEditISOInput} />
-      </View>
+      </ScrollView>
       <ButtonWrapper
         left={
-          <Button variant="warning" callback={handleCancel}>
+          <Button variant="warning" onPress={handleCancel}>
             Cancel
           </Button>
         }
         right={
-          <Button variant="primary" callback={handleEditRoll}>
+          <Button disabled={disabledSubmit} variant="primary" onPress={handleEditRoll}>
             Submit
           </Button>
         }

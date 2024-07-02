@@ -1,8 +1,9 @@
 import { useCallback, useState } from 'react'
+import { StyleSheet, View } from 'react-native'
 import { Button } from 'react-native-paper'
 import { DatePickerModal as DatePickerModalRNDP } from 'react-native-paper-dates'
-import { StyleSheet, View } from 'react-native'
 
+import { SPACING } from '../theme'
 import Typography from './Typography'
 
 interface DatePickerProps {
@@ -48,8 +49,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     flexDirection: 'row',
-    margin: 10,
-    paddingLeft: 16,
+    margin: SPACING.md,
   },
   typography: {
     flex: 1,

@@ -8,7 +8,7 @@ import TextInput from '@/shared/components/TextInput'
 import { Phase } from '@/shared/types'
 import { router } from 'expo-router'
 import React, { useCallback, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { ScrollView, StyleSheet } from 'react-native'
 import { useAsyncEffect } from 'use-async-effect'
 
 const ADD_NEW_CAMERA_MENU_OPTION = {
@@ -23,7 +23,8 @@ const AddRoll = () => {
   const [newCameraInput, setNewCameraInput] = useState('')
   const [newRollInput, setNewRollInput] = useState('')
   const [date, setDate] = useState<Date>(new Date())
-  const [newISOInput, setNewISOInput] = useState('')
+
+  const disabledSubmit = !activeCamera || !newRollInput || (activeCamera === ADD_NEW_CAMERA_MENU_OPTION.value && !newCameraInput) || !date
 
   useAsyncEffect(async () => {
     const cameras = await queries.select.cameras()
@@ -49,20 +50,19 @@ const AddRoll = () => {
       newCameraId = result.id
     }
 
-    const result = await queries.insert.roll({
+    await queries.insert.roll({
       cameraId: newCameraId,
       roll: newRollInput,
       insertedIntoCameraAt: date.toISOString(),
-      iso: newISOInput,
       phase: Phase.Exposing,
     })
 
-    router.navigate(`/roll/${result.id}`)
-  }, [activeCamera, date, newISOInput, newRollInput, newCameraInput])
+    router.navigate(`/`)
+  }, [activeCamera, date, newRollInput, newCameraInput])
 
   return (
     <PageWrapper title="Add Roll">
-      <View style={styles.formWrapper}>
+      <ScrollView style={styles.formWrapper}>
         <Dropdown
           label={'Select a Camera'}
           isVisible={isCameraDropdownVisible}
@@ -76,16 +76,15 @@ const AddRoll = () => {
         ) : null}
         <TextInput label="Roll Name" value={newRollInput} onChangeText={setNewRollInput} />
         <DatePickerModal date={date} setDate={setDate} />
-        <TextInput label="ISO" value={newISOInput} onChangeText={setNewISOInput} />
-      </View>
+      </ScrollView>
       <ButtonWrapper
         left={
-          <Button variant="warning" callback={handleCancel}>
+          <Button variant="warning" onPress={handleCancel}>
             Cancel
           </Button>
         }
         right={
-          <Button variant="primary" callback={handleAddRoll}>
+          <Button disabled={disabledSubmit} variant="primary" onPress={handleAddRoll}>
             Add Roll
           </Button>
         }

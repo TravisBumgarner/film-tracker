@@ -37,3 +37,12 @@ export const PHASE_TO_COLOR_NAME = {
   [Phase.Developed]: COLORS.success,
   [Phase.Archived]: COLORS.light,
 }
+
+export const SPACING = {
+  sm: 8,
+  md: 16,
+}
+
+export const BORDER_RADIUS = {
+  md: 8,
+}
