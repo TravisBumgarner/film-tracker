@@ -4,17 +4,15 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
-    "start:android": "expo start --android",
-    "start:ios": "expo start --ios",
-    "start:web": "expo start --web",
-    "test": "jest --watchAll",
-    "no-thanks-lint": "expo lint",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "db:generate": "npx drizzle-kit generate",
-    "build:ios:localdev": "eas build --profile development-simulator --platform ios",
-    "build:ios:register": "eas device:create",
-    "build:ios:development": "eas build --profile development --platform ios",
-    "build:ios:internal": "eas build --profile preview --platform ios"
+    "register:ios": "eas device:create",
+    "move-to-ios-build-dir": "rm -rf ./builds/ios && mkdir -p ./builds/ios && mv *.ipa ./builds/ios",
+    "build:ios:local:development": "ENV=development && eas build --platform ios --local --profile development && yarn move-to-ios-build-dir",
+    "build:ios:cloud:internal": "eas build --profile internal --platform ios",
+    "build:ios:local:internal": "eas build --platform ios --local --profile internal && yarn move-to-ios-build-dir",
+    "build:ios:cloud:production": "eas build --profile production --platform ios",
+    "build:ios:local:production": "eas build --platform ios --local --profile production && yarn move-to-ios-build-dir",
+    "submit:ios": "eas submit --platform ios --profile production"
   },
   "jest": {
     "preset": "jest-expo"
