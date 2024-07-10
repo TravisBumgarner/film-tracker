@@ -1,5 +1,5 @@
 import Typography from '@/shared/components/Typography'
-import { COLORS } from '@/shared/theme'
+import { COLORS, SPACING } from '@/shared/theme'
 import * as React from 'react'
 import { KeyboardAvoidingView, Platform, SafeAreaView, StyleProp, StyleSheet, ViewStyle } from 'react-native'
 
@@ -24,6 +24,8 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: COLORS.dark.opaque,
     flex: 1,
+    paddingLeft: SPACING.md,
+    paddingRight: SPACING.md,
   },
 })
 

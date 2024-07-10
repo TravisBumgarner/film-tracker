@@ -64,6 +64,7 @@ const Dropdown = <T extends DropdownEnums | string>({ data, onChangeCallback, va
     </View>
   )
 }
+DropDown.displayName = 'DropDown'
 
 export default Dropdown
 
