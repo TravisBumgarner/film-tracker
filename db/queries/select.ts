@@ -1,30 +1,10 @@
 import { db } from '@/db/client'
-import { RollPreviewListItemData } from '@/shared/types'
-import { desc, eq, sql } from 'drizzle-orm'
+import { desc, eq } from 'drizzle-orm'
 
 import { CamerasTable, NotesTable, RollsTable, SelectCamera, SelectNote, SelectRoll } from '../schema'
 
-const rolls = async (): Promise<RollPreviewListItemData[]> => {
-  // TODO - not sure if this query works.
-  return (await db
-    .select({
-      id: RollsTable.id,
-      roll: RollsTable.roll,
-      createdAt: RollsTable.createdAt,
-      updatedAt: RollsTable.updatedAt,
-      cameraId: RollsTable.cameraId,
-      phase: RollsTable.phase,
-      cameraModel: CamerasTable.model,
-      notesCount: sql<number>`count(${NotesTable.id})`,
-      insertedIntoCameraAt: RollsTable.insertedIntoCameraAt,
-      removedFromCameraAt: RollsTable.removedFromCameraAt,
-    })
-    .from(RollsTable)
-    .leftJoin(CamerasTable, eq(RollsTable.cameraId, CamerasTable.id))
-    .leftJoin(NotesTable, eq(RollsTable.id, NotesTable.rollId))
-    .groupBy(RollsTable.id)) as RollPreviewListItemData[]
-  // For some reason the joins make an extra row with null values, so we filter them out
-  // .filter(roll => roll.id !== null) as RollPreviewListItemData[]
+const rolls = async (): Promise<SelectRoll[]> => {
+  return (await db.select().from(RollsTable).orderBy(desc(RollsTable.lastInteractedAt))) as SelectRoll[]
 }
 
 const cameras = async (): Promise<SelectCamera[]> => {
@@ -44,10 +24,15 @@ const noteByNoteId = async (noteId: string): Promise<SelectNote> => {
   return (await db.select().from(NotesTable).where(eq(NotesTable.id, noteId)))[0]
 }
 
+const cameraById = async (cameraId: string): Promise<SelectCamera> => {
+  return (await db.select().from(CamerasTable).where(eq(CamerasTable.id, cameraId)))[0]
+}
+
 export default {
   rolls,
   cameras,
   notesByRollId,
   noteByNoteId,
   rollById,
+  cameraById,
 }

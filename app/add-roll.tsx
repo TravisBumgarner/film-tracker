@@ -17,7 +17,6 @@ const ADD_NEW_CAMERA_MENU_OPTION = {
 }
 
 const AddRoll = () => {
-  const [isCameraDropdownVisible, setIsCameraDropdownVisible] = useState(false)
   const [cameraList, setCameraList] = useState<{ label: string; value: string }[]>([ADD_NEW_CAMERA_MENU_OPTION])
   const [activeCamera, setActiveCamera] = useState('')
   const [newCameraInput, setNewCameraInput] = useState('')
@@ -55,6 +54,7 @@ const AddRoll = () => {
       roll: newRollInput,
       insertedIntoCameraAt: date.toISOString(),
       phase: Phase.Exposing,
+      lastInteractedAt: date.toISOString(),
     })
 
     router.navigate(`/`)
@@ -63,18 +63,21 @@ const AddRoll = () => {
   return (
     <PageWrapper title="Add Roll">
       <ScrollView style={styles.formWrapper}>
-        <Dropdown
-          label={'Select a Camera'}
-          isVisible={isCameraDropdownVisible}
-          setIsVisible={setIsCameraDropdownVisible}
-          value={activeCamera}
-          setValue={setActiveCamera}
-          list={cameraList}
-        />
+        <Dropdown<string> dropdownPosition="bottom" value={activeCamera} onChangeCallback={setActiveCamera} data={cameraList} />
         {activeCamera === ADD_NEW_CAMERA_MENU_OPTION.value ? (
-          <TextInput label="Add a new Camera" value={newCameraInput} onChangeText={setNewCameraInput} />
+          <TextInput
+            autoFocus={false} //eslint-disable-line
+            label="Add a new Camera"
+            value={newCameraInput}
+            onChangeText={setNewCameraInput}
+          />
         ) : null}
-        <TextInput label="Roll Name" value={newRollInput} onChangeText={setNewRollInput} />
+        <TextInput
+          autoFocus={false} //eslint-disable-line
+          label="Roll Name"
+          value={newRollInput}
+          onChangeText={setNewRollInput}
+        />
         <DatePickerModal date={date} setDate={setDate} />
       </ScrollView>
       <ButtonWrapper

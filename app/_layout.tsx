@@ -57,7 +57,6 @@ function App() {
           <Stack.Screen name="add-roll" options={{ headerShown: false }} />
           <Stack.Screen name="edit-roll" options={{ headerShown: false }} />
           <Stack.Screen name="add-note" options={{ headerShown: false }} />
-          <Stack.Screen name="roll/[id]" options={{ headerShown: false }} />
           <Stack.Screen name="edit-note" options={{ headerShown: false }} />
         </Stack>
       </GestureHandlerRootView>

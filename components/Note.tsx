@@ -1,6 +1,6 @@
 import queries from '@/db/queries'
 import Typography from '@/shared/components/Typography'
-import { BORDER_RADIUS, COLORS, SPACING } from '@/shared/theme'
+import { COLORS } from '@/shared/theme'
 import { navigateWithParams } from '@/shared/utilities'
 import { useCallback, useRef } from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -32,19 +32,8 @@ const NoteListItem = ({ text, date, id, rollId, onDeleteCallback }: Props) => {
 
   const renderLeftActions = useCallback(
     () => (
-      <TouchableOpacity
-        onPress={handleDelete}
-        style={{
-          backgroundColor: COLORS.light.opaque,
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: SPACING.md,
-          borderRadius: BORDER_RADIUS.md,
-          marginRight: SPACING.md,
-          marginBottom: SPACING.md,
-        }}
-      >
-        <Icon source="delete" size={24} color={COLORS.dark.opaque} />
+      <TouchableOpacity onPress={handleDelete} style={{}}>
+        <Icon source="delete" size={24} color={COLORS.primary.opaque} />
       </TouchableOpacity>
     ),
     [handleDelete]
@@ -52,19 +41,8 @@ const NoteListItem = ({ text, date, id, rollId, onDeleteCallback }: Props) => {
 
   const renderRightActions = useCallback(
     () => (
-      <TouchableOpacity
-        onPress={handleEdit}
-        style={{
-          backgroundColor: COLORS.light.opaque,
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: SPACING.md,
-          borderRadius: BORDER_RADIUS.md,
-          marginLeft: SPACING.md,
-          marginBottom: SPACING.md,
-        }}
-      >
-        <Icon source="pencil" size={24} color={COLORS.dark.opaque} />
+      <TouchableOpacity onPress={handleEdit} style={{}}>
+        <Icon source="pencil" size={24} color={COLORS.primary.opaque} />
       </TouchableOpacity>
     ),
     [handleEdit]
@@ -82,13 +60,9 @@ const NoteListItem = ({ text, date, id, rollId, onDeleteCallback }: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: COLORS.light.transparent,
-    borderColor: COLORS.light.opaque,
-    borderRadius: BORDER_RADIUS.md,
-    borderWidth: 1,
-    flex: 0,
-    marginBottom: SPACING.md,
-    padding: SPACING.md,
+    borderTopColor: COLORS.light.opaque,
+    borderTopWidth: 1,
+    height: 50,
   },
 })
 

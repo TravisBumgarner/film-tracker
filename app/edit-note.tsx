@@ -59,7 +59,12 @@ const EditNote = () => {
   return (
     <PageWrapper title="Edit Roll">
       <ScrollView style={styles.formWrapper}>
-        <TextInput label="Text" value={editNoteInput} onChangeText={setEditNoteInput} />
+        <TextInput
+          autoFocus={true}  //eslint-disable-line
+          label="Text"
+          value={editNoteInput}
+          onChangeText={setEditNoteInput}
+        />
       </ScrollView>
       <ButtonWrapper
         left={

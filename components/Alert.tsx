@@ -24,7 +24,7 @@ const Alert = () => {
       <View style={styles.container}>
         <View style={styles.content}>
           <Typography style={styles.text} variant="body1">
-            {alertMessage}asd
+            {alertMessage}
           </Typography>
           <Button variant="primary" onPress={hideDialog}>
             Done

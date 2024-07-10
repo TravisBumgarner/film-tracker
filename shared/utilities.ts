@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { router } from 'expo-router'
 
-import { URLParams } from './types'
+import { Phase, URLParams } from './types'
 
 export const areSameDay = (date1: Date | null, date2: Date | null) => {
   if (!date1 || !date2) {
@@ -43,3 +43,22 @@ export const navigateWithParams = <T extends keyof URLParams>(route: T, params: 
   router.push(route)
   router.setParams(params)
 }
+
+export const PHASE_LIST: { label: string; value: Phase }[] = [
+  {
+    label: 'Exposing',
+    value: Phase.Exposing,
+  },
+  {
+    label: 'Exposed',
+    value: Phase.Exposed,
+  },
+  {
+    label: 'Developed',
+    value: Phase.Developed,
+  },
+  {
+    label: 'Archived',
+    value: Phase.Archived,
+  },
+]

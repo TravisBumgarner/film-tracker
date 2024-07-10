@@ -28,13 +28,20 @@ const AddNote = () => {
       text: newNoteText,
       rollId: params.rollId,
     })
-    router.navigate(`/roll/${params.rollId}`)
+    await queries.update.roll(params.rollId, {
+      lastInteractedAt: new Date().toISOString(),
+    })
+    router.back()
   }, [newNoteText, params, dispatch])
 
   return (
     <PageWrapper title="Add Note">
       <ScrollView style={styles.formWrapper}>
-        <TextInput value={newNoteText} onChangeText={setNewNoteText} />
+        <TextInput
+          autoFocus={true} //eslint-disable-line
+          value={newNoteText}
+          onChangeText={setNewNoteText}
+        />
       </ScrollView>
       <ButtonWrapper
         left={
