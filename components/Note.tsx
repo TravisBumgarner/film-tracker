@@ -1,6 +1,6 @@
 import queries from '@/db/queries'
 import Typography from '@/shared/components/Typography'
-import { COLORS } from '@/shared/theme'
+import { COLORS, SPACING } from '@/shared/theme'
 import { navigateWithParams } from '@/shared/utilities'
 import { useCallback, useRef } from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -60,9 +60,9 @@ const NoteListItem = ({ text, date, id, rollId, onDeleteCallback }: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    borderTopColor: COLORS.light.opaque,
-    borderTopWidth: 1,
-    height: 50,
+    backgroundColor: COLORS.light.transparent,
+    marginVertical: SPACING.MEDIUM,
+    padding: SPACING.MEDIUM,
   },
 })
 

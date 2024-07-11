@@ -61,4 +61,8 @@ export const PHASE_LIST: { label: string; value: Phase }[] = [
     label: 'Archived',
     value: Phase.Archived,
   },
+  {
+    label: 'Abandoned',
+    value: Phase.Abandoned,
+  },
 ]
