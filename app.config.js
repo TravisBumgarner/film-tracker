@@ -3,7 +3,7 @@ import 'dotenv/config'
 const config = () => ({
   expo: {
     name: process.env.APP_NAME || 'Film',
-    slug: 'ideas-down-quickly',
+    slug: 'film-tracker-app',
     version: '1.0.0',
     orientation: 'portrait',
     icon: './assets/images/icon.png',

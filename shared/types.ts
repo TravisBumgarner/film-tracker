@@ -3,6 +3,7 @@ export enum Phase {
   Exposed = 'Exposed',
   Developed = 'Developed',
   Archived = 'Archived',
+  Abandoned = 'Abandoned',
 }
 
 export type RollPreviewListItemData = {

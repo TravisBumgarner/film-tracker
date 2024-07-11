@@ -18,6 +18,7 @@ const TextInput: React.FC<{ autoFocus: boolean; label?: string; value: string; o
       label={label}
       value={value}
       onChangeText={onChangeText}
+      multiline
     />
   )
 }
