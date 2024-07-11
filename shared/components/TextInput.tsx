@@ -4,8 +4,22 @@ import { TextInput as TextInputRNP } from 'react-native-paper'
 
 import { COLORS, SPACING } from '../theme'
 
-const TextInput: React.FC<{ label?: string; value: string; onChangeText: (value: string) => void }> = ({ label, value, onChangeText }) => {
-  return <TextInputRNP style={styles.inputStyle} contentStyle={styles.inputContentStyle} label={label} value={value} onChangeText={onChangeText} />
+const TextInput: React.FC<{ autoFocus: boolean; label?: string; value: string; onChangeText: (value: string) => void }> = ({
+  label,
+  value,
+  onChangeText,
+  autoFocus,
+}) => {
+  return (
+    <TextInputRNP
+      autoFocus={autoFocus} //eslint-disable-line
+      style={styles.inputStyle}
+      contentStyle={styles.inputContentStyle}
+      label={label}
+      value={value}
+      onChangeText={onChangeText}
+    />
+  )
 }
 
 const styles = StyleSheet.create({
@@ -14,8 +28,8 @@ const styles = StyleSheet.create({
     color: COLORS.light.opaque,
   },
   inputStyle: {
-    marginBottom: SPACING.md,
-    marginTop: SPACING.md,
+    marginBottom: SPACING.MEDIUM,
+    marginTop: SPACING.MEDIUM,
   },
 })
 

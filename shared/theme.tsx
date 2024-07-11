@@ -39,10 +39,18 @@ export const PHASE_TO_COLOR_NAME = {
 }
 
 export const SPACING = {
-  sm: 8,
-  md: 16,
-}
+  XXSMALL: 4,
+  XSMALL: 8,
+  SMALL: 12,
+  MEDIUM: 16,
+  LARGE: 24,
+  XLARGE: 32,
+  XXLARGE: 48,
+} as const
 
 export const BORDER_RADIUS = {
-  md: 8,
-}
+  NONE: 0,
+  SMALL: 4,
+  MEDIUM: 8,
+  LARGE: 12,
+} as const

@@ -5,19 +5,26 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
-    },
-    "development-simulator": {
-      "developmentClient": true,
       "distribution": "internal",
-      "ios": {
-        "simulator": true
+      "env": {
+        "EXPO_BUNDLE_IDENTIFIER": "com.sillysideprojects.filmtracker.dev",
+        "APP_NAME": "Film Dev"
       }
     },
-    "preview": {
-      "distribution": "internal"
+    "internal": {
+      "distribution": "internal",
+      "env": {
+        "EXPO_BUNDLE_IDENTIFIER": "com.sillysideprojects.filmtracker.internal",
+        "APP_NAME": "Film Internal"
+      }
     },
-    "production": {}
+    "production": {
+      "distribution": "store",
+      "env": {
+        "EXPO_BUNDLE_IDENTIFIER": "com.sillysideprojects.filmtracker.prod",
+        "APP_NAME": "Film Tracker"
+      }
+    }
   },
   "submit": {
     "production": {}

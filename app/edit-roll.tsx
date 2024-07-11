@@ -7,6 +7,7 @@ import Loading from '@/shared/components/Loading'
 import PageWrapper from '@/shared/components/PageWrapper'
 import TextInput from '@/shared/components/TextInput'
 import { Phase, URLParams } from '@/shared/types'
+import { PHASE_LIST } from '@/shared/utilities'
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router'
 import React, { useCallback, useState } from 'react'
 import { ScrollView, StyleSheet } from 'react-native'
@@ -18,7 +19,6 @@ const ADD_NEW_CAMERA_MENU_OPTION = {
 
 const EditRoll = () => {
   const [editId, setEditId] = useState('')
-  const [isCameraDropdownVisible, setIsCameraDropdownVisible] = useState(false)
   const [cameraList, setCameraList] = useState<{ label: string; value: string }[]>([ADD_NEW_CAMERA_MENU_OPTION])
   const [activeCamera, setActiveCamera] = useState('')
   const [newCameraInput, setNewCameraInput] = useState('')
@@ -26,6 +26,7 @@ const EditRoll = () => {
   const [editDate, setEditDate] = useState<Date>(new Date())
   const params = useLocalSearchParams<URLParams['edit-roll']>()
   const [isLoading, setIsLoading] = useState(true)
+  const [phase, setPhase] = useState<Phase>(Phase.Exposing)
 
   const disabledSubmit = !activeCamera || !editRollInput || (activeCamera === ADD_NEW_CAMERA_MENU_OPTION.value && !newCameraInput) || !editDate
 
@@ -46,6 +47,7 @@ const EditRoll = () => {
           setEditDate(new Date(roll.insertedIntoCameraAt))
           setActiveCamera(roll.cameraId)
           setEditId(roll.id)
+          setPhase(roll.phase)
 
           setCameraList([ADD_NEW_CAMERA_MENU_OPTION, ...cameras.map(camera => ({ label: camera.model, value: camera.id }))])
         } catch (error) {
@@ -60,8 +62,8 @@ const EditRoll = () => {
   )
 
   const handleCancel = useCallback(() => {
-    router.navigate(`/roll/${editId}`)
-  }, [editId])
+    router.back()
+  }, [])
 
   const handleEditRoll = useCallback(async () => {
     let newCameraId = activeCamera
@@ -76,10 +78,10 @@ const EditRoll = () => {
       cameraId: newCameraId,
       roll: editRollInput,
       insertedIntoCameraAt: editDate.toISOString(),
-      phase: Phase.Exposing,
+      phase,
     })
-    router.navigate(`/roll/${editId}`)
-  }, [activeCamera, editDate, editRollInput, newCameraInput, editId])
+    router.back()
+  }, [activeCamera, editDate, editRollInput, newCameraInput, editId, phase])
 
   if (isLoading) {
     return <Loading />
@@ -88,19 +90,23 @@ const EditRoll = () => {
   return (
     <PageWrapper title="Edit Roll">
       <ScrollView style={styles.formWrapper}>
-        <Dropdown
-          label={'Select a Camera'}
-          isVisible={isCameraDropdownVisible}
-          setIsVisible={setIsCameraDropdownVisible}
-          value={activeCamera}
-          setValue={setActiveCamera}
-          list={cameraList}
-        />
+        <Dropdown<string> dropdownPosition="bottom" value={activeCamera} onChangeCallback={setActiveCamera} data={cameraList} />
         {activeCamera === ADD_NEW_CAMERA_MENU_OPTION.value ? (
-          <TextInput label="Add a new Camera" value={newCameraInput} onChangeText={setNewCameraInput} />
+          <TextInput
+            autoFocus={false} //eslint-disable-line
+            label="Add a new Camera"
+            value={newCameraInput}
+            onChangeText={setNewCameraInput}
+          />
         ) : null}
-        <TextInput label="Roll Name" value={editRollInput} onChangeText={setEditRollInput} />
+        <TextInput
+          autoFocus={false} //eslint-disable-line
+          label="Roll Name"
+          value={editRollInput}
+          onChangeText={setEditRollInput}
+        />
         <DatePickerModal date={editDate} setDate={setEditDate} />
+        <Dropdown<Phase> dropdownPosition="bottom" value={phase} onChangeCallback={setPhase} data={PHASE_LIST} />
       </ScrollView>
       <ButtonWrapper
         left={

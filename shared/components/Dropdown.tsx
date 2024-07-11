@@ -1,136 +1,103 @@
-import React, { ReactNode, useCallback, useEffect, useState } from 'react'
-import { LayoutChangeEvent, ScrollView, View } from 'react-native'
-import { Menu, TextInput, TouchableRipple } from 'react-native-paper'
+import React, { useCallback, useState } from 'react'
+import { StyleSheet, View } from 'react-native'
+import { Dropdown as DropdownRNED } from 'react-native-element-dropdown'
+import { Icon } from 'react-native-paper'
 
-import { BORDER_RADIUS, COLORS, SPACING } from '../theme'
+import { COLORS, SPACING } from '../theme'
+import { Phase } from '../types'
 
-export interface DropDownPropsInterface<T extends string | number> {
-  isVisible: boolean
-  setIsVisible: (value: boolean) => void
+type DropdownEnums = Phase
+
+interface DropdownProps<T extends DropdownEnums | string> {
+  data: { label: string; value: T }[]
+  onChangeCallback: (value: T) => void
   value: T
-  setValue: (_value: T) => void
-  label?: string | undefined
-  placeholder?: string | undefined
-  list: Array<{
-    label: string
-    value: string
-    custom?: ReactNode
-  }>
+  dropdownPosition: 'top' | 'bottom'
 }
 
-const DropDown = (props: DropDownPropsInterface<string>) => {
-  const { isVisible, setIsVisible, value, setValue, label, placeholder, list } = props
-  const [displayValue, setDisplayValue] = useState('')
+const Dropdown = <T extends DropdownEnums | string>({ data, onChangeCallback, value, dropdownPosition }: DropdownProps<T>) => {
+  const [isFocus, setIsFocus] = useState(false)
 
-  useEffect(() => {
-    const _label = list.find(_ => _.value === value)?.label
-    if (_label) {
-      setDisplayValue(_label)
+  const renderRightIcon = useCallback(() => {
+    let source: string
+
+    if (dropdownPosition === 'top') {
+      source = isFocus ? 'chevron-down' : 'chevron-up'
+    } else {
+      source = isFocus ? 'chevron-up' : 'chevron-down'
     }
-  }, [list, value])
 
-  const [inputLayout, setInputLayout] = useState({
-    height: 0,
-    width: 0,
-    x: 0,
-    y: 0,
-  })
+    return <Icon source={source} size={20} color={COLORS.primary.opaque} />
+  }, [isFocus, dropdownPosition])
 
-  const onLayout = (event: LayoutChangeEvent) => {
-    setInputLayout(event.nativeEvent.layout)
-  }
-
-  const isActive = useCallback(
-    (currentValue: string) => {
-      return value === currentValue
+  const onChange = useCallback(
+    (item: { label: string; value: T }) => {
+      onChangeCallback(item.value)
+      setIsFocus(false)
     },
-    [value]
-  )
-
-  const onDismiss = useCallback(() => {
-    setIsVisible(false)
-  }, [setIsVisible])
-
-  const onOpen = useCallback(() => {
-    setIsVisible(true)
-  }, [setIsVisible])
-
-  const setActive = useCallback(
-    (currentValue: string) => {
-      setValue(currentValue)
-    },
-    [setValue]
+    [onChangeCallback]
   )
 
   return (
-    <Menu
-      visible={isVisible}
-      onDismiss={onDismiss}
-      anchor={
-        <TouchableRipple onPress={onOpen} onLayout={onLayout}>
-          <View pointerEvents={'none'}>
-            <TextInput
-              value={displayValue}
-              label={label}
-              placeholder={placeholder}
-              pointerEvents={'none'}
-              textColor={COLORS.light.opaque}
-              right={<TextInput.Icon color={COLORS.light.opaque} icon={isVisible ? 'menu-up' : 'menu-down'} />}
-              underlineColor="transparent"
-              theme={{ colors: { onSurfaceVariant: COLORS.light.opaque } }}
-              style={{
-                borderRadius: BORDER_RADIUS.md,
-                // For some reason, something is overriding the border radius so the next two lines are needed.
-                borderTopEndRadius: BORDER_RADIUS.md,
-                borderTopLeftRadius: BORDER_RADIUS.md,
-                backgroundColor: COLORS.light.transparent,
-                borderWidth: 1,
-                borderColor: COLORS.light.opaque,
-            }}
-            />
-          </View>
-        </TouchableRipple>
-      }
-      contentStyle={{
-        backgroundColor: COLORS.dark.opaque,
-        borderRadius: BORDER_RADIUS.md,
-      }}
-      style={{
-        width: inputLayout?.width,
-        paddingTop: SPACING.md,
-        marginTop: inputLayout?.height,
-      }}
-    >
-      <ScrollView
-        bounces={false}
-        style={{
-          maxHeight: 300,
-        }}
-      >
-        {list.map((_item, _index) => (
-          <TouchableRipple
-            key={_item.value}
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}
-            onPress={() => {
-              setActive(_item.value)
-              onDismiss()
-            }}
-          >
-            <Menu.Item
-              title={_item.custom || _item.label}
-              titleStyle={{
-                color: isActive(_item.value) ? COLORS.primary.opaque : COLORS.light.opaque,
-              }}
-            />
-          </TouchableRipple>
-        ))}
-      </ScrollView>
-    </Menu>
+    <View style={styles.container}>
+      <DropdownRNED
+        style={[styles.dropdown, isFocus && { borderColor: COLORS.primary.opaque }]}
+        placeholderStyle={styles.placeholderStyle}
+        selectedTextStyle={styles.selectedTextStyle}
+        iconStyle={styles.iconStyle}
+        data={data}
+        itemTextStyle={styles.itemTextStyle}
+        dropdownPosition={dropdownPosition}
+        maxHeight={300}
+        labelField="label"
+        valueField="value"
+        containerStyle={styles.containerStyle}
+        itemContainerStyle={styles.itemContainerStyle}
+        placeholder={!isFocus ? 'Select item' : '...'}
+        value={value}
+        onFocus={() => setIsFocus(true)}
+        onBlur={() => setIsFocus(false)}
+        onChange={onChange}
+        activeColor={COLORS.primary.opaque}
+        renderRightIcon={renderRightIcon}
+      />
+    </View>
   )
 }
-DropDown.displayName = 'DropDown'
 
-export default DropDown
+export default Dropdown
+
+const styles = StyleSheet.create({
+  container: {
+    paddingVertical: SPACING.MEDIUM,
+  },
+  containerStyle: {
+    backgroundColor: COLORS.dark.opaque,
+    borderColor: COLORS.dark.transparent,
+    borderWidth: 0,
+  },
+  dropdown: {
+    backgroundColor: COLORS.dark.opaque,
+    borderColor: COLORS.dark.transparent,
+    borderWidth: 1,
+    height: 50,
+    paddingHorizontal: SPACING.MEDIUM,
+  },
+  iconStyle: {
+    height: 20,
+    width: 20,
+  },
+  itemContainerStyle: {
+    backgroundColor: COLORS.dark.opaque,
+  },
+  itemTextStyle: {
+    color: COLORS.light.opaque,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    color: COLORS.light.opaque,
+    fontSize: 16,
+  },
+})

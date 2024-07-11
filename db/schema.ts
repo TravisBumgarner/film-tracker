@@ -1,5 +1,6 @@
 import { Phase } from '@/shared/types'
 import { sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { Literal, Null, Record, String, Union } from 'runtypes'
 
 export const RollsTable = sqliteTable('roll', {
   id: text('id').primaryKey().unique().notNull(),
@@ -12,6 +13,7 @@ export const RollsTable = sqliteTable('roll', {
   phase: text('phase').notNull(), // Sqlite does not have an enum type
   insertedIntoCameraAt: text('insertedIntoCameraAt').notNull(),
   removedFromCameraAt: text('removedFromCameraAt'),
+  lastInteractedAt: text('lastInteractedAt'),
 })
 
 export const CamerasTable = sqliteTable('camera', {
@@ -39,3 +41,30 @@ export type NewNote = typeof NotesTable.$inferInsert
 export type SelectRoll = Omit<typeof RollsTable.$inferSelect, 'phase'> & { phase: Phase }
 export type SelectCamera = typeof CamerasTable.$inferSelect
 export type SelectNote = typeof NotesTable.$inferSelect
+
+export const RollRunType = Record({
+  id: String,
+  roll: String,
+  createdAt: String,
+  updatedAt: String.Or(Null),
+  cameraId: String,
+  phase: Union(Literal(Phase.Archived), Literal(Phase.Developed), Literal(Phase.Exposed), Literal(Phase.Exposing)),
+  insertedIntoCameraAt: String,
+  removedFromCameraAt: String.Or(Null),
+  lastInteractedAt: String.Or(Null),
+})
+
+export const CameraRunType = Record({
+  id: String,
+  createdAt: String,
+  updatedAt: String.Or(Null),
+  model: String,
+})
+
+export const NoteRunType = Record({
+  id: String,
+  createdAt: String,
+  updatedAt: String.Or(Null),
+  text: String,
+  rollId: String,
+})

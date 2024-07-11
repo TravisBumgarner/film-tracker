@@ -2,7 +2,7 @@ import { db } from '@/db/client'
 import 'react-native-get-random-values'
 import { v4 as uuidv4 } from 'uuid'
 
-import { CamerasTable, NewCamera, NewNote, NewRoll, NotesTable, RollsTable } from '../schema'
+import { CamerasTable, NewCamera, NewNote, NewRoll, NotesTable, RollsTable, SelectCamera, SelectNote, SelectRoll } from '../schema'
 
 const camera = async (camera: Omit<NewCamera, 'id' | 'createdAt'>): Promise<NewCamera> => {
   return (
@@ -43,8 +43,15 @@ const note = async (note: Omit<NewNote, 'id' | 'createdAt'>): Promise<NewNote> =
   )[0]
 }
 
+const everything = async ({ rolls, cameras, notes }: { rolls: SelectRoll[]; cameras: SelectCamera[]; notes: SelectNote[] }) => {
+  await db.insert(RollsTable).values(rolls)
+  await db.insert(CamerasTable).values(cameras)
+  await db.insert(NotesTable).values(notes)
+}
+
 export default {
   roll,
   camera,
   note,
+  everything,
 }
