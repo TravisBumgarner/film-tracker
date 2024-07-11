@@ -51,7 +51,7 @@ const Button = ({
 
 const styles = StyleSheet.create({
   base: {
-    borderRadius: BORDER_RADIUS.md,
+    borderRadius: BORDER_RADIUS.MEDIUM,
     borderWidth: 1,
     width: '100%',
   },

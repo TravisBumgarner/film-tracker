@@ -40,10 +40,10 @@ const RollPreviewListItem = ({ id, roll, camera, notesCount, phase, insertedInto
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: SPACING.md,
+    borderRadius: SPACING.MEDIUM,
     borderWidth: 1,
-    marginTop: SPACING.md,
-    padding: SPACING.md,
+    marginTop: SPACING.MEDIUM,
+    padding: SPACING.MEDIUM,
   },
 })
 

@@ -28,6 +28,10 @@ const cameraById = async (cameraId: string): Promise<SelectCamera> => {
   return (await db.select().from(CamerasTable).where(eq(CamerasTable.id, cameraId)))[0]
 }
 
+const notes = async (): Promise<SelectNote[]> => {
+  return await db.select().from(NotesTable)
+}
+
 export default {
   rolls,
   cameras,
@@ -35,4 +39,5 @@ export default {
   noteByNoteId,
   rollById,
   cameraById,
+  notes,
 }

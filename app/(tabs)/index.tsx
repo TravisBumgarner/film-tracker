@@ -69,11 +69,11 @@ const Home = () => {
 
 const styles = StyleSheet.create({
   buttonWrapper: {
-    padding: SPACING.md,
+    padding: SPACING.MEDIUM,
   },
   rollWrapper: {
     flex: 1,
-    padding: SPACING.md,
+    padding: SPACING.MEDIUM,
   },
   scrollViewContent: {
     alignItems: 'center',

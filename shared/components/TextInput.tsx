@@ -28,8 +28,8 @@ const styles = StyleSheet.create({
     color: COLORS.light.opaque,
   },
   inputStyle: {
-    marginBottom: SPACING.md,
-    marginTop: SPACING.md,
+    marginBottom: SPACING.MEDIUM,
+    marginTop: SPACING.MEDIUM,
   },
 })
 

@@ -69,7 +69,7 @@ export default Dropdown
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: SPACING.md,
+    paddingVertical: SPACING.MEDIUM,
   },
   containerStyle: {
     backgroundColor: COLORS.dark.opaque,
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.dark.transparent,
     borderWidth: 1,
     height: 50,
-    paddingHorizontal: SPACING.md,
+    paddingHorizontal: SPACING.MEDIUM,
   },
   iconStyle: {
     height: 20,

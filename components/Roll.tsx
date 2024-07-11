@@ -93,10 +93,10 @@ const Roll = ({ roll }: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: SPACING.md,
+    borderRadius: SPACING.MEDIUM,
     borderWidth: 1,
     flex: 1,
-    padding: SPACING.md,
+    padding: SPACING.MEDIUM,
   },
 })
 

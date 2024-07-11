@@ -10,14 +10,17 @@ export interface State {
   settings: {
     colorTheme: 'dark' | 'light'
   }
-  alertMessage: string | null
+  toast: {
+    message: string
+    variant: 'success' | 'error' | 'warning'
+  } | null
 }
 
 const EMPTY_STATE: State = {
   settings: {
     colorTheme: 'light',
   },
-  alertMessage: null,
+  toast: null,
 }
 
 const initialSetup = () => {
@@ -54,16 +57,12 @@ interface EditUserSettings {
   payload: State['settings']
 }
 
-interface AddAlertMessage {
-  type: 'ADD_ALERT_MESSAGE'
-  payload: string
+interface Toast {
+  type: 'TOAST'
+  payload: State['toast']
 }
 
-interface ClearAlertMessage {
-  type: 'CLEAR_ALERT_MESSAGE'
-}
-
-export type Action = EditUserSettings | HydrateUserSettings | AddAlertMessage | ClearAlertMessage
+export type Action = EditUserSettings | HydrateUserSettings | Toast
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -76,11 +75,8 @@ const reducer = (state: State, action: Action): State => {
       })
       return { ...state, settings: { ...state.settings, ...action.payload } }
     }
-    case 'ADD_ALERT_MESSAGE': {
-      return { ...state, alertMessage: action.payload }
-    }
-    case 'CLEAR_ALERT_MESSAGE': {
-      return { ...state, alertMessage: null }
+    case 'TOAST': {
+      return { ...state, toast: action.payload }
     }
     default:
       throw new Error('Unexpected action')
@@ -89,7 +85,7 @@ const reducer = (state: State, action: Action): State => {
 
 const context = createContext({
   state: EMPTY_STATE,
-  dispatch: () => {},
+  dispatch: () => { },
 } as {
   state: State
   dispatch: Dispatch<Action>

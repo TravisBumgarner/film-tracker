@@ -20,17 +20,17 @@ const ButtonWrapper: React.FC<ButtonWrapperProps> = ({ left, right }) => {
 const styles = StyleSheet.create({
   buttonLeft: {
     flex: 1,
-    marginRight: SPACING.sm,
+    marginRight: SPACING.XSMALL,
   },
   buttonRight: {
     flex: 1,
-    marginLeft: SPACING.sm,
+    marginLeft: SPACING.XSMALL,
   },
   container: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: SPACING.md,
-    marginTop: SPACING.md,
+    marginBottom: SPACING.MEDIUM,
+    marginTop: SPACING.MEDIUM,
   },
 })
 

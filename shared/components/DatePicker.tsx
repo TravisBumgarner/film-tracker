@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     flexDirection: 'row',
-    margin: SPACING.md,
+    margin: SPACING.MEDIUM,
   },
   typography: {
     flex: 1,
