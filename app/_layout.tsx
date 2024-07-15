@@ -1,15 +1,14 @@
-import Toast from '@/components/Toast'
 import { db } from '@/db/client'
 import migrations from '@/db/migrations/migrations'
-import Context, { context } from '@/shared/context'
+import Context from '@/shared/context'
 import * as Sentry from '@sentry/react-native'
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator'
 import { useFonts } from 'expo-font'
-import { Stack, router } from 'expo-router'
+import { Stack } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
-import { useContext, useEffect } from 'react'
+import { useEffect } from 'react'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import { MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper'
+import { MD3DarkTheme, PaperProvider } from 'react-native-paper'
 
 import 'react-native-reanimated'
 
@@ -29,62 +28,43 @@ Sentry.init({
 SplashScreen.preventAutoHideAsync()
 
 function App() {
-  const { success: haveMigrationsRun, error: haveMigrationsErrored } = useMigrations(db, migrations)
-  const {
-    state: {
-      settings: { colorTheme },
-    },
-  } = useContext(context)
-
-  const [haveFontsLoaded] = useFonts({
-    Comfortaa: require('../assets/fonts/Comfortaa.ttf'),
-  })
-
-  const hasLoaded = [haveFontsLoaded, haveMigrationsRun].every(i => i)
-
-  const hasErrored = [haveMigrationsErrored].some(i => i)
-  const paperTheme = colorTheme === 'dark' ? MD3DarkTheme : MD3LightTheme
-
-  useEffect(() => {
-    if (hasErrored) {
-      router.replace('error')
-    }
-  }, [hasErrored])
-
-  useEffect(() => {
-    if (hasLoaded || hasErrored) {
-      SplashScreen.hideAsync()
-    }
-  }, [hasLoaded, hasErrored])
-
-  if (!hasLoaded && !hasErrored) {
-    return null
-  }
-
   return (
-    <PaperProvider theme={paperTheme}>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-          <Stack.Screen name="error" />
-          <Stack.Screen name="add-roll" options={{ headerShown: false }} />
-          <Stack.Screen name="edit-roll" options={{ headerShown: false }} />
-          <Stack.Screen name="add-note" options={{ headerShown: false }} />
-          <Stack.Screen name="edit-note" options={{ headerShown: false }} />
-        </Stack>
-      </GestureHandlerRootView>
+    <PaperProvider theme={MD3DarkTheme}>
+      <Context>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" />
+            <Stack.Screen name="error" />
+            <Stack.Screen name="add-roll" options={{ headerShown: false }} />
+            <Stack.Screen name="edit-roll" options={{ headerShown: false }} />
+            <Stack.Screen name="add-note" options={{ headerShown: false }} />
+            <Stack.Screen name="edit-note" options={{ headerShown: false }} />
+          </Stack>
+        </GestureHandlerRootView>
+      </Context>
     </PaperProvider>
   )
 }
 
 const AppWrapper = () => {
-  return (
-    <Context>
-      <App />
-      <Toast />
-    </Context>
-  )
+  const [loaded] = useFonts({
+    Comfortaa: require('../assets/fonts/Comfortaa.ttf'),
+  })
+  const { success } = useMigrations(db, migrations)
+
+  useEffect(() => {
+    if (loaded && success) {
+      // I have no idea why but if SplashScreen.hideAsync isn't at the top default export it doesn't work?
+      SplashScreen.hideAsync()
+    }
+  }, [loaded, success])
+
+  if (!loaded && !success) {
+    return null
+  }
+
+  return <App />
 }
 
-export default Sentry.wrap(AppWrapper)
+export default AppWrapper
