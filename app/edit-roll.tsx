@@ -6,10 +6,11 @@ import Dropdown from '@/shared/components/Dropdown'
 import Loading from '@/shared/components/Loading'
 import PageWrapper from '@/shared/components/PageWrapper'
 import TextInput from '@/shared/components/TextInput'
+import { context } from '@/shared/context'
 import { Phase, URLParams } from '@/shared/types'
 import { PHASE_LIST } from '@/shared/utilities'
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { ScrollView, StyleSheet } from 'react-native'
 
 const ADD_NEW_CAMERA_MENU_OPTION = {
@@ -18,6 +19,7 @@ const ADD_NEW_CAMERA_MENU_OPTION = {
 }
 
 const EditRoll = () => {
+  const { dispatch } = useContext(context)
   const [editId, setEditId] = useState('')
   const [cameraList, setCameraList] = useState<{ label: string; value: string }[]>([ADD_NEW_CAMERA_MENU_OPTION])
   const [activeCamera, setActiveCamera] = useState('')
@@ -34,7 +36,10 @@ const EditRoll = () => {
     useCallback(() => {
       async function fetchData() {
         if (!params.rollId) {
-          console.log('no roll Id found')
+          dispatch({
+            type: 'TOAST',
+            payload: { message: 'Roll ID is required', variant: 'ERROR' },
+          })
           setIsLoading(false) // set loading to false even if rollId is not present
           return
         }
@@ -58,7 +63,7 @@ const EditRoll = () => {
       }
       if (!isLoading) return
       fetchData()
-    }, [params, isLoading])
+    }, [params, isLoading, dispatch])
   )
 
   const handleCancel = useCallback(() => {

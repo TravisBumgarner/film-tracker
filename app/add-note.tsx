@@ -20,7 +20,13 @@ const AddNote = () => {
 
   const handleAddNote = useCallback(async () => {
     if (!params.rollId) {
-      dispatch({ type: 'ADD_ALERT_MESSAGE', payload: 'Roll ID is required' })
+      dispatch({
+        type: 'TOAST',
+        payload: {
+          message: 'Roll ID is required',
+          variant: 'ERROR',
+        },
+      })
       return
     }
 

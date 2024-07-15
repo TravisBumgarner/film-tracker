@@ -7,7 +7,7 @@ import { BORDER_RADIUS, COLORS } from '../theme'
 
 const SHARED = {
   mode: 'contained',
-  textColor: COLORS.light.opaque,
+  textColor: COLORS.NEUTRAL[200],
 } as const
 
 const Button = ({
@@ -56,20 +56,16 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   error: {
-    backgroundColor: COLORS.error.transparent,
-    borderColor: COLORS.dark.opaque,
+    backgroundColor: COLORS.ERROR[300],
   },
   primary: {
-    backgroundColor: COLORS.primary.transparent,
-    borderColor: COLORS.primary.opaque,
+    backgroundColor: COLORS.PRIMARY[300],
   },
   secondary: {
-    backgroundColor: COLORS.secondary.transparent,
-    borderColor: COLORS.secondary.opaque,
+    backgroundColor: COLORS.SECONDARY[300],
   },
   warning: {
-    backgroundColor: COLORS.warning.transparent,
-    borderColor: COLORS.warning.opaque,
+    backgroundColor: COLORS.WARNING[300],
   },
 })
 

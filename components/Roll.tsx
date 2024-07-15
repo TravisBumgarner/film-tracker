@@ -32,7 +32,9 @@ const Roll = ({ roll }: Props) => {
 
         if (!isActive) return
 
-        if (!camera) dispatch({ type: 'ADD_ALERT_MESSAGE', payload: 'Error loading camera' })
+        if (!camera) {
+          dispatch({ type: 'TOAST', payload: { message: 'Error loading camera', variant: 'ERROR' } })
+        }
 
         setCamera(camera)
         setNotes(notes)

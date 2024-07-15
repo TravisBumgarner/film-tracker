@@ -41,7 +41,7 @@ const Typography: React.FC<TypographyProps> = ({ children, variant, style: style
 
 const styles = StyleSheet.create({
   base: {
-    color: COLORS.light.opaque,
+    color: COLORS.NEUTRAL[200],
   },
   body1: {
     fontSize: 16,

@@ -12,7 +12,7 @@ export interface State {
   }
   toast: {
     message: string
-    variant: 'success' | 'error' | 'warning'
+    variant: 'SUCCESS' | 'ERROR' | 'WARNING'
   } | null
 }
 

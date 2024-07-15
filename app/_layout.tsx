@@ -29,7 +29,7 @@ Sentry.init({
 SplashScreen.preventAutoHideAsync()
 
 function App() {
-  const { success: haveMigrationsRun, error: haveMigrationsErrored } = useMigrations(db, migrations)
+  const { SUCCESS: haveMigrationsRun, error: haveMigrationsErrored } = useMigrations(db, migrations)
   const {
     state: {
       settings: { colorTheme },

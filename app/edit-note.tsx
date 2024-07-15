@@ -21,7 +21,7 @@ const EditNote = () => {
     useCallback(() => {
       async function fetchData() {
         if (!params.noteId) {
-          dispatch({ type: 'ADD_ALERT_MESSAGE', payload: 'Note ID is required' })
+          dispatch({ type: 'TOAST', payload: { message: 'Note ID is required', variant: 'ERROR' } })
           setIsLoading(false) // set loading to false even if rollId is not present
           return
         }

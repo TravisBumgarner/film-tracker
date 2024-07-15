@@ -25,8 +25,8 @@ const TextInput: React.FC<{ autoFocus: boolean; label?: string; value: string; o
 
 const styles = StyleSheet.create({
   inputContentStyle: {
-    backgroundColor: COLORS.dark.opaque,
-    color: COLORS.light.opaque,
+    backgroundColor: COLORS.NEUTRAL[800],
+    color: COLORS.NEUTRAL[200],
   },
   inputStyle: {
     marginBottom: SPACING.MEDIUM,

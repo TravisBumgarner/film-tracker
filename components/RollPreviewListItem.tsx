@@ -18,8 +18,7 @@ type Props = {
 const RollPreviewListItem = ({ id, roll, camera, notesCount, phase, insertedIntoCameraAt, removedFromCameraAt }: Props) => {
   const containerStyle = {
     ...styles.container,
-    backgroundColor: PHASE_TO_COLOR_NAME[phase].transparent,
-    borderColor: PHASE_TO_COLOR_NAME[phase].opaque,
+    backgroundColor: PHASE_TO_COLOR_NAME[phase][300],
   }
 
   const openRoll = useCallback(() => {

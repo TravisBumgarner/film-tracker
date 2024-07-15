@@ -9,8 +9,13 @@ export default function TabLayout() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: COLORS.dark.opaque,
+          backgroundColor: COLORS.NEUTRAL[800],
+          borderWidth: 0,
         },
+        tabBarLabelStyle: {
+          color: COLORS.NEUTRAL['300'],
+        },
+        tabBarActiveTintColor: COLORS.PRIMARY['300'],
       }}
     >
       <Tabs.Screen

@@ -33,7 +33,7 @@ const NoteListItem = ({ text, date, id, rollId, onDeleteCallback }: Props) => {
   const renderLeftActions = useCallback(
     () => (
       <TouchableOpacity onPress={handleDelete} style={{}}>
-        <Icon source="delete" size={24} color={COLORS.primary.opaque} />
+        <Icon source="delete" size={24} color={COLORS.NEUTRAL[800]} />
       </TouchableOpacity>
     ),
     [handleDelete]
@@ -42,7 +42,7 @@ const NoteListItem = ({ text, date, id, rollId, onDeleteCallback }: Props) => {
   const renderRightActions = useCallback(
     () => (
       <TouchableOpacity onPress={handleEdit} style={{}}>
-        <Icon source="pencil" size={24} color={COLORS.primary.opaque} />
+        <Icon source="pencil" size={24} color={COLORS.NEUTRAL[800]} />
       </TouchableOpacity>
     ),
     [handleEdit]
@@ -60,7 +60,7 @@ const NoteListItem = ({ text, date, id, rollId, onDeleteCallback }: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: COLORS.light.transparent,
+    backgroundColor: COLORS.NEUTRAL[200],
     marginVertical: SPACING.MEDIUM,
     padding: SPACING.MEDIUM,
   },

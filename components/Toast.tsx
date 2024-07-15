@@ -23,7 +23,7 @@ const Toast = () => {
       duration={3000}
       onDismiss={onDismissSnackBar}
       style={{
-        backgroundColor: COLORS[toast.variant].opaque,
+        backgroundColor: COLORS[toast.variant][300],
         borderRadius: BORDER_RADIUS.NONE,
         justifyContent: 'center',
         alignItems: 'center',
@@ -34,7 +34,7 @@ const Toast = () => {
       <Text
         style={{
           textAlign: 'center',
-          color: COLORS.dark.opaque,
+          color: COLORS.NEUTRAL[200],
           fontWeight: 'bold',
         }}
       >
