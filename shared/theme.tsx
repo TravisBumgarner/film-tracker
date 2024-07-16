@@ -1,41 +1,66 @@
 import { Phase } from './types'
 
 export const COLORS = {
-  primary: {
-    opaque: 'rgb(2, 100, 160)',
-    transparent: 'rgba(2, 100, 160, 0.2)',
+  NEUTRAL: {
+    '100': '#E3E7E8',
+    '200': '#C7CFD1',
+    '300': '#ABB7BA',
+    '400': '#8F9EA3',
+    '500': '#73868C',
+    '600': '#5C6B70',
+    '700': '#475E66',
+    '800': '#3A4D53',
+    '900': '#2C3B40',
+    '1000': '#1F2A2D',
   },
-  secondary: {
-    opaque: 'rgb(100, 157, 200)',
-    transparent: 'rgba(100, 157, 200, 0.2)',
+  PRIMARY: {
+    '100': '#CCF3FF',
+    '200': '#66DAFF',
+    '300': '#00C1FF',
+    '400': '#007499',
+    '500': '#002733',
   },
-  error: {
-    opaque: 'rgb(189, 123, 105)',
-    transparent: 'rgba(189, 123, 105, 0.2)',
+  SECONDARY: {
+    '100': '#E9CFFC',
+    '200': '#BC6EF7',
+    '300': '#8F0DF2',
+    '400': '#720AC2',
+    '500': '#560891',
   },
-  warning: {
-    opaque: 'rgb(197, 186, 103)',
-    transparent: 'rgba(197, 186, 103, 0.2)',
+  SUCCESS: {
+    '100': '#CCFFDD',
+    '200': '#66FF99',
+    '300': '#00FF55',
+    '400': '#00CC44',
+    '500': '#009933',
   },
-  success: {
-    opaque: 'rgb(144, 197, 103)',
-    transparent: 'rgba(144, 197, 103, 0.2)',
+  WARNING: {
+    '100': '#FFF1CC',
+    '200': '#FFD466',
+    '300': '#FFB800',
+    '400': '#996E00',
+    '500': '#332500',
   },
-  light: {
-    opaque: 'rgb(215, 216, 214)',
-    transparent: 'rgba(215, 216, 214, 0.2)',
+  ERROR: {
+    '100': '#FFCCEB',
+    '200': '#FF66C2',
+    '300': '#FF0099',
+    '400': '#CC007A',
+    '500': '#99005C',
   },
-  dark: {
-    opaque: 'rgb(34, 39, 45)',
-    transparent: 'rgba(34, 39, 45, 0.2)',
+  MISC: {
+    TRANSPARENT: 'TRANSPARENT',
+    BLACK: '#000',
+    WHITE: '#FFF',
   },
-}
+} as const
 
 export const PHASE_TO_COLOR_NAME = {
-  [Phase.Exposing]: COLORS.error,
-  [Phase.Exposed]: COLORS.warning,
-  [Phase.Developed]: COLORS.success,
-  [Phase.Archived]: COLORS.light,
+  [Phase.Exposing]: COLORS.ERROR[300],
+  [Phase.Exposed]: COLORS.WARNING[300],
+  [Phase.Developed]: COLORS.SUCCESS[300],
+  [Phase.Archived]: COLORS.NEUTRAL[500],
+  [Phase.Abandoned]: COLORS.NEUTRAL[200],
 }
 
 export const SPACING = {
@@ -53,4 +78,12 @@ export const BORDER_RADIUS = {
   SMALL: 4,
   MEDIUM: 8,
   LARGE: 12,
+} as const
+
+export const BORDER_WIDTH = {
+  NONE: 0,
+  XSMALL: 1,
+  SMALL: 2,
+  MEDIUM: 4,
+  LARGE: 8,
 } as const

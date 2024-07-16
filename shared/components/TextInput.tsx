@@ -1,36 +1,51 @@
-import * as React from 'react'
-import { StyleSheet } from 'react-native'
-import { TextInput as TextInputRNP } from 'react-native-paper'
+import { StyleSheet, View } from 'react-native'
+import { Text, TextInput as TextInputRNP } from 'react-native-paper'
 
-import { COLORS, SPACING } from '../theme'
+import { BORDER_WIDTH, COLORS, SPACING } from '../theme'
 
-const TextInput: React.FC<{ autoFocus: boolean; label?: string; value: string; onChangeText: (value: string) => void }> = ({
-  label,
-  value,
-  onChangeText,
-  autoFocus,
-}) => {
+type Props = {
+  label?: string
+  value: string
+  onChangeText: (text: string) => void
+  multiline?: boolean
+  color?: string
+  autoFocus?: boolean
+}
+
+const TextInput: React.FC<Props> = ({ multiline, label, value, onChangeText, color, autoFocus }) => {
   return (
-    <TextInputRNP
-      autoFocus={autoFocus} //eslint-disable-line
-      style={styles.inputStyle}
-      contentStyle={styles.inputContentStyle}
-      label={label}
-      value={value}
-      onChangeText={onChangeText}
-      multiline
-    />
+    <View style={styles.container}>
+      {label && <Text style={styles.label}>{label}</Text>}
+      <TextInputRNP
+        onChangeText={onChangeText}
+        value={value}
+        mode="flat"
+        multiline={multiline}
+        style={StyleSheet.flatten([styles.textInput, { backgroundColor: COLORS.MISC.TRANSPARENT }])}
+        textColor={COLORS.NEUTRAL[200]}
+        autoFocus={autoFocus} //eslint-disable-line
+        underlineStyle={{
+          borderColor: color || COLORS.PRIMARY[300],
+          borderWidth: BORDER_WIDTH.XSMALL,
+        }}
+      />
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
-  inputContentStyle: {
-    backgroundColor: COLORS.dark.opaque,
-    color: COLORS.light.opaque,
+  container: {
+    justifyContent: 'center',
+    paddingVertical: SPACING.MEDIUM,
   },
-  inputStyle: {
-    marginBottom: SPACING.MEDIUM,
-    marginTop: SPACING.MEDIUM,
+  label: {
+    color: COLORS.NEUTRAL[400],
+    paddingBottom: SPACING.MEDIUM,
+  },
+  textInput: {
+    borderRadius: 10,
+    fontSize: 24,
+    paddingHorizontal: 0,
   },
 })
 

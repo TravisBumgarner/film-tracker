@@ -22,6 +22,10 @@ const Home = () => {
     }, [])
   )
 
+  const onRollChange = useCallback(() => {
+    queries.select.rolls().then(setRolls)
+  }, [])
+
   const addRollCallback = useCallback(() => {
     router.push('add-roll')
   }, [])
@@ -35,7 +39,7 @@ const Home = () => {
           alignContent: 'center',
         }}
       >
-        <Button variant="primary" onPress={addRollCallback}>
+        <Button variant="filled" color="primary" onPress={addRollCallback}>
           Add Your First Roll
         </Button>
       </PageWrapper>
@@ -43,7 +47,7 @@ const Home = () => {
   }
 
   return (
-    <PageWrapper>
+    <PageWrapper ignoreMargin>
       <ScrollView
         ref={scrollViewRef}
         snapToInterval={width} // Snap to the screen width
@@ -51,15 +55,16 @@ const Home = () => {
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollViewContent}
+        decelerationRate="fast" // Adjust scrolling speed
       >
         {rolls.map((roll, index) => (
           <View style={[styles.rollWrapper, { width: width }]} key={index}>
-            <Roll roll={roll} />
+            <Roll roll={roll} onRollChange={onRollChange} />
           </View>
         ))}
       </ScrollView>
-      <View style={styles.buttonWrapper}>
-        <Button variant="secondary" onPress={addRollCallback}>
+      <View style={{ marginBottom: SPACING.MEDIUM, marginHorizontal: SPACING.MEDIUM }}>
+        <Button variant="link" color="secondary" onPress={addRollCallback}>
           Add roll
         </Button>
       </View>
@@ -68,12 +73,8 @@ const Home = () => {
 }
 
 const styles = StyleSheet.create({
-  buttonWrapper: {
-    padding: SPACING.MEDIUM,
-  },
   rollWrapper: {
     flex: 1,
-    padding: SPACING.MEDIUM,
   },
   scrollViewContent: {
     alignItems: 'center',

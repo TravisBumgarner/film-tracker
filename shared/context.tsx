@@ -3,7 +3,7 @@ import { createContext, useReducer, type Dispatch } from 'react'
 export interface State {
   toast: {
     message: string
-    variant: 'success' | 'error' | 'warning'
+    variant: 'SUCCESS' | 'ERROR' | 'WARNING'
   } | null
 }
 

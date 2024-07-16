@@ -23,7 +23,7 @@ const Settings = () => {
     queries.delete.everything()
     dispatch({
       type: 'TOAST',
-      payload: { message: 'Database wiped', variant: 'success' },
+      payload: { message: 'Database wiped', variant: 'SUCCESS' },
     })
   }, [dispatch])
 
@@ -41,14 +41,14 @@ const Settings = () => {
         type: 'TOAST',
         payload: {
           message: `Backup created`,
-          variant: 'success',
+          variant: 'SUCCESS',
         },
       })
     } catch (error) {
       Sentry.captureException(error)
       dispatch({
         type: 'TOAST',
-        payload: { message: 'Something went wrong', variant: 'error' },
+        payload: { message: 'Something went wrong', variant: 'ERROR' },
       })
     } finally {
       setIsProcessing(false)
@@ -66,7 +66,7 @@ const Settings = () => {
       if (!result.assets) {
         dispatch({
           type: 'TOAST',
-          payload: { message: 'Restore Cancelled', variant: 'warning' },
+          payload: { message: 'Restore Cancelled', variant: 'WARNING' },
         })
         return
       }
@@ -76,7 +76,7 @@ const Settings = () => {
           type: 'TOAST',
           payload: {
             message: 'Select only one file to restore',
-            variant: 'warning',
+            variant: 'WARNING',
           },
         })
         return
@@ -88,7 +88,7 @@ const Settings = () => {
       if (!Array.isArray(rawCameras) || !Array.isArray(rawRolls) || !Array.isArray(rawNotes)) {
         dispatch({
           type: 'TOAST',
-          payload: { message: 'Invalid backup file', variant: 'error' },
+          payload: { message: 'Invalid backup file', variant: 'ERROR' },
         })
         return
       }
@@ -105,20 +105,20 @@ const Settings = () => {
         Sentry.captureException(error)
         dispatch({
           type: 'TOAST',
-          payload: { message: 'Restore failed', variant: 'error' },
+          payload: { message: 'Restore failed', variant: 'ERROR' },
         })
         return
       }
 
       dispatch({
         type: 'TOAST',
-        payload: { message: 'Restore successful', variant: 'success' },
+        payload: { message: 'Restore SUCCESSful', variant: 'SUCCESS' },
       })
     } catch (error) {
       Sentry.captureException(error)
       dispatch({
         type: 'TOAST',
-        payload: { message: 'Restore failed', variant: 'error' },
+        payload: { message: 'Restore failed', variant: 'ERROR' },
       })
     } finally {
       setIsProcessing(false)
@@ -140,12 +140,12 @@ const Settings = () => {
           <Typography variant="h2">Database</Typography>
           <ButtonWrapper
             left={
-              <Button variant="primary" onPress={handleBackup} disabled={isProcessing}>
+              <Button variant="link" color="primary" onPress={handleBackup} disabled={isProcessing}>
                 Backup Database
               </Button>
             }
             right={
-              <Button variant="primary" onPress={handleRestore} disabled={isProcessing}>
+              <Button variant="filled" color="primary" onPress={handleRestore} disabled={isProcessing}>
                 Restore Database
               </Button>
             }
@@ -159,7 +159,7 @@ const Settings = () => {
             value={deleteText}
             onChangeText={text => setDeleteText(text)}
           />
-          <Button disabled={deleteText !== 'Delete'} onPress={handleWipeDatabase} variant="warning">
+          <Button disabled={deleteText !== 'Delete'} onPress={handleWipeDatabase} variant="link" color="warning">
             Wipe Database and Migrations
           </Button>
         </View>

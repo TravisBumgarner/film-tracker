@@ -4,20 +4,23 @@ import Button from '@/shared/components/Button'
 import ButtonWrapper from '@/shared/components/ButtonWrapper'
 import Typography from '@/shared/components/Typography'
 import { context } from '@/shared/context'
-import { SPACING } from '@/shared/theme'
-import { navigateWithParams } from '@/shared/utilities'
+import { COLORS, SPACING } from '@/shared/theme'
+import { Phase } from '@/shared/types'
+import { navigateWithParams, orderToPhaseLookup, phaseDisplayNameLookup, phaseOrderLookup } from '@/shared/utilities'
 import { useFocusEffect } from 'expo-router'
 import { useCallback, useContext, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { FlatList } from 'react-native-gesture-handler'
 
 import Note from './Note'
+import PhaseDisplay from './PhaseDisplay'
 
 type Props = {
   roll: SelectRoll
+  onRollChange: () => void
 }
 
-const Roll = ({ roll }: Props) => {
+const Roll = ({ roll, onRollChange }: Props) => {
   const { dispatch } = useContext(context)
   const [camera, setCamera] = useState<SelectCamera | null>(null)
   const [notes, setNotes] = useState<SelectNote[]>([])
@@ -32,7 +35,9 @@ const Roll = ({ roll }: Props) => {
 
         if (!isActive) return
 
-        if (!camera) dispatch({ type: 'ADD_ALERT_MESSAGE', payload: 'Error loading camera' })
+        if (!camera) {
+          dispatch({ type: 'TOAST', payload: { message: 'Error loading camera', variant: 'ERROR' } })
+        }
 
         setCamera(camera)
         setNotes(notes)
@@ -59,17 +64,50 @@ const Roll = ({ roll }: Props) => {
     navigateWithParams('add-note', { rollId: roll.id })
   }, [roll.id])
 
+  const handlePhaseChange = useCallback(async () => {
+    const nextPhase = phaseOrderLookup[roll.phase] + 1
+
+    const rollUpdate: Partial<SelectRoll> = {
+      phase: orderToPhaseLookup[nextPhase],
+    }
+
+    if (rollUpdate.phase === Phase.Exposed) {
+      rollUpdate.removedFromCameraAt = new Date().toISOString()
+    }
+
+    if (rollUpdate.phase === Phase.Developed) {
+      rollUpdate.developedAt = new Date().toISOString()
+    }
+
+    if (rollUpdate.phase === Phase.Archived) {
+      rollUpdate.archivedAt = new Date().toISOString()
+    }
+
+    await queries.update.roll(roll.id, rollUpdate)
+    onRollChange()
+  }, [roll.id, roll.phase, onRollChange])
+
   if (!camera) {
     return null
   }
 
   return (
     <View style={styles.container}>
-      <Typography variant="body1">Roll: {roll.roll}</Typography>
-      <Typography variant="body1">Camera: {camera?.model}</Typography>
-      <Typography variant="body1">Phase: {roll.phase}</Typography>
-      <Typography variant="body1">Insert Date: {roll.insertedIntoCameraAt}</Typography>
-      {roll.removedFromCameraAt && <Typography variant="body1">Removal Date: {roll.removedFromCameraAt}</Typography>}
+      <Typography variant="h2">{roll.roll}</Typography>
+      <Typography variant="body1">{camera?.model}</Typography>
+      <PhaseDisplay roll={roll} />
+      <ButtonWrapper
+        left={
+          <Button variant="link" color="secondary" onPress={handlePhaseChange}>
+            Mark as {phaseDisplayNameLookup[orderToPhaseLookup[phaseOrderLookup[roll.phase] + 1]]}
+          </Button>
+        }
+        right={
+          <Button variant="link" color="secondary" onPress={handlePhaseChange}>
+            Mark as {Phase.Abandoned}
+          </Button>
+        }
+      />
       <FlatList
         data={notes}
         keyExtractor={item => item.id}
@@ -77,12 +115,12 @@ const Roll = ({ roll }: Props) => {
       />
       <ButtonWrapper
         left={
-          <Button variant="secondary" onPress={editRollCallback}>
+          <Button variant="link" color="secondary" onPress={editRollCallback}>
             Edit Roll
           </Button>
         }
         right={
-          <Button variant="primary" onPress={addNoteCallback}>
+          <Button variant="filled" color="primary" onPress={addNoteCallback}>
             Add Note
           </Button>
         }
@@ -93,9 +131,9 @@ const Roll = ({ roll }: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: SPACING.MEDIUM,
-    borderWidth: 1,
+    backgroundColor: COLORS.NEUTRAL[900],
     flex: 1,
+    margin: SPACING.MEDIUM,
     padding: SPACING.MEDIUM,
   },
 })

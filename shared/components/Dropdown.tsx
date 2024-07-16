@@ -27,7 +27,7 @@ const Dropdown = <T extends DropdownEnums | string>({ data, onChangeCallback, va
       source = isFocus ? 'chevron-up' : 'chevron-down'
     }
 
-    return <Icon source={source} size={20} color={COLORS.primary.opaque} />
+    return <Icon source={source} size={20} color={COLORS.PRIMARY[300]} />
   }, [isFocus, dropdownPosition])
 
   const onChange = useCallback(
@@ -41,7 +41,7 @@ const Dropdown = <T extends DropdownEnums | string>({ data, onChangeCallback, va
   return (
     <View style={styles.container}>
       <DropdownRNED
-        style={[styles.dropdown, isFocus && { borderColor: COLORS.primary.opaque }]}
+        style={styles.dropdown}
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}
         iconStyle={styles.iconStyle}
@@ -54,11 +54,11 @@ const Dropdown = <T extends DropdownEnums | string>({ data, onChangeCallback, va
         containerStyle={styles.containerStyle}
         itemContainerStyle={styles.itemContainerStyle}
         placeholder={!isFocus ? 'Select item' : '...'}
-        value={value}
+        value={value as string}
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
         onChange={onChange}
-        activeColor={COLORS.primary.opaque}
+        activeColor={COLORS.PRIMARY[300]}
         renderRightIcon={renderRightIcon}
       />
     </View>
@@ -69,17 +69,15 @@ export default Dropdown
 
 const styles = StyleSheet.create({
   container: {
+    borderColor: COLORS.PRIMARY[500],
     paddingVertical: SPACING.MEDIUM,
   },
   containerStyle: {
-    backgroundColor: COLORS.dark.opaque,
-    borderColor: COLORS.dark.transparent,
+    backgroundColor: COLORS.NEUTRAL[900],
     borderWidth: 0,
   },
   dropdown: {
-    backgroundColor: COLORS.dark.opaque,
-    borderColor: COLORS.dark.transparent,
-    borderWidth: 1,
+    backgroundColor: COLORS.NEUTRAL[900],
     height: 50,
     paddingHorizontal: SPACING.MEDIUM,
   },
@@ -88,16 +86,17 @@ const styles = StyleSheet.create({
     width: 20,
   },
   itemContainerStyle: {
-    backgroundColor: COLORS.dark.opaque,
+    backgroundColor: COLORS.NEUTRAL[900],
   },
   itemTextStyle: {
-    color: COLORS.light.opaque,
+    color: COLORS.NEUTRAL[200],
   },
   placeholderStyle: {
+    color: COLORS.NEUTRAL[200],
     fontSize: 16,
   },
   selectedTextStyle: {
-    color: COLORS.light.opaque,
+    color: COLORS.NEUTRAL[200],
     fontSize: 16,
   },
 })

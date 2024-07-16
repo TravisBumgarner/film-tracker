@@ -6,10 +6,12 @@ import Dropdown from '@/shared/components/Dropdown'
 import Loading from '@/shared/components/Loading'
 import PageWrapper from '@/shared/components/PageWrapper'
 import TextInput from '@/shared/components/TextInput'
+import { context } from '@/shared/context'
+import { COLORS } from '@/shared/theme'
 import { Phase, URLParams } from '@/shared/types'
 import { PHASE_LIST } from '@/shared/utilities'
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { ScrollView, StyleSheet } from 'react-native'
 
 const ADD_NEW_CAMERA_MENU_OPTION = {
@@ -18,6 +20,7 @@ const ADD_NEW_CAMERA_MENU_OPTION = {
 }
 
 const EditRoll = () => {
+  const { dispatch } = useContext(context)
   const [editId, setEditId] = useState('')
   const [cameraList, setCameraList] = useState<{ label: string; value: string }[]>([ADD_NEW_CAMERA_MENU_OPTION])
   const [activeCamera, setActiveCamera] = useState('')
@@ -34,7 +37,10 @@ const EditRoll = () => {
     useCallback(() => {
       async function fetchData() {
         if (!params.rollId) {
-          console.log('no roll Id found')
+          dispatch({
+            type: 'TOAST',
+            payload: { message: 'Roll ID is required', variant: 'ERROR' },
+          })
           setIsLoading(false) // set loading to false even if rollId is not present
           return
         }
@@ -58,7 +64,7 @@ const EditRoll = () => {
       }
       if (!isLoading) return
       fetchData()
-    }, [params, isLoading])
+    }, [params, isLoading, dispatch])
   )
 
   const handleCancel = useCallback(() => {
@@ -93,6 +99,7 @@ const EditRoll = () => {
         <Dropdown<string> dropdownPosition="bottom" value={activeCamera} onChangeCallback={setActiveCamera} data={cameraList} />
         {activeCamera === ADD_NEW_CAMERA_MENU_OPTION.value ? (
           <TextInput
+            color={COLORS.PRIMARY[300]}
             autoFocus={false} //eslint-disable-line
             label="Add a new Camera"
             value={newCameraInput}
@@ -100,6 +107,7 @@ const EditRoll = () => {
           />
         ) : null}
         <TextInput
+          color={COLORS.PRIMARY[300]}
           autoFocus={false} //eslint-disable-line
           label="Roll Name"
           value={editRollInput}
@@ -110,12 +118,12 @@ const EditRoll = () => {
       </ScrollView>
       <ButtonWrapper
         left={
-          <Button variant="warning" onPress={handleCancel}>
+          <Button variant="link" color="warning" onPress={handleCancel}>
             Cancel
           </Button>
         }
         right={
-          <Button disabled={disabledSubmit} variant="primary" onPress={handleEditRoll}>
+          <Button disabled={disabledSubmit} variant="filled" color="primary" onPress={handleEditRoll}>
             Submit
           </Button>
         }

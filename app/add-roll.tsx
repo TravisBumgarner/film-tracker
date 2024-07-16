@@ -5,6 +5,7 @@ import DatePickerModal from '@/shared/components/DatePicker'
 import Dropdown from '@/shared/components/Dropdown'
 import PageWrapper from '@/shared/components/PageWrapper'
 import TextInput from '@/shared/components/TextInput'
+import { COLORS } from '@/shared/theme'
 import { Phase } from '@/shared/types'
 import { router } from 'expo-router'
 import React, { useCallback, useState } from 'react'
@@ -66,6 +67,7 @@ const AddRoll = () => {
         <Dropdown<string> dropdownPosition="bottom" value={activeCamera} onChangeCallback={setActiveCamera} data={cameraList} />
         {activeCamera === ADD_NEW_CAMERA_MENU_OPTION.value ? (
           <TextInput
+            color={COLORS.PRIMARY[300]}
             autoFocus={false} //eslint-disable-line
             label="Add a new Camera"
             value={newCameraInput}
@@ -73,6 +75,7 @@ const AddRoll = () => {
           />
         ) : null}
         <TextInput
+          color={COLORS.PRIMARY[300]}
           autoFocus={false} //eslint-disable-line
           label="Roll Name"
           value={newRollInput}
@@ -82,12 +85,12 @@ const AddRoll = () => {
       </ScrollView>
       <ButtonWrapper
         left={
-          <Button variant="warning" onPress={handleCancel}>
+          <Button variant="link" color="warning" onPress={handleCancel}>
             Cancel
           </Button>
         }
         right={
-          <Button disabled={disabledSubmit} variant="primary" onPress={handleAddRoll}>
+          <Button disabled={disabledSubmit} variant="filled" color="primary" onPress={handleAddRoll}>
             Add Roll
           </Button>
         }

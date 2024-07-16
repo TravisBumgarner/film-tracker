@@ -13,6 +13,9 @@ export const RollsTable = sqliteTable('roll', {
   phase: text('phase').notNull(), // Sqlite does not have an enum type
   insertedIntoCameraAt: text('insertedIntoCameraAt').notNull(),
   removedFromCameraAt: text('removedFromCameraAt'),
+  developedAt: text('developedAt'),
+  archivedAt: text('archivedAt'),
+  abandonedAt: text('abandonedAt'),
   lastInteractedAt: text('lastInteractedAt'),
 })
 

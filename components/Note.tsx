@@ -1,6 +1,6 @@
 import queries from '@/db/queries'
 import Typography from '@/shared/components/Typography'
-import { COLORS, SPACING } from '@/shared/theme'
+import { BORDER_RADIUS, BORDER_WIDTH, COLORS, SPACING } from '@/shared/theme'
 import { navigateWithParams } from '@/shared/utilities'
 import { useCallback, useRef } from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -21,9 +21,7 @@ const NoteListItem = ({ text, date, id, rollId, onDeleteCallback }: Props) => {
   const handleDelete = useCallback(async () => {
     await queries.delete.note(id)
     onDeleteCallback()
-
-    console.log('navigating?', rollId)
-  }, [rollId, id, onDeleteCallback])
+  }, [id, onDeleteCallback])
 
   const handleEdit = useCallback(() => {
     navigateWithParams('edit-note', { noteId: id, rollId })
@@ -32,8 +30,8 @@ const NoteListItem = ({ text, date, id, rollId, onDeleteCallback }: Props) => {
 
   const renderLeftActions = useCallback(
     () => (
-      <TouchableOpacity onPress={handleDelete} style={{}}>
-        <Icon source="delete" size={24} color={COLORS.primary.opaque} />
+      <TouchableOpacity onPress={handleDelete} style={StyleSheet.flatten([styles.swipeableBase, styles.swipeableLeft])}>
+        <Icon source="delete" size={24} color={COLORS.NEUTRAL[900]} />
       </TouchableOpacity>
     ),
     [handleDelete]
@@ -41,8 +39,8 @@ const NoteListItem = ({ text, date, id, rollId, onDeleteCallback }: Props) => {
 
   const renderRightActions = useCallback(
     () => (
-      <TouchableOpacity onPress={handleEdit} style={{}}>
-        <Icon source="pencil" size={24} color={COLORS.primary.opaque} />
+      <TouchableOpacity onPress={handleEdit} style={StyleSheet.flatten([styles.swipeableBase, styles.swipeableRight])}>
+        <Icon source="pencil" size={24} color={COLORS.NEUTRAL[900]} />
       </TouchableOpacity>
     ),
     [handleEdit]
@@ -58,11 +56,27 @@ const NoteListItem = ({ text, date, id, rollId, onDeleteCallback }: Props) => {
   )
 }
 
+const SHARED_SPACING = BORDER_WIDTH.MEDIUM
+
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: COLORS.light.transparent,
+    backgroundColor: COLORS.NEUTRAL[600],
     marginVertical: SPACING.MEDIUM,
     padding: SPACING.MEDIUM,
+  },
+  swipeableBase: {
+    alignItems: 'center',
+    backgroundColor: COLORS.NEUTRAL[600],
+    borderRadius: BORDER_RADIUS.NONE,
+    justifyContent: 'center',
+    marginVertical: SPACING.MEDIUM,
+    padding: SPACING.XXSMALL,
+  },
+  swipeableLeft: {
+    marginRight: SHARED_SPACING,
+  },
+  swipeableRight: {
+    marginLeft: SHARED_SPACING,
   },
 })
 

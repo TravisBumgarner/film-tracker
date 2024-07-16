@@ -15,12 +15,18 @@ const AddNote = () => {
   const params = useLocalSearchParams<URLParams['add-note']>()
 
   const handleCancel = useCallback(() => {
-    router.navigate(`roll/${params.rollId}`)
-  }, [params.rollId])
+    router.back()
+  }, [])
 
   const handleAddNote = useCallback(async () => {
     if (!params.rollId) {
-      dispatch({ type: 'ADD_ALERT_MESSAGE', payload: 'Roll ID is required' })
+      dispatch({
+        type: 'TOAST',
+        payload: {
+          message: 'Roll ID is required',
+          variant: 'ERROR',
+        },
+      })
       return
     }
 
@@ -41,16 +47,17 @@ const AddNote = () => {
           autoFocus={true} //eslint-disable-line
           value={newNoteText}
           onChangeText={setNewNoteText}
+          multiline
         />
       </ScrollView>
       <ButtonWrapper
         left={
-          <Button variant="warning" onPress={handleCancel}>
+          <Button variant="link" color="warning" onPress={handleCancel}>
             Cancel
           </Button>
         }
         right={
-          <Button disabled={newNoteText.length === 0} variant="primary" onPress={handleAddNote}>
+          <Button variant="filled" disabled={newNoteText.length === 0} color="primary" onPress={handleAddNote}>
             Submit
           </Button>
         }
