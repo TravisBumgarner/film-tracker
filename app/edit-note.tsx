@@ -42,22 +42,22 @@ const EditNote = () => {
   )
 
   const handleCancel = useCallback(() => {
-    router.navigate(`/roll/${params.rollId}`)
-  }, [params.rollId])
+    router.back()
+  }, [])
 
   const handleEditNote = useCallback(async () => {
     await queries.update.note(editId, {
       text: editNoteInput,
     })
-    router.navigate(`/roll/${params.rollId}`)
-  }, [params, editNoteInput, editId])
+    router.navigate('/')
+  }, [editNoteInput, editId])
 
   if (isLoading) {
     return <Loading />
   }
 
   return (
-    <PageWrapper title="Edit Roll">
+    <PageWrapper title="Edit Note">
       <ScrollView style={styles.formWrapper}>
         <TextInput
           autoFocus={true}  //eslint-disable-line
@@ -68,12 +68,12 @@ const EditNote = () => {
       </ScrollView>
       <ButtonWrapper
         left={
-          <Button variant="warning" onPress={handleCancel}>
+          <Button variant="link" color="warning" onPress={handleCancel}>
             Cancel
           </Button>
         }
         right={
-          <Button disabled={editNoteInput.length === 0} variant="primary" onPress={handleEditNote}>
+          <Button variant="filled" disabled={editNoteInput.length === 0} color="primary" onPress={handleEditNote}>
             Submit
           </Button>
         }

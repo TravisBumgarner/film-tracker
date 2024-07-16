@@ -79,3 +79,11 @@ export const BORDER_RADIUS = {
   MEDIUM: 8,
   LARGE: 12,
 } as const
+
+export const BORDER_WIDTH = {
+  NONE: 0,
+  XSMALL: 1,
+  SMALL: 2,
+  MEDIUM: 4,
+  LARGE: 8,
+} as const

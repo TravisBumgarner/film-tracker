@@ -7,6 +7,7 @@ import Loading from '@/shared/components/Loading'
 import PageWrapper from '@/shared/components/PageWrapper'
 import TextInput from '@/shared/components/TextInput'
 import { context } from '@/shared/context'
+import { COLORS } from '@/shared/theme'
 import { Phase, URLParams } from '@/shared/types'
 import { PHASE_LIST } from '@/shared/utilities'
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router'
@@ -98,6 +99,7 @@ const EditRoll = () => {
         <Dropdown<string> dropdownPosition="bottom" value={activeCamera} onChangeCallback={setActiveCamera} data={cameraList} />
         {activeCamera === ADD_NEW_CAMERA_MENU_OPTION.value ? (
           <TextInput
+            color={COLORS.PRIMARY[300]}
             autoFocus={false} //eslint-disable-line
             label="Add a new Camera"
             value={newCameraInput}
@@ -105,6 +107,7 @@ const EditRoll = () => {
           />
         ) : null}
         <TextInput
+          color={COLORS.PRIMARY[300]}
           autoFocus={false} //eslint-disable-line
           label="Roll Name"
           value={editRollInput}
@@ -115,12 +118,12 @@ const EditRoll = () => {
       </ScrollView>
       <ButtonWrapper
         left={
-          <Button variant="warning" onPress={handleCancel}>
+          <Button variant="link" color="warning" onPress={handleCancel}>
             Cancel
           </Button>
         }
         right={
-          <Button disabled={disabledSubmit} variant="primary" onPress={handleEditRoll}>
+          <Button disabled={disabledSubmit} variant="filled" color="primary" onPress={handleEditRoll}>
             Submit
           </Button>
         }

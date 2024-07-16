@@ -41,7 +41,7 @@ const Dropdown = <T extends DropdownEnums | string>({ data, onChangeCallback, va
   return (
     <View style={styles.container}>
       <DropdownRNED
-        style={[styles.dropdown, isFocus && { borderColor: COLORS.PRIMARY[300] }]}
+        style={styles.dropdown}
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}
         iconStyle={styles.iconStyle}
@@ -69,15 +69,15 @@ export default Dropdown
 
 const styles = StyleSheet.create({
   container: {
+    borderColor: COLORS.PRIMARY[500],
     paddingVertical: SPACING.MEDIUM,
   },
   containerStyle: {
-    backgroundColor: COLORS.NEUTRAL[800],
+    backgroundColor: COLORS.NEUTRAL[900],
     borderWidth: 0,
   },
   dropdown: {
-    backgroundColor: COLORS.NEUTRAL[800],
-    borderWidth: 1,
+    backgroundColor: COLORS.NEUTRAL[900],
     height: 50,
     paddingHorizontal: SPACING.MEDIUM,
   },
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     width: 20,
   },
   itemContainerStyle: {
-    backgroundColor: COLORS.NEUTRAL[800],
+    backgroundColor: COLORS.NEUTRAL[900],
   },
   itemTextStyle: {
     color: COLORS.NEUTRAL[200],

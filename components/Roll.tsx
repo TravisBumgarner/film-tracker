@@ -4,7 +4,7 @@ import Button from '@/shared/components/Button'
 import ButtonWrapper from '@/shared/components/ButtonWrapper'
 import Typography from '@/shared/components/Typography'
 import { context } from '@/shared/context'
-import { SPACING } from '@/shared/theme'
+import { COLORS, SPACING } from '@/shared/theme'
 import { navigateWithParams } from '@/shared/utilities'
 import { useFocusEffect } from 'expo-router'
 import { useCallback, useContext, useState } from 'react'
@@ -79,12 +79,12 @@ const Roll = ({ roll }: Props) => {
       />
       <ButtonWrapper
         left={
-          <Button variant="secondary" onPress={editRollCallback}>
+          <Button variant="" color="secondary" onPress={editRollCallback}>
             Edit Roll
           </Button>
         }
         right={
-          <Button variant="primary" onPress={addNoteCallback}>
+          <Button variant="filled" color="primary" onPress={addNoteCallback}>
             Add Note
           </Button>
         }
@@ -95,9 +95,9 @@ const Roll = ({ roll }: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: SPACING.MEDIUM,
-    borderWidth: 1,
+    backgroundColor: COLORS.NEUTRAL[900],
     flex: 1,
+    margin: SPACING.MEDIUM,
     padding: SPACING.MEDIUM,
   },
 })
