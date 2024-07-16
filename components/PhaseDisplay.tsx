@@ -6,7 +6,6 @@ import { phaseDisplayNameLookup, phaseOrderLookup } from '@/shared/utilities'
 import { StyleSheet, View } from 'react-native'
 
 const IndividualPhase = ({ phase, currentPhase, date }: { phase: Phase; currentPhase: Phase; date: string | null }) => {
-  console.log(phase, currentPhase)
   if (phaseOrderLookup[phase] > phaseOrderLookup[currentPhase]) {
     return <Typography variant="body1">{phaseDisplayNameLookup[phase]}</Typography>
   }

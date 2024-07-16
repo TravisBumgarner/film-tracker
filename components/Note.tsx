@@ -21,9 +21,7 @@ const NoteListItem = ({ text, date, id, rollId, onDeleteCallback }: Props) => {
   const handleDelete = useCallback(async () => {
     await queries.delete.note(id)
     onDeleteCallback()
-
-    console.log('navigating?', rollId)
-  }, [rollId, id, onDeleteCallback])
+  }, [id, onDeleteCallback])
 
   const handleEdit = useCallback(() => {
     navigateWithParams('edit-note', { noteId: id, rollId })
