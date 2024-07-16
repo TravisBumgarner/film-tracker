@@ -22,6 +22,10 @@ const Home = () => {
     }, [])
   )
 
+  const onRollChange = useCallback(() => {
+    queries.select.rolls().then(setRolls)
+  }, [])
+
   const addRollCallback = useCallback(() => {
     router.push('add-roll')
   }, [])
@@ -51,10 +55,11 @@ const Home = () => {
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollViewContent}
+        decelerationRate="fast" // Adjust scrolling speed
       >
         {rolls.map((roll, index) => (
           <View style={[styles.rollWrapper, { width: width }]} key={index}>
-            <Roll roll={roll} />
+            <Roll roll={roll} onRollChange={onRollChange} />
           </View>
         ))}
       </ScrollView>

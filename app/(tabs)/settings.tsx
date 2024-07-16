@@ -140,12 +140,12 @@ const Settings = () => {
           <Typography variant="h2">Database</Typography>
           <ButtonWrapper
             left={
-              <Button variant="primary" onPress={handleBackup} disabled={isProcessing}>
+              <Button variant="link" color="primary" onPress={handleBackup} disabled={isProcessing}>
                 Backup Database
               </Button>
             }
             right={
-              <Button variant="primary" onPress={handleRestore} disabled={isProcessing}>
+              <Button variant="filled" color="primary" onPress={handleRestore} disabled={isProcessing}>
                 Restore Database
               </Button>
             }
@@ -159,7 +159,7 @@ const Settings = () => {
             value={deleteText}
             onChangeText={text => setDeleteText(text)}
           />
-          <Button disabled={deleteText !== 'Delete'} onPress={handleWipeDatabase} variant="warning">
+          <Button disabled={deleteText !== 'Delete'} onPress={handleWipeDatabase} variant="link" color="warning">
             Wipe Database and Migrations
           </Button>
         </View>

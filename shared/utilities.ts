@@ -66,3 +66,21 @@ export const PHASE_LIST: { label: string; value: Phase }[] = [
     value: Phase.Abandoned,
   },
 ]
+
+export const phaseDisplayNameLookup = {
+  [Phase.Exposing]: 'Exposing',
+  [Phase.Exposed]: 'Exposed',
+  [Phase.Developed]: 'Developed',
+  [Phase.Archived]: 'Archived',
+  [Phase.Abandoned]: 'Abandoned',
+}
+
+export const phaseOrderLookup = {
+  [Phase.Exposing]: 0,
+  [Phase.Exposed]: 1,
+  [Phase.Developed]: 2,
+  [Phase.Archived]: 3,
+  [Phase.Abandoned]: 4,
+}
+
+export const orderToPhaseLookup = [Phase.Exposing, Phase.Exposed, Phase.Developed, Phase.Archived, Phase.Abandoned]

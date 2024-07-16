@@ -54,7 +54,7 @@ const Dropdown = <T extends DropdownEnums | string>({ data, onChangeCallback, va
         containerStyle={styles.containerStyle}
         itemContainerStyle={styles.itemContainerStyle}
         placeholder={!isFocus ? 'Select item' : '...'}
-        value={value}
+        value={value as string}
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
         onChange={onChange}
@@ -92,6 +92,7 @@ const styles = StyleSheet.create({
     color: COLORS.NEUTRAL[200],
   },
   placeholderStyle: {
+    color: COLORS.NEUTRAL[200],
     fontSize: 16,
   },
   selectedTextStyle: {
