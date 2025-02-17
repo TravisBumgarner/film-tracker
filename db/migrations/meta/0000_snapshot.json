@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "9530b4e8-5b42-4db9-8d62-544a992694d7",
+  "id": "74e1370e-5c76-45fe-9669-9fb5affd9df6",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "camera": {
@@ -21,8 +21,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "updatedAt": {
-          "name": "updatedAt",
+        "lastUsedAt": {
+          "name": "lastUsedAt",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -160,15 +160,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "insertedIntoCameraAt": {
-          "name": "insertedIntoCameraAt",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "removedFromCameraAt": {
-          "name": "removedFromCameraAt",
+        "lastInteractedAt": {
+          "name": "lastInteractedAt",
           "type": "text",
           "primaryKey": false,
           "notNull": false,

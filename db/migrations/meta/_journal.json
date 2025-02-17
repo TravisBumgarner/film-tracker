@@ -5,36 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1719260585498,
-      "tag": "0000_luxuriant_microchip",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1720654624145,
-      "tag": "0001_wandering_gorilla_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1721093247749,
-      "tag": "0002_long_weapon_omega",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1739760150863,
-      "tag": "0003_breezy_franklin_richards",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "6",
-      "when": 1739761757163,
-      "tag": "0004_nervous_drax",
+      "when": 1739772642304,
+      "tag": "0000_magical_stephen_strange",
       "breakpoints": true
     }
   ]
