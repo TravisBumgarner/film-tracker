@@ -53,7 +53,7 @@ const Dropdown = <T extends DropdownEnums | string>({ data, onChangeCallback, va
         valueField="value"
         containerStyle={styles.containerStyle}
         itemContainerStyle={styles.itemContainerStyle}
-        placeholder={!isFocus ? 'Select item' : '...'}
+        placeholder={!isFocus ? 'Select Camera' : '...'}
         value={value as string}
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}

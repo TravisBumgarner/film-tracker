@@ -25,6 +25,7 @@ const roll = async (roll: Omit<NewRoll, 'id' | 'createdAt'>): Promise<NewRoll> =
         ...roll,
         id: uuidv4(),
         createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       })
       .returning()
   )[0] as NewRoll // Is this type safe? TBD.

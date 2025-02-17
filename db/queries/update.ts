@@ -12,7 +12,7 @@ const roll = async (id: string, roll: Partial<NewRoll>): Promise<PartialWithRequ
       .update(RollsTable)
       .set({
         ...roll,
-        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       })
       .where(eq(RollsTable.id, id))
       .returning()),

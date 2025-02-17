@@ -15,12 +15,10 @@ export type RollPreviewListItemData = {
   phase: Phase
   cameraModel: string
   notesCount: number
-  insertedIntoCameraAt: string
   removedFromCameraAt: string | null
 }
 
 export type URLParams = {
-  'add-note': { rollId: string }
   'edit-roll': { rollId: string }
   'edit-note': { noteId: string; rollId: string }
 }

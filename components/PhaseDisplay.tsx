@@ -1,71 +1,54 @@
+import queries from '@/db/queries'
 import { SelectRoll } from '@/db/schema'
+import Button from '@/shared/components/Button'
 import Typography from '@/shared/components/Typography'
 import { COLORS } from '@/shared/theme'
-import { Phase } from '@/shared/types'
-import { phaseDisplayNameLookup, phaseOrderLookup } from '@/shared/utilities'
+import { orderToPhaseLookup, phaseOrderLookup } from '@/shared/utilities'
+import React, { useCallback } from 'react'
 import { StyleSheet, View } from 'react-native'
+import { Icon } from 'react-native-paper'
 
-const IndividualPhase = ({ phase, currentPhase, date }: { phase: Phase; currentPhase: Phase; date: string | null }) => {
-  if (phaseOrderLookup[phase] > phaseOrderLookup[currentPhase]) {
-    return <Typography variant="body1">{phaseDisplayNameLookup[phase]}</Typography>
-  }
+const StatusDisplay = ({ roll, onPhaseChange }: { roll: SelectRoll; onPhaseChange: () => void }) => {
+  const handlePhaseChange = useCallback(
+    async (direction: 'next' | 'previous') => {
+      const nextPhase = direction === 'next' ? phaseOrderLookup[roll.phase] + 1 : phaseOrderLookup[roll.phase] - 1
 
-  if (phaseOrderLookup[phase] < phaseOrderLookup[currentPhase] + 1) {
-    return (
-      <>
-        <Typography style={{ color: COLORS.NEUTRAL[800] }} variant="body1">
-          {phaseDisplayNameLookup[phase]}
-        </Typography>
-        <Typography style={{ color: COLORS.NEUTRAL[800] }} variant="body2">
-          {date?.split('T')[0]}
-        </Typography>
-      </>
-    )
-  }
-}
+      const rollUpdate: Partial<SelectRoll> = {
+        phase: orderToPhaseLookup[nextPhase],
+      }
 
-const statusDisplay = ({ roll }: { roll: SelectRoll }) => {
+      await queries.update.roll(roll.id, rollUpdate)
+      onPhaseChange()
+    },
+    [roll.id, roll.phase, onPhaseChange]
+  )
+
   return (
     <View style={styles.container}>
-      <View style={StyleSheet.flatten([styles.base, styles.exposing])}>
-        <IndividualPhase phase={Phase.Exposing} currentPhase={roll.phase} date={roll.insertedIntoCameraAt} />
-      </View>
-      <View style={StyleSheet.flatten([styles.base, styles.exposed])}>
-        <IndividualPhase phase={Phase.Exposed} currentPhase={roll.phase} date={roll.removedFromCameraAt} />
-      </View>
-      <View style={StyleSheet.flatten([styles.base, styles.developed])}>
-        <IndividualPhase phase={Phase.Developed} currentPhase={roll.phase} date={roll.developedAt} />
-      </View>
-      <View style={StyleSheet.flatten([styles.base, styles.archived])}>
-        <IndividualPhase phase={Phase.Archived} currentPhase={roll.phase} date={roll.archivedAt} />
+      <View style={styles.phaseContainer}>
+        <Button variant="link" color="secondary" onPress={() => handlePhaseChange('previous')}>
+          <Icon source="chevron-left" size={24} color={COLORS.NEUTRAL[400]} />
+        </Button>
+        <Typography variant="body1">{roll.phase}</Typography>
+        <Button variant="link" color="secondary" onPress={() => handlePhaseChange('next')}>
+          <Icon source="chevron-right" size={24} color={COLORS.NEUTRAL[400]} />
+        </Button>
       </View>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  archived: {
-    backgroundColor: COLORS.NEUTRAL[100],
-  },
-  base: {
-    alignItems: 'center',
-    display: 'flex',
-    flex: 1,
-    padding: 4,
-  },
   container: {
     display: 'flex',
+    flexDirection: 'column',
+  },
+  phaseContainer: {
+    alignItems: 'center',
+    display: 'flex',
     flexDirection: 'row',
-  },
-  developed: {
-    backgroundColor: COLORS.SUCCESS[100],
-  },
-  exposed: {
-    backgroundColor: COLORS.WARNING[100],
-  },
-  exposing: {
-    backgroundColor: COLORS.ERROR[100],
+    justifyContent: 'center',
   },
 })
 
-export default statusDisplay
+export default StatusDisplay

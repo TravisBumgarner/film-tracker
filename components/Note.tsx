@@ -61,8 +61,8 @@ const SHARED_SPACING = BORDER_WIDTH.MEDIUM
 const styles = StyleSheet.create({
   container: {
     backgroundColor: COLORS.NEUTRAL[600],
-    marginVertical: SPACING.MEDIUM,
-    padding: SPACING.MEDIUM,
+    marginVertical: SPACING.XXSMALL,
+    padding: SPACING.XSMALL,
   },
   swipeableBase: {
     alignItems: 'center',

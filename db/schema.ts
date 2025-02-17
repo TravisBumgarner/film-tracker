@@ -11,18 +11,13 @@ export const RollsTable = sqliteTable('roll', {
     .references(() => CamerasTable.id)
     .notNull(),
   phase: text('phase').notNull(), // Sqlite does not have an enum type
-  insertedIntoCameraAt: text('insertedIntoCameraAt').notNull(),
-  removedFromCameraAt: text('removedFromCameraAt'),
-  developedAt: text('developedAt'),
-  archivedAt: text('archivedAt'),
-  abandonedAt: text('abandonedAt'),
   lastInteractedAt: text('lastInteractedAt'),
 })
 
 export const CamerasTable = sqliteTable('camera', {
   id: text('id').primaryKey().unique().notNull(),
   createdAt: text('date').notNull(),
-  updatedAt: text('updatedAt'),
+  lastUsedAt: text('lastUsedAt'),
   model: text('model').notNull(),
 })
 
@@ -49,18 +44,15 @@ export const RollRunType = Record({
   id: String,
   roll: String,
   createdAt: String,
-  updatedAt: String.Or(Null),
+  updatedAt: String,
   cameraId: String,
   phase: Union(Literal(Phase.Archived), Literal(Phase.Developed), Literal(Phase.Exposed), Literal(Phase.Exposing)),
-  insertedIntoCameraAt: String,
-  removedFromCameraAt: String.Or(Null),
-  lastInteractedAt: String.Or(Null),
 })
 
 export const CameraRunType = Record({
   id: String,
   createdAt: String,
-  updatedAt: String.Or(Null),
+  updatedAt: String,
   model: String,
 })
 
