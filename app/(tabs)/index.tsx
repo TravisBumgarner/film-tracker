@@ -64,6 +64,22 @@ const Home = () => {
     [rolls]
   )
 
+  if (rolls.length === 0) {
+    return (
+      <PageWrapper
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignContent: 'center',
+        }}
+      >
+        <Button variant="filled" color="primary" onPress={addRollCallback}>
+          Add Your First Roll
+        </Button>
+      </PageWrapper>
+    )
+  }
+
   if (filteredRollIds.length === 0) {
     return (
       <PageWrapper
@@ -76,22 +92,6 @@ const Home = () => {
         <Typography variant="h1">No rolls yet</Typography>
         <Button variant="filled" color="primary" onPress={clearFilters}>
           Clear Filters
-        </Button>
-      </PageWrapper>
-    )
-  }
-
-  if (rolls.length === 0) {
-    return (
-      <PageWrapper
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignContent: 'center',
-        }}
-      >
-        <Button variant="filled" color="primary" onPress={addRollCallback}>
-          Add Your First Roll
         </Button>
       </PageWrapper>
     )
@@ -114,13 +114,13 @@ const Home = () => {
         contentContainerStyle={styles.scrollViewContent}
         decelerationRate="fast" // Adjust scrolling speed
       >
-        <View style={[styles.rollWrapper, { width: width }]} key="add-roll">
+        <View style={[styles.sharedWrapper, { width: width }]} key="add-roll">
           <Button variant="filled" color="secondary" onPress={addRollCallback}>
             Add roll
           </Button>
         </View>
         {filteredRollIds.map((rollId, index) => (
-          <View style={[styles.rollWrapper, { width: width }]} key={index}>
+          <View style={[styles.sharedWrapper, { width: width }]} key={index}>
             <Roll rollId={rollId} refetchCallback={fetchRolls} />
           </View>
         ))}
@@ -131,11 +131,11 @@ const Home = () => {
 }
 
 const styles = StyleSheet.create({
-  rollWrapper: {
-    flex: 1,
-  },
   scrollViewContent: {
     alignItems: 'center',
+  },
+  sharedWrapper: {
+    flex: 1,
   },
 })
 

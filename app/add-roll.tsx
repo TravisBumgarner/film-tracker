@@ -60,7 +60,7 @@ const AddRoll = () => {
   return (
     <PageWrapper title="Add Roll">
       <ScrollView style={styles.formWrapper}>
-        <Dropdown<string> dropdownPosition="bottom" value={activeCamera} onChangeCallback={setActiveCamera} data={cameraList} />
+        <Dropdown dropdownPosition="bottom" value={activeCamera} onChangeCallback={setActiveCamera} data={cameraList} />
         {activeCamera === ADD_NEW_CAMERA_MENU_OPTION.value ? (
           <TextInput
             color={COLORS.PRIMARY[300]}
@@ -72,7 +72,7 @@ const AddRoll = () => {
         ) : null}
         <TextInput
           color={COLORS.PRIMARY[300]}
-          autoFocus={false} //eslint-disable-line
+          autoFocus={true} //eslint-disable-line
           label="Roll Name"
           value={newRollInput}
           onChangeText={setNewRollInput}
