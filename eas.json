@@ -3,26 +3,26 @@
     "version": ">= 9.1.0"
   },
   "build": {
-    "development": {
+    "dev": {
       "developmentClient": true,
       "distribution": "internal",
       "env": {
         "EXPO_BUNDLE_IDENTIFIER": "com.sillysideprojects.filmtracker.dev",
-        "APP_NAME": "Film Dev"
+        "EXPO_APP_NAME": "Dev"
       }
     },
     "internal": {
       "distribution": "internal",
       "env": {
         "EXPO_BUNDLE_IDENTIFIER": "com.sillysideprojects.filmtracker.internal",
-        "APP_NAME": "Film Internal"
+        "EXPO_APP_NAME": "Internal"
       }
     },
     "production": {
       "distribution": "store",
       "env": {
         "EXPO_BUNDLE_IDENTIFIER": "com.sillysideprojects.filmtracker.prod",
-        "APP_NAME": "Film Tracker"
+        "EXPO_APP_NAME": "filmtracker Down"
       }
     }
   },
