@@ -108,7 +108,6 @@ const Button = ({
 const buttonStyles = StyleSheet.create({
   base: {
     borderRadius: BORDER_RADIUS.NONE,
-    width: '100%',
   },
   primaryFilled: {
     backgroundColor: COLORS.PRIMARY[300],

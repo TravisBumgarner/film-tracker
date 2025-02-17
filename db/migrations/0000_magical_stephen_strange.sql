@@ -1,7 +1,7 @@
 CREATE TABLE `camera` (
 	`id` text PRIMARY KEY NOT NULL,
 	`date` text NOT NULL,
-	`updatedAt` text,
+	`lastUsedAt` text,
 	`model` text NOT NULL
 );
 --> statement-breakpoint
@@ -21,8 +21,7 @@ CREATE TABLE `roll` (
 	`updatedAt` text,
 	`cameraId` text NOT NULL,
 	`phase` text NOT NULL,
-	`insertedIntoCameraAt` text NOT NULL,
-	`removedFromCameraAt` text,
+	`lastInteractedAt` text,
 	FOREIGN KEY (`cameraId`) REFERENCES `camera`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint

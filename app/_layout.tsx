@@ -38,8 +38,8 @@ function App() {
             <Stack.Screen name="error" />
             <Stack.Screen name="add-roll" options={{ headerShown: false }} />
             <Stack.Screen name="edit-roll" options={{ headerShown: false }} />
-            <Stack.Screen name="add-note" options={{ headerShown: false }} />
             <Stack.Screen name="edit-note" options={{ headerShown: false }} />
+            <Stack.Screen name="add-camera" options={{ headerShown: false }} />
           </Stack>
         </GestureHandlerRootView>
       </Context>

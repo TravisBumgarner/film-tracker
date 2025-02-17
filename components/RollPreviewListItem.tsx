@@ -10,12 +10,11 @@ type Props = {
   camera: string
   notesCount: number
   phase: Phase
-  insertedIntoCameraAt: string
   removedFromCameraAt: string | null
   id: string
 }
 
-const RollPreviewListItem = ({ id, roll, camera, notesCount, phase, insertedIntoCameraAt, removedFromCameraAt }: Props) => {
+const RollPreviewListItem = ({ id, roll, camera, notesCount, phase, removedFromCameraAt }: Props) => {
   const containerStyle = {
     ...styles.container,
     backgroundColor: PHASE_TO_COLOR_NAME[phase][300],
@@ -31,7 +30,6 @@ const RollPreviewListItem = ({ id, roll, camera, notesCount, phase, insertedInto
       <Typography variant="body1">{camera}</Typography>
       <Typography variant="body1">{notesCount} Notes</Typography>
       <Typography variant="body1">{phase}</Typography>
-      <Typography variant="body1">{insertedIntoCameraAt}</Typography>
       {removedFromCameraAt && <Typography variant="body1">{removedFromCameraAt}</Typography>}
     </TouchableOpacity>
   )

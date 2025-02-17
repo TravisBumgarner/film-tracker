@@ -7,6 +7,10 @@ const note = (id: string) => {
   return db.delete(NotesTable).where(eq(NotesTable.id, id))
 }
 
+const camera = (id: string) => {
+  return db.delete(CamerasTable).where(eq(CamerasTable.id, id))
+}
+
 const everything = async () => {
   await db.delete(NotesTable).all()
   await db.delete(CamerasTable).all()
@@ -16,4 +20,5 @@ const everything = async () => {
 export default {
   note,
   everything,
+  camera,
 }

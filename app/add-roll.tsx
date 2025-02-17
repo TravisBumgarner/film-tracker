@@ -1,7 +1,6 @@
 import queries from '@/db/queries'
 import Button from '@/shared/components/Button'
 import ButtonWrapper from '@/shared/components/ButtonWrapper'
-import DatePickerModal from '@/shared/components/DatePicker'
 import Dropdown from '@/shared/components/Dropdown'
 import PageWrapper from '@/shared/components/PageWrapper'
 import TextInput from '@/shared/components/TextInput'
@@ -22,9 +21,8 @@ const AddRoll = () => {
   const [activeCamera, setActiveCamera] = useState('')
   const [newCameraInput, setNewCameraInput] = useState('')
   const [newRollInput, setNewRollInput] = useState('')
-  const [date, setDate] = useState<Date>(new Date())
 
-  const disabledSubmit = !activeCamera || !newRollInput || (activeCamera === ADD_NEW_CAMERA_MENU_OPTION.value && !newCameraInput) || !date
+  const disabledSubmit = !activeCamera || !newRollInput || (activeCamera === ADD_NEW_CAMERA_MENU_OPTION.value && !newCameraInput)
 
   useAsyncEffect(async () => {
     const cameras = await queries.select.cameras()
@@ -53,18 +51,16 @@ const AddRoll = () => {
     await queries.insert.roll({
       cameraId: newCameraId,
       roll: newRollInput,
-      insertedIntoCameraAt: date.toISOString(),
       phase: Phase.Exposing,
-      lastInteractedAt: date.toISOString(),
     })
 
     router.navigate(`/`)
-  }, [activeCamera, date, newRollInput, newCameraInput])
+  }, [activeCamera, newRollInput, newCameraInput])
 
   return (
     <PageWrapper title="Add Roll">
       <ScrollView style={styles.formWrapper}>
-        <Dropdown<string> dropdownPosition="bottom" value={activeCamera} onChangeCallback={setActiveCamera} data={cameraList} />
+        <Dropdown dropdownPosition="bottom" value={activeCamera} onChangeCallback={setActiveCamera} data={cameraList} />
         {activeCamera === ADD_NEW_CAMERA_MENU_OPTION.value ? (
           <TextInput
             color={COLORS.PRIMARY[300]}
@@ -76,12 +72,11 @@ const AddRoll = () => {
         ) : null}
         <TextInput
           color={COLORS.PRIMARY[300]}
-          autoFocus={false} //eslint-disable-line
+          autoFocus={true} //eslint-disable-line
           label="Roll Name"
           value={newRollInput}
           onChangeText={setNewRollInput}
         />
-        <DatePickerModal date={date} setDate={setDate} />
       </ScrollView>
       <ButtonWrapper
         left={

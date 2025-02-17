@@ -4,18 +4,15 @@ import { Dropdown as DropdownRNED } from 'react-native-element-dropdown'
 import { Icon } from 'react-native-paper'
 
 import { COLORS, SPACING } from '../theme'
-import { Phase } from '../types'
 
-type DropdownEnums = Phase
-
-interface DropdownProps<T extends DropdownEnums | string> {
-  data: { label: string; value: T }[]
-  onChangeCallback: (value: T) => void
-  value: T
+interface DropdownProps {
+  data: { label: string; value: string }[]
+  onChangeCallback: (value: string) => void
+  value: string
   dropdownPosition: 'top' | 'bottom'
 }
 
-const Dropdown = <T extends DropdownEnums | string>({ data, onChangeCallback, value, dropdownPosition }: DropdownProps<T>) => {
+const Dropdown = ({ data, onChangeCallback, value, dropdownPosition }: DropdownProps) => {
   const [isFocus, setIsFocus] = useState(false)
 
   const renderRightIcon = useCallback(() => {
@@ -31,7 +28,7 @@ const Dropdown = <T extends DropdownEnums | string>({ data, onChangeCallback, va
   }, [isFocus, dropdownPosition])
 
   const onChange = useCallback(
-    (item: { label: string; value: T }) => {
+    (item: { label: string; value: string }) => {
       onChangeCallback(item.value)
       setIsFocus(false)
     },
@@ -53,7 +50,7 @@ const Dropdown = <T extends DropdownEnums | string>({ data, onChangeCallback, va
         valueField="value"
         containerStyle={styles.containerStyle}
         itemContainerStyle={styles.itemContainerStyle}
-        placeholder={!isFocus ? 'Select item' : '...'}
+        placeholder={!isFocus ? 'Select Camera' : '...'}
         value={value as string}
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}

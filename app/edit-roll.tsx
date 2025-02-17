@@ -50,7 +50,6 @@ const EditRoll = () => {
           const roll = await queries.select.rollById(params.rollId)
 
           setEditRollInput(roll.roll)
-          setEditDate(new Date(roll.insertedIntoCameraAt))
           setActiveCamera(roll.cameraId)
           setEditId(roll.id)
           setPhase(roll.phase)
@@ -83,11 +82,10 @@ const EditRoll = () => {
     await queries.update.roll(editId, {
       cameraId: newCameraId,
       roll: editRollInput,
-      insertedIntoCameraAt: editDate.toISOString(),
       phase,
     })
     router.back()
-  }, [activeCamera, editDate, editRollInput, newCameraInput, editId, phase])
+  }, [activeCamera, editRollInput, newCameraInput, editId, phase])
 
   if (isLoading) {
     return <Loading />

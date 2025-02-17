@@ -57,9 +57,14 @@ https://docs.expo.dev/submit/ios/
 # SQLite
 
 cd /Users/travisbumgarner/Library/Developer/CoreSimulator/Devices
-find . -name database.db
+find . -name filmtracker.db
 open [pathname]
 Should open in SQLite Browser
+
+## Migrations
+
+1. Make modifications to `schema.ts`
+1. `yarn run db:generate`
 
 # Backups & Restores of Data
 
