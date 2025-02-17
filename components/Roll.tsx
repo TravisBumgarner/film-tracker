@@ -15,9 +15,10 @@ import PhaseDisplay from './PhaseDisplay'
 
 type Props = {
   rollId: string
+  refetchCallback: () => void
 }
 
-const Roll = ({ rollId }: Props) => {
+const Roll = ({ rollId, refetchCallback }: Props) => {
   const [camera, setCamera] = useState<SelectCamera | null>(null)
   const [notes, setNotes] = useState<SelectNote[]>([])
   const [newNoteText, setNewNoteText] = useState('')
@@ -31,7 +32,8 @@ const Roll = ({ rollId }: Props) => {
     setRoll(roll)
     setCamera(camera)
     setNotes(notes)
-  }, [rollId])
+    refetchCallback()
+  }, [rollId, refetchCallback])
 
   useFocusEffect(
     useCallback(() => {

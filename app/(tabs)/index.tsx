@@ -1,8 +1,12 @@
 import Roll from '@/components/Roll'
 import queries from '@/db/queries'
+import { SelectRoll } from '@/db/schema'
 import Button from '@/shared/components/Button'
+import Dropdown from '@/shared/components/Dropdown'
 import PageWrapper from '@/shared/components/PageWrapper'
+import Typography from '@/shared/components/Typography'
 import { SPACING } from '@/shared/theme'
+import { Phase } from '@/shared/types'
 import { router, useFocusEffect } from 'expo-router'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Dimensions, StyleSheet, View } from 'react-native'
@@ -12,28 +16,72 @@ const { width } = Dimensions.get('window')
 
 const Home = () => {
   const scrollViewRef = useRef<ScrollView>(null)
-  const [rollIds, setRollIds] = useState<string[]>([])
+  const [rolls, setRolls] = useState<SelectRoll[]>([])
+  const [filteredRollIds, setFilteredRollIds] = useState<string[]>([])
+  const [selectedPhase, setSelectedPhase] = useState<Phase | ''>('')
   const defaultIndex = 1 // Set your desired default index here
+
+  const fetchRolls = useCallback(() => {
+    queries.select.rolls().then(rolls => setRolls(rolls))
+  }, [])
 
   useFocusEffect(
     useCallback(() => {
       scrollViewRef.current?.scrollTo({ x: 0, y: 0 })
-      queries.select.rolls().then(rolls => setRollIds(rolls.map(roll => roll.id)))
-    }, [])
+      fetchRolls()
+    }, [fetchRolls])
   )
 
   useEffect(() => {
     // Scroll to the first roll
-    if (rollIds.length > 0 && scrollViewRef.current) {
+    if (filteredRollIds.length > 0 && scrollViewRef.current) {
       scrollViewRef.current.scrollTo({ x: width * defaultIndex, animated: true })
     }
-  }, [rollIds, defaultIndex])
+  }, [filteredRollIds, defaultIndex, selectedPhase])
 
   const addRollCallback = useCallback(() => {
     router.push('add-roll')
   }, [])
 
-  if (rollIds.length === 0) {
+  useEffect(() => {
+    if (selectedPhase === '') {
+      setFilteredRollIds(rolls.map(roll => roll.id))
+    } else {
+      setFilteredRollIds(rolls.filter(roll => roll.phase === selectedPhase).map(roll => roll.id))
+    }
+  }, [selectedPhase, rolls])
+
+  const clearFilters = useCallback(() => {
+    setSelectedPhase('')
+    setFilteredRollIds(rolls.map(roll => roll.id))
+  }, [rolls])
+
+  const handlePhaseChange = useCallback(
+    (phase: string) => {
+      setSelectedPhase(phase as Phase)
+      setFilteredRollIds(rolls.filter(roll => roll.phase === phase).map(roll => roll.id))
+    },
+    [rolls]
+  )
+
+  if (filteredRollIds.length === 0) {
+    return (
+      <PageWrapper
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignContent: 'center',
+        }}
+      >
+        <Typography variant="h1">No rolls yet</Typography>
+        <Button variant="filled" color="primary" onPress={clearFilters}>
+          Clear Filters
+        </Button>
+      </PageWrapper>
+    )
+  }
+
+  if (rolls.length === 0) {
     return (
       <PageWrapper
         style={{
@@ -51,6 +99,12 @@ const Home = () => {
 
   return (
     <PageWrapper ignoreMargin>
+      <Dropdown
+        data={[{ label: 'All', value: '' }, ...Object.values(Phase).map(phase => ({ label: phase, value: phase }))]}
+        onChangeCallback={handlePhaseChange}
+        value={selectedPhase}
+        dropdownPosition="bottom"
+      />
       <ScrollView
         ref={scrollViewRef}
         snapToInterval={width} // Snap to the screen width
@@ -65,9 +119,9 @@ const Home = () => {
             Add roll
           </Button>
         </View>
-        {rollIds.map((rollId, index) => (
+        {filteredRollIds.map((rollId, index) => (
           <View style={[styles.rollWrapper, { width: width }]} key={index}>
-            <Roll rollId={rollId} />
+            <Roll rollId={rollId} refetchCallback={fetchRolls} />
           </View>
         ))}
       </ScrollView>
