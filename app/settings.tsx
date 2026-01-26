@@ -22,13 +22,12 @@ import { context } from '@/shared/context'
 import {
   backupToICloud,
   getICloudBackupEnabled,
-  getLastBackupTimestamp,
+  getICloudBackupInfo,
   isIOS,
   restoreFromICloud,
   setICloudBackupEnabled,
 } from '@/shared/icloud'
 import { COLORS, SPACING } from '@/shared/theme'
-import { formatDate } from '@/shared/utilities'
 
 const APP_VERSION = '1.0.0'
 
@@ -36,16 +35,17 @@ export default function Settings() {
   const [isExporting, setIsExporting] = useState(false)
   const [isImporting, setIsImporting] = useState(false)
   const [iCloudEnabled, setICloudEnabled] = useState(false)
-  const [lastBackupDate, setLastBackupDate] = useState<string | null>(null)
+  const [iCloudBackupDate, setICloudBackupDate] = useState<string | null>(null)
+  const [isBackingUpToICloud, setIsBackingUpToICloud] = useState(false)
   const [isRestoringFromICloud, setIsRestoringFromICloud] = useState(false)
   const { dispatch } = useContext(context)
 
   useEffect(() => {
     if (isIOS) {
       getICloudBackupEnabled().then(setICloudEnabled)
-      getLastBackupTimestamp().then(timestamp => {
-        if (timestamp) {
-          setLastBackupDate(formatDate(new Date(timestamp).toISOString()))
+      getICloudBackupInfo().then(info => {
+        if (info.exists && info.backupDate) {
+          setICloudBackupDate(info.backupDate)
         }
       })
     }
@@ -56,9 +56,11 @@ export default function Settings() {
     await setICloudBackupEnabled(enabled)
 
     if (enabled) {
+      setIsBackingUpToICloud(true)
       const result = await backupToICloud()
+      setIsBackingUpToICloud(false)
       if (result.success) {
-        setLastBackupDate(formatDate(new Date().toISOString()))
+        setICloudBackupDate(new Date().toISOString())
         dispatch({
           type: 'TOAST',
           payload: { message: 'iCloud backup enabled', variant: 'SUCCESS' },
@@ -74,6 +76,33 @@ export default function Settings() {
           },
         })
       }
+    }
+  }
+
+  const handleICloudBackup = async () => {
+    setIsBackingUpToICloud(true)
+    try {
+      const result = await backupToICloud()
+      if (result.success) {
+        setICloudBackupDate(new Date().toISOString())
+        dispatch({
+          type: 'TOAST',
+          payload: {
+            message: 'Backup to iCloud successful',
+            variant: 'SUCCESS',
+          },
+        })
+      } else {
+        dispatch({
+          type: 'TOAST',
+          payload: {
+            message: result.error || 'Backup failed',
+            variant: 'ERROR',
+          },
+        })
+      }
+    } finally {
+      setIsBackingUpToICloud(false)
     }
   }
 
@@ -288,27 +317,38 @@ export default function Settings() {
               <Switch
                 value={iCloudEnabled}
                 onValueChange={handleICloudToggle}
+                disabled={isBackingUpToICloud || isRestoringFromICloud}
                 color={COLORS.PRIMARY[300]}
               />
             </View>
-            {lastBackupDate && (
+            {iCloudBackupDate && (
               <Text style={styles.lastBackupText}>
-                Last backup: {lastBackupDate}
+                Last backup: {new Date(iCloudBackupDate).toLocaleString()}
               </Text>
             )}
             <ButtonWrapper
-              full={
+              vertical={[
                 <Button
+                  key="backup"
                   color="primary"
-                  variant="link"
+                  variant="filled"
+                  onPress={handleICloudBackup}
+                  disabled={isBackingUpToICloud || isRestoringFromICloud}
+                >
+                  {isBackingUpToICloud ? 'Backing up...' : 'Backup to iCloud'}
+                </Button>,
+                <Button
+                  key="restore"
+                  color="primary"
+                  variant="filled"
                   onPress={handleRestoreFromICloud}
-                  disabled={isRestoringFromICloud}
+                  disabled={isBackingUpToICloud || isRestoringFromICloud}
                 >
                   {isRestoringFromICloud
                     ? 'Restoring...'
                     : 'Restore from iCloud'}
-                </Button>
-              }
+                </Button>,
+              ]}
             />
           </View>
         )}
