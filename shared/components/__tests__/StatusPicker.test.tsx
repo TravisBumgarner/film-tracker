@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react-native'
-import { RollStatus, type RollStatusType } from '../../types'
+import { RollStatus } from '../../types'
 import StatusPicker from '../StatusPicker'
 
 describe('StatusPicker', () => {
