@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native'
+import { type KeyboardTypeOptions, StyleSheet, View } from 'react-native'
 import { Text, TextInput as TextInputRNP } from 'react-native-paper'
 
 import { BORDER_WIDTH, COLORS, SPACING } from '../theme'
@@ -11,6 +11,7 @@ type Props = {
   color: string
   autoFocus?: boolean
   maxLines?: number
+  keyboardType?: KeyboardTypeOptions
 }
 
 const LINE_HEIGHT = 36
@@ -23,6 +24,7 @@ const TextInput: React.FC<Props> = ({
   color,
   autoFocus,
   maxLines,
+  keyboardType,
 }) => {
   const maxHeight = maxLines ? maxLines * LINE_HEIGHT : undefined
 
@@ -41,6 +43,7 @@ const TextInput: React.FC<Props> = ({
         ])}
         textColor={COLORS.NEUTRAL[200]}
         autoFocus={autoFocus}
+        keyboardType={keyboardType}
         underlineStyle={{
           borderColor: color,
           borderWidth: BORDER_WIDTH.XSMALL,

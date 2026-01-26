@@ -12,25 +12,24 @@ describe('StatusPicker', () => {
   describe('rendering', () => {
     it('renders the current status value', () => {
       render(
-        <StatusPicker value={RollStatus.IN_CAMERA} onChange={mockOnChange} />
+        <StatusPicker value={RollStatus.EXPOSING} onChange={mockOnChange} />
       )
 
-      expect(screen.getByText('In Camera')).toBeTruthy()
+      expect(screen.getByText('Exposing')).toBeTruthy()
       expect(screen.getByText('Status')).toBeTruthy()
     })
 
-    it('renders all five status options when modal is opened', () => {
+    it('renders all four status options when modal is opened', () => {
       render(
-        <StatusPicker value={RollStatus.IN_CAMERA} onChange={mockOnChange} />
+        <StatusPicker value={RollStatus.EXPOSING} onChange={mockOnChange} />
       )
 
       // Open the modal by pressing the trigger
-      fireEvent.press(screen.getByText('In Camera'))
+      fireEvent.press(screen.getByText('Exposing'))
 
       expect(screen.getByText('Select Status')).toBeTruthy()
       // All statuses should be visible in the modal
-      expect(screen.getAllByText('In Camera').length).toBeGreaterThanOrEqual(1)
-      expect(screen.getByText('Exposing')).toBeTruthy()
+      expect(screen.getAllByText('Exposing').length).toBeGreaterThanOrEqual(1)
       expect(screen.getByText('Exposed')).toBeTruthy()
       expect(screen.getByText('Developed')).toBeTruthy()
       expect(screen.getByText('Archived')).toBeTruthy()
@@ -40,15 +39,15 @@ describe('StatusPicker', () => {
   describe('selection', () => {
     it('calls onChange with the selected status when a status is pressed', () => {
       render(
-        <StatusPicker value={RollStatus.IN_CAMERA} onChange={mockOnChange} />
+        <StatusPicker value={RollStatus.EXPOSING} onChange={mockOnChange} />
       )
 
       // Open the modal
-      fireEvent.press(screen.getByText('In Camera'))
-      // Select a different status
       fireEvent.press(screen.getByText('Exposing'))
+      // Select a different status
+      fireEvent.press(screen.getByText('Exposed'))
 
-      expect(mockOnChange).toHaveBeenCalledWith(RollStatus.EXPOSING)
+      expect(mockOnChange).toHaveBeenCalledWith(RollStatus.EXPOSED)
     })
 
     it('calls onChange when pressing a different status', () => {

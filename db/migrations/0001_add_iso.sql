@@ -1,0 +1,1 @@
+ALTER TABLE `roll` ADD `iso` integer;

@@ -8,17 +8,18 @@ import { ROLL_STATUS_LABELS, RollStatus, type RollStatusType } from '../types'
 type Props = {
   value: RollStatusType
   onChange: (status: RollStatusType) => void
+  compact?: boolean
 }
 
 const STATUS_ORDER: RollStatusType[] = [
-  RollStatus.IN_CAMERA,
   RollStatus.EXPOSING,
   RollStatus.EXPOSED,
   RollStatus.DEVELOPED,
   RollStatus.ARCHIVED,
+  RollStatus.ABANDONED,
 ]
 
-const StatusPicker: React.FC<Props> = ({ value, onChange }) => {
+const StatusPicker: React.FC<Props> = ({ value, onChange, compact = false }) => {
   const [modalVisible, setModalVisible] = useState(false)
 
   const handleSelect = (status: RollStatusType) => {
@@ -28,7 +29,10 @@ const StatusPicker: React.FC<Props> = ({ value, onChange }) => {
 
   return (
     <>
-      <Pressable style={styles.trigger} onPress={() => setModalVisible(true)}>
+      <Pressable
+        style={compact ? styles.triggerCompact : styles.trigger}
+        onPress={() => setModalVisible(true)}
+      >
         <Text style={styles.label}>Status</Text>
         <View
           style={[
@@ -88,15 +92,17 @@ const styles = StyleSheet.create({
   trigger: {
     paddingVertical: SPACING.MEDIUM,
   },
+  triggerCompact: {
+    paddingVertical: SPACING.XSMALL,
+  },
   label: {
     color: COLORS.NEUTRAL[400],
-    paddingBottom: SPACING.MEDIUM,
+    paddingBottom: SPACING.XSMALL,
+    fontSize: 12,
   },
   selectedValue: {
     paddingHorizontal: SPACING.MEDIUM,
     paddingVertical: SPACING.SMALL,
-    borderRadius: BORDER_RADIUS.SMALL,
-    alignSelf: 'flex-start',
   },
   selectedText: {
     color: COLORS.NEUTRAL[900],

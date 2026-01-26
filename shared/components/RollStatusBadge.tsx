@@ -1,7 +1,7 @@
 import { StyleSheet, View } from 'react-native'
 import { Text } from 'react-native-paper'
 
-import { BORDER_RADIUS, COLORS, ROLL_STATUS_COLORS, SPACING } from '../theme'
+import { COLORS, ROLL_STATUS_COLORS, SPACING } from '../theme'
 import { ROLL_STATUS_LABELS, type RollStatusType } from '../types'
 
 type Props = {
@@ -23,7 +23,6 @@ const styles = StyleSheet.create({
   badge: {
     paddingHorizontal: SPACING.XSMALL,
     paddingVertical: SPACING.XXSMALL,
-    borderRadius: BORDER_RADIUS.SMALL,
   },
   text: {
     color: COLORS.NEUTRAL[900],

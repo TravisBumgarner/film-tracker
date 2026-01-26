@@ -7,6 +7,7 @@ import { MD3DarkTheme, PaperProvider } from 'react-native-paper'
 
 import { db } from '@/db/client'
 import migrations from '@/db/migrations/migrations'
+import { seedDatabase } from '@/db/seed'
 import Toast from '@/shared/components/Toast'
 import Context from '@/shared/context'
 
@@ -39,7 +40,9 @@ const AppWrapper = () => {
 
   useEffect(() => {
     if (success) {
-      SplashScreen.hideAsync()
+      seedDatabase().then(() => {
+        SplashScreen.hideAsync()
+      })
     }
   }, [success])
 

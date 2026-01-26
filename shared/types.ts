@@ -2,21 +2,21 @@ export type PartialWithRequiredKeys<T, K extends keyof T> = Partial<T> &
   Pick<T, K>
 
 export const RollStatus = {
-  IN_CAMERA: 'IN_CAMERA',
   EXPOSING: 'EXPOSING',
   EXPOSED: 'EXPOSED',
   DEVELOPED: 'DEVELOPED',
   ARCHIVED: 'ARCHIVED',
+  ABANDONED: 'ABANDONED',
 } as const
 
 export type RollStatusType = (typeof RollStatus)[keyof typeof RollStatus]
 
 export const ROLL_STATUS_LABELS: Record<RollStatusType, string> = {
-  IN_CAMERA: 'In Camera',
   EXPOSING: 'Exposing',
   EXPOSED: 'Exposed',
   DEVELOPED: 'Developed',
   ARCHIVED: 'Archived',
+  ABANDONED: 'Abandoned',
 }
 
 export type URLParams = {
@@ -42,11 +42,15 @@ export type Roll = {
   status: RollStatusType
   frameCount: number
   framesShot: number | null
+  iso: number | null
   notes: string | null
   createdAt: string
   updatedAt: string | null
-  startedAt: string | null
+  exposingAt: string | null
+  exposedAt: string | null
   developedAt: string | null
+  archivedAt: string | null
+  abandonedAt: string | null
 }
 
 export type RollPhoto = {

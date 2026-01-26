@@ -18,7 +18,7 @@ const Button = ({
   icon,
 }: {
   children: React.ReactNode
-  color: 'primary' | 'warning'
+  color: 'primary' | 'warning' | 'neutral'
   onPress: () => void
   disabled?: boolean
   icon?: IconSource
@@ -85,6 +85,37 @@ const Button = ({
           </Text>
         </ButtonRNP>
       )
+    case 'neutral':
+      return (
+        <ButtonRNP
+          style={StyleSheet.flatten([
+            {
+              ...buttonStyles.base,
+              ...(variant === 'filled'
+                ? buttonStyles.neutralFilled
+                : buttonStyles.neutralLink),
+              ...(disabled ? { backgroundColor: COLORS.NEUTRAL[700] } : {}),
+            },
+          ])}
+          {...SHARED}
+          onPress={onPress}
+          disabled={disabled}
+          icon={icon}
+        >
+          <Text
+            style={StyleSheet.flatten([
+              {
+                ...(variant === 'filled'
+                  ? textStyles.neutralFilled
+                  : textStyles.neutralLink),
+                ...(disabled ? { color: COLORS.NEUTRAL[400] } : {}),
+              },
+            ])}
+          >
+            {children}
+          </Text>
+        </ButtonRNP>
+      )
   }
 }
 
@@ -105,6 +136,12 @@ const buttonStyles = StyleSheet.create({
   warningLink: {
     backgroundColor: COLORS.MISC.TRANSPARENT,
   },
+  neutralFilled: {
+    backgroundColor: COLORS.NEUTRAL[600],
+  },
+  neutralLink: {
+    backgroundColor: COLORS.MISC.TRANSPARENT,
+  },
 })
 
 const textStyles = StyleSheet.create({
@@ -121,6 +158,13 @@ const textStyles = StyleSheet.create({
   },
   warningLink: {
     color: COLORS.WARNING[300],
+  },
+  neutralFilled: {
+    color: COLORS.NEUTRAL[100],
+    fontWeight: 'bold',
+  },
+  neutralLink: {
+    color: COLORS.NEUTRAL[400],
   },
 })
 

@@ -28,14 +28,18 @@ export const RollsTable = sqliteTable('roll', {
     .references(() => CamerasTable.id, { onDelete: 'cascade' })
     .notNull(),
   filmStock: text('filmStock').notNull(),
-  status: text('status').notNull().default('IN_CAMERA'),
+  status: text('status').notNull().default('EXPOSING'),
   frameCount: integer('frameCount').notNull().default(36),
   framesShot: integer('framesShot'),
+  iso: integer('iso'),
   notes: text('notes'),
   createdAt: text('createdAt').notNull(),
   updatedAt: text('updatedAt'),
-  startedAt: text('startedAt'),
+  exposingAt: text('exposingAt'),
+  exposedAt: text('exposedAt'),
   developedAt: text('developedAt'),
+  archivedAt: text('archivedAt'),
+  abandonedAt: text('abandonedAt'),
 })
 
 export type SelectRoll = typeof RollsTable.$inferSelect
@@ -48,11 +52,15 @@ export const RollRunType = Record({
   status: String,
   frameCount: Number,
   framesShot: Number.Or(Null),
+  iso: Number.Or(Null),
   notes: String.Or(Null),
   createdAt: String,
   updatedAt: String.Or(Null),
-  startedAt: String.Or(Null),
+  exposingAt: String.Or(Null),
+  exposedAt: String.Or(Null),
   developedAt: String.Or(Null),
+  archivedAt: String.Or(Null),
+  abandonedAt: String.Or(Null),
 })
 
 export const RollPhotosTable = sqliteTable('roll_photo', {

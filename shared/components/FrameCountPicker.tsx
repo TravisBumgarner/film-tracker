@@ -7,11 +7,12 @@ import { BORDER_RADIUS, BORDER_WIDTH, COLORS, SPACING } from '../theme'
 type Props = {
   value: number
   onChange: (count: number) => void
+  compact?: boolean
 }
 
 const PRESET_COUNTS = [12, 24, 36]
 
-const FrameCountPicker: React.FC<Props> = ({ value, onChange }) => {
+const FrameCountPicker: React.FC<Props> = ({ value, onChange, compact = false }) => {
   const [modalVisible, setModalVisible] = useState(false)
   const [customValue, setCustomValue] = useState('')
 
@@ -31,10 +32,13 @@ const FrameCountPicker: React.FC<Props> = ({ value, onChange }) => {
 
   return (
     <>
-      <Pressable style={styles.trigger} onPress={() => setModalVisible(true)}>
-        <Text style={styles.label}>Frame Count</Text>
+      <Pressable
+        style={compact ? styles.triggerCompact : styles.trigger}
+        onPress={() => setModalVisible(true)}
+      >
+        <Text style={styles.label}>Frames</Text>
         <View style={styles.selectedValue}>
-          <Text style={styles.selectedText}>{value} frames</Text>
+          <Text style={styles.selectedText}>{value}</Text>
         </View>
       </Pressable>
 
@@ -100,16 +104,18 @@ const styles = StyleSheet.create({
   trigger: {
     paddingVertical: SPACING.MEDIUM,
   },
+  triggerCompact: {
+    paddingVertical: SPACING.XSMALL,
+  },
   label: {
     color: COLORS.NEUTRAL[400],
-    paddingBottom: SPACING.MEDIUM,
+    paddingBottom: SPACING.XSMALL,
+    fontSize: 12,
   },
   selectedValue: {
     paddingHorizontal: SPACING.MEDIUM,
     paddingVertical: SPACING.SMALL,
-    borderRadius: BORDER_RADIUS.SMALL,
     backgroundColor: COLORS.NEUTRAL[700],
-    alignSelf: 'flex-start',
   },
   selectedText: {
     color: COLORS.NEUTRAL[200],
