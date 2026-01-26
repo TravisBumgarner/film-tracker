@@ -1,0 +1,40 @@
+{
+  "cli": {
+    "version": ">= 9.1.0",
+    "appVersionSource": "local"
+  },
+  "build": {
+    "dev": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "EXPO_BUNDLE_IDENTIFIER": "com.sillysideprojects.filmtracker.dev",
+        "EXPO_APP_NAME": "Film Tracker Dev"
+      }
+    },
+    "internal": {
+      "distribution": "internal",
+      "env": {
+        "EXPO_BUNDLE_IDENTIFIER": "com.sillysideprojects.filmtracker.internal",
+        "EXPO_APP_NAME": "Film Tracker Internal"
+      }
+    },
+    "testflight": {
+      "distribution": "store",
+      "env": {
+        "EXPO_BUNDLE_IDENTIFIER": "com.sillysideprojects.filmtracker.prod",
+        "EXPO_APP_NAME": "Film Tracker"
+      }
+    },
+    "production": {
+      "distribution": "store",
+      "env": {
+        "EXPO_BUNDLE_IDENTIFIER": "com.sillysideprojects.filmtracker.prod",
+        "EXPO_APP_NAME": "Film Tracker"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

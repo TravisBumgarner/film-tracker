@@ -1,0 +1,377 @@
+project: Film Tracker
+repo: TravisBumgarner/film-tracker
+design_file: designs/film-tracker/DESIGN.md
+scoping_date: 2026-01-25
+
+milestones:
+  - number: 1
+    title: "1. Project Foundation"
+    description: Initialize Expo project with TypeScript, Biome, Drizzle, theme, and shared components
+    branch:
+      working: 1-project-foundation
+      base: main
+
+  - number: 2
+    title: "2. Camera Management"
+    description: Camera pager navigation and CRUD operations for cameras
+    branch:
+      working: 7-camera-management
+      base: main
+
+  - number: 3
+    title: "3. Roll Management"
+    description: Roll listing, CRUD operations, status management, and detail views
+    branch:
+      working: 12-roll-management
+      base: main
+
+  - number: 4
+    title: "4. Photos & Settings"
+    description: Photo picker integration, photo storage, and settings screen
+    branch:
+      working: 18-photos-settings
+      base: main
+
+tasks:
+  # Milestone 1: Project Foundation
+  - id: 1
+    github_issue: 1
+    milestone: 1
+    title: Initialize Expo project with TypeScript configuration
+    description: |
+      Initialize a new Expo project with TypeScript, copying the configuration patterns from ideas-down-quickly.
+
+      Set up app.config.js, eas.json, babel.config.js, and the basic app/_layout.tsx with providers.
+    acceptance_criteria:
+      - Create new Expo project with npx create-expo-app
+      - Configure TypeScript (tsconfig.json matching reference project)
+      - Set up app.config.js with Film Tracker branding
+      - Configure eas.json with dev/internal/testflight/production profiles
+      - Add required dependencies (expo-router, react-native-paper, drizzle-orm, etc.)
+      - Create basic app/_layout.tsx with providers
+      - Verify app runs on iOS simulator
+    depends_on: []
+    effort: 2
+    status: scoped
+
+  - id: 2
+    github_issue: 2
+    milestone: 1
+    title: Configure Biome linting and formatting
+    description: |
+      Set up Biome for linting and formatting, copying the configuration from ideas-down-quickly.
+    acceptance_criteria:
+      - Copy biome.json from reference project
+      - Add Biome dev dependency
+      - Add npm scripts: lint, lint:fix, format, typecheck
+      - Verify linting works and fix any initial errors
+    depends_on: [1]
+    effort: 1
+    status: scoped
+
+  - id: 3
+    github_issue: 3
+    milestone: 1
+    title: Set up theme and design tokens
+    description: |
+      Create the theme configuration with design tokens for colors, spacing, borders, and typography.
+      Include ROLL_STATUS_COLORS mapping for status badges.
+    acceptance_criteria:
+      - Create shared/theme.tsx with COLORS object (NEUTRAL, PRIMARY, SECONDARY, SUCCESS, WARNING, ERROR)
+      - Add SPACING, BORDER_RADIUS, BORDER_WIDTH constants
+      - Add ROLL_STATUS_COLORS mapping for status badges
+    depends_on: [1]
+    effort: 1
+    status: scoped
+
+  - id: 4
+    github_issue: 4
+    milestone: 1
+    title: Create shared utility functions and types
+    description: |
+      Set up shared TypeScript types and utility functions for the app.
+      Includes RollStatus enum, URL parameters, and context for toast notifications.
+    acceptance_criteria:
+      - Create shared/types.ts with RollStatus enum, URLParams, Camera and Roll types
+      - Create shared/utilities.ts with navigateWithParams, date formatting, UUID wrapper
+      - Create shared/context.tsx with toast notification state management
+    depends_on: [1]
+    effort: 2
+    status: scoped
+
+  - id: 5
+    github_issue: 5
+    milestone: 1
+    title: Set up Drizzle ORM with database schema
+    description: |
+      Configure Drizzle ORM with SQLite and create the database schema for cameras, rolls, and photos.
+    acceptance_criteria:
+      - Create drizzle.config.ts
+      - Create db/schema.ts with CamerasTable, RollsTable, RollPhotosTable
+      - Create db/client.ts with database initialization
+      - Generate initial migration with drizzle-kit
+      - Update app/_layout.tsx to run migrations on startup
+    depends_on: [1]
+    effort: 2
+    status: scoped
+
+  - id: 6
+    github_issue: 6
+    milestone: 1
+    title: Create shared UI components
+    description: |
+      Create the shared UI component library copying patterns from ideas-down-quickly.
+      Includes Button, ButtonWrapper, TextInput, Typography, PageWrapper, and Toast.
+    acceptance_criteria:
+      - Create Button.tsx (primary/warning colors, filled/link variants)
+      - Create ButtonWrapper.tsx (layout for button groups)
+      - Create TextInput.tsx (multiline support, labels)
+      - Create Typography.tsx (h1, h2, body1, caption variants)
+      - Create PageWrapper.tsx (SafeAreaView, KeyboardAvoidingView)
+      - Create Toast.tsx (Snackbar-based notifications)
+    depends_on: [3, 4]
+    effort: 2
+    status: scoped
+
+  # Milestone 2: Camera Management
+  - id: 7
+    github_issue: 7
+    milestone: 2
+    title: Create camera database queries
+    description: |
+      Implement database query functions for camera CRUD operations.
+    acceptance_criteria:
+      - Create select queries: cameras(), cameraById()
+      - Create insert query: camera()
+      - Create update queries: camera(), reorderCameras()
+      - Create delete query: camera() (with cascade to rolls)
+    depends_on: [5]
+    effort: 2
+    status: scoped
+
+  - id: 8
+    github_issue: 8
+    milestone: 2
+    title: Build camera pager main screen
+    description: |
+      Create the main screen with horizontal paging between cameras.
+      Swiping left from the first camera shows the add camera UI.
+    acceptance_criteria:
+      - Create app/index.tsx with horizontal FlatList/PagerView
+      - Implement pagingEnabled for snap-to-camera behavior
+      - First page (leftmost) shows "Add Camera" prompt
+      - Track current camera index and show page indicator dots
+      - Load cameras from database on focus
+    depends_on: [6, 7, 9]
+    effort: 3
+    status: scoped
+
+  - id: 9
+    github_issue: 9
+    milestone: 2
+    title: Create CameraCard component
+    description: |
+      Create the CameraCard component that displays a camera's information and its rolls grouped by status.
+    acceptance_criteria:
+      - Create shared/components/CameraCard.tsx
+      - Display camera name, notes, and rolls grouped by status
+      - Add Edit Camera button and Add Roll button
+      - Handle empty state (no rolls)
+    depends_on: [6]
+    effort: 2
+    status: scoped
+
+  - id: 10
+    github_issue: 10
+    milestone: 2
+    title: Create add camera modal screen
+    description: |
+      Create the modal screen for adding a new camera.
+    acceptance_criteria:
+      - Create app/add-camera.tsx as modal screen
+      - Add TextInput for name (required) and notes (optional)
+      - Validate and insert camera with next sortOrder
+      - Show success toast and navigate back
+    depends_on: [6, 7]
+    effort: 2
+    status: scoped
+
+  - id: 11
+    github_issue: 11
+    milestone: 2
+    title: Create edit camera modal screen
+    description: |
+      Create the modal screen for editing an existing camera.
+    acceptance_criteria:
+      - Create app/edit-camera.tsx as modal screen
+      - Accept cameraId route parameter and load data
+      - Allow editing name and notes
+      - Add Delete button with confirmation dialog
+      - Show success toast and navigate back
+    depends_on: [6, 7]
+    effort: 2
+    status: scoped
+
+  # Milestone 3: Roll Management
+  - id: 12
+    github_issue: 12
+    milestone: 3
+    title: Create roll database queries
+    description: |
+      Implement database query functions for roll CRUD operations.
+    acceptance_criteria:
+      - Create select queries: rollsByCameraId(), rollById()
+      - Create insert query: roll()
+      - Create update queries: roll(), rollStatus() with timestamp handling
+      - Create delete query: roll() (with cascade to photos)
+    depends_on: [5]
+    effort: 2
+    status: scoped
+
+  - id: 13
+    github_issue: 13
+    milestone: 3
+    title: Create RollCard and RollStatusBadge components
+    description: |
+      Create components for displaying roll information in the camera view.
+    acceptance_criteria:
+      - Create RollStatusBadge.tsx with color-coded status display
+      - Create RollCard.tsx with film stock, status badge, frame count, and notes preview
+      - Add tap handler to navigate to roll detail
+    depends_on: [3, 6]
+    effort: 2
+    status: scoped
+
+  - id: 14
+    github_issue: 14
+    milestone: 3
+    title: Create add roll modal screen
+    description: |
+      Create the modal screen for adding a new roll to a camera.
+    acceptance_criteria:
+      - Create app/add-roll.tsx as modal screen
+      - Accept cameraId route parameter
+      - Add inputs for film stock, status, frame count, notes
+      - Validate and insert roll linked to camera
+      - Show success toast and navigate back
+    depends_on: [6, 12, 15]
+    effort: 2
+    status: scoped
+
+  - id: 15
+    github_issue: 15
+    milestone: 3
+    title: Create StatusPicker component
+    description: |
+      Create a dropdown/modal component for selecting roll status.
+    acceptance_criteria:
+      - Create shared/components/StatusPicker.tsx
+      - Display all 5 statuses with color coding
+      - Highlight current selection and trigger callback on change
+    depends_on: [3]
+    effort: 1
+    status: scoped
+
+  - id: 16
+    github_issue: 16
+    milestone: 3
+    title: Create edit roll modal screen
+    description: |
+      Create the modal screen for editing an existing roll.
+    acceptance_criteria:
+      - Create app/edit-roll.tsx as modal screen
+      - Accept rollId route parameter and load data
+      - Allow editing all fields: film stock, status, frame count, notes
+      - Add Delete button with confirmation dialog
+      - Show success toast and navigate back
+    depends_on: [6, 12, 15]
+    effort: 2
+    status: scoped
+
+  - id: 17
+    github_issue: 17
+    milestone: 3
+    title: Create roll detail modal screen
+    description: |
+      Create the modal screen for viewing roll details with full information.
+    acceptance_criteria:
+      - Create app/roll-detail.tsx as modal screen
+      - Display all roll information: film stock, camera, status, dates, notes
+      - Add Edit button and quick status change button
+      - Placeholder for PhotoGrid (added in task #21)
+    depends_on: [6, 12, 13]
+    effort: 2
+    status: scoped
+
+  # Milestone 4: Photos & Settings
+  - id: 18
+    github_issue: 18
+    milestone: 4
+    title: Create photo database queries
+    description: |
+      Implement database query functions for roll photo CRUD operations.
+    acceptance_criteria:
+      - Create select query: photosByRollId()
+      - Create insert query: photo()
+      - Create delete query: photo() with filesystem cleanup
+    depends_on: [5]
+    effort: 1
+    status: scoped
+
+  - id: 19
+    github_issue: 19
+    milestone: 4
+    title: Implement photo picker and storage
+    description: |
+      Create utilities for capturing/selecting photos and storing them locally.
+    acceptance_criteria:
+      - Add expo-image-picker and expo-file-system dependencies
+      - Create shared/photoUtils.ts with pickImage, takePhoto, savePhotoToApp, deletePhotoFile
+      - Handle permissions for camera and photo library
+    depends_on: [1]
+    effort: 2
+    status: scoped
+
+  - id: 20
+    github_issue: 20
+    milestone: 4
+    title: Create PhotoGrid component
+    description: |
+      Create a grid component for displaying and managing photos attached to a roll.
+    acceptance_criteria:
+      - Create shared/components/PhotoGrid.tsx
+      - Display photos in responsive grid with add button
+      - Show action sheet for Take Photo / Choose from Library
+      - Tap to view full size, long press to delete
+    depends_on: [18, 19]
+    effort: 2
+    status: scoped
+
+  - id: 21
+    github_issue: 21
+    milestone: 4
+    title: Integrate PhotoGrid into roll screens
+    description: |
+      Add photo management functionality to add-roll, edit-roll, and roll-detail screens.
+    acceptance_criteria:
+      - Add PhotoGrid to add-roll, edit-roll, and roll-detail screens
+      - Save photo references to database when roll is saved
+      - Delete photos from database and filesystem when removed
+    depends_on: [14, 16, 17, 20]
+    effort: 2
+    status: scoped
+
+  - id: 22
+    github_issue: 22
+    milestone: 4
+    title: Create settings screen
+    description: |
+      Create a settings screen accessible from the main view for app configuration and data management.
+    acceptance_criteria:
+      - Create app/settings.tsx screen with settings button in main header
+      - Add export data (JSON backup) and import data (restore) options
+      - Add delete all data with confirmation
+      - Show appropriate toasts for success/error
+    depends_on: [6, 7, 12]
+    effort: 2
+    status: scoped
