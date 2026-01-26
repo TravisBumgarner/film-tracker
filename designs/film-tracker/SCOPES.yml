@@ -52,7 +52,7 @@ tasks:
       - Verify app runs on iOS simulator
     depends_on: []
     effort: 2
-    status: scoped
+    status: completed
 
   - id: 2
     github_issue: 2
@@ -67,7 +67,7 @@ tasks:
       - Verify linting works and fix any initial errors
     depends_on: [1]
     effort: 1
-    status: scoped
+    status: completed
 
   - id: 3
     github_issue: 3
@@ -82,7 +82,7 @@ tasks:
       - Add ROLL_STATUS_COLORS mapping for status badges
     depends_on: [1]
     effort: 1
-    status: scoped
+    status: completed
 
   - id: 4
     github_issue: 4
@@ -97,7 +97,7 @@ tasks:
       - Create shared/context.tsx with toast notification state management
     depends_on: [1]
     effort: 2
-    status: scoped
+    status: completed
 
   - id: 5
     github_issue: 5
@@ -113,7 +113,7 @@ tasks:
       - Update app/_layout.tsx to run migrations on startup
     depends_on: [1]
     effort: 2
-    status: scoped
+    status: completed
 
   - id: 6
     github_issue: 6
@@ -131,7 +131,7 @@ tasks:
       - Create Toast.tsx (Snackbar-based notifications)
     depends_on: [3, 4]
     effort: 2
-    status: scoped
+    status: completed
 
   # Milestone 2: Camera Management
   - id: 7
