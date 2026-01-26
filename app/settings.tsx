@@ -2,9 +2,9 @@ import * as DocumentPicker from 'expo-document-picker'
 import * as FileSystem from 'expo-file-system'
 import { router } from 'expo-router'
 import * as Sharing from 'expo-sharing'
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
-import { Text } from 'react-native-paper'
+import { Switch, Text } from 'react-native-paper'
 import {
   deleteAllData,
   selectCameras,
@@ -19,6 +19,14 @@ import {
   Typography,
 } from '@/shared/components'
 import { context } from '@/shared/context'
+import {
+  backupToICloud,
+  getICloudBackupEnabled,
+  getICloudBackupInfo,
+  isIOS,
+  restoreFromICloud,
+  setICloudBackupEnabled,
+} from '@/shared/icloud'
 import { COLORS, SPACING } from '@/shared/theme'
 
 const APP_VERSION = '1.0.0'
@@ -26,7 +34,116 @@ const APP_VERSION = '1.0.0'
 export default function Settings() {
   const [isExporting, setIsExporting] = useState(false)
   const [isImporting, setIsImporting] = useState(false)
+  const [iCloudEnabled, setICloudEnabled] = useState(false)
+  const [iCloudBackupDate, setICloudBackupDate] = useState<string | null>(null)
+  const [isBackingUpToICloud, setIsBackingUpToICloud] = useState(false)
+  const [isRestoringFromICloud, setIsRestoringFromICloud] = useState(false)
   const { dispatch } = useContext(context)
+
+  useEffect(() => {
+    if (isIOS) {
+      getICloudBackupEnabled().then(setICloudEnabled)
+      getICloudBackupInfo().then(info => {
+        if (info.exists && info.backupDate) {
+          setICloudBackupDate(info.backupDate)
+        }
+      })
+    }
+  }, [])
+
+  const handleICloudToggle = async (enabled: boolean) => {
+    setICloudEnabled(enabled)
+    await setICloudBackupEnabled(enabled)
+
+    if (enabled) {
+      setIsBackingUpToICloud(true)
+      const result = await backupToICloud()
+      setIsBackingUpToICloud(false)
+      if (result.success) {
+        setICloudBackupDate(new Date().toISOString())
+        dispatch({
+          type: 'TOAST',
+          payload: { message: 'iCloud backup enabled', variant: 'SUCCESS' },
+        })
+      } else {
+        setICloudEnabled(false)
+        await setICloudBackupEnabled(false)
+        dispatch({
+          type: 'TOAST',
+          payload: {
+            message: result.error || 'Failed to enable iCloud backup',
+            variant: 'ERROR',
+          },
+        })
+      }
+    }
+  }
+
+  const handleICloudBackup = async () => {
+    setIsBackingUpToICloud(true)
+    try {
+      const result = await backupToICloud()
+      if (result.success) {
+        setICloudBackupDate(new Date().toISOString())
+        dispatch({
+          type: 'TOAST',
+          payload: {
+            message: 'Backup to iCloud successful',
+            variant: 'SUCCESS',
+          },
+        })
+      } else {
+        dispatch({
+          type: 'TOAST',
+          payload: {
+            message: result.error || 'Backup failed',
+            variant: 'ERROR',
+          },
+        })
+      }
+    } finally {
+      setIsBackingUpToICloud(false)
+    }
+  }
+
+  const handleRestoreFromICloud = () => {
+    Alert.alert(
+      'Restore from iCloud',
+      'This will replace all existing data with data from your iCloud backup. Are you sure?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Restore',
+          style: 'destructive',
+          onPress: async () => {
+            setIsRestoringFromICloud(true)
+            try {
+              const result = await restoreFromICloud()
+              if (result.success) {
+                dispatch({
+                  type: 'TOAST',
+                  payload: {
+                    message: `Restored ${result.restoredCameras} cameras, ${result.restoredRolls} rolls, ${result.restoredPhotos} photos`,
+                    variant: 'SUCCESS',
+                  },
+                })
+              } else {
+                dispatch({
+                  type: 'TOAST',
+                  payload: {
+                    message: result.error || 'Failed to restore from iCloud',
+                    variant: 'ERROR',
+                  },
+                })
+              }
+            } finally {
+              setIsRestoringFromICloud(false)
+            }
+          },
+        },
+      ]
+    )
+  }
 
   const handleExport = async () => {
     setIsExporting(true)
@@ -189,8 +306,55 @@ export default function Settings() {
   return (
     <PageWrapper title="Settings">
       <View style={styles.content}>
+        {isIOS && (
+          <View style={styles.section}>
+            <Typography variant="h2">iCloud Backup</Typography>
+            <Text style={styles.sectionDescription}>
+              Automatically backup your data to iCloud daily.
+            </Text>
+            <View style={styles.toggleRow}>
+              <Text style={styles.toggleLabel}>Auto-backup daily</Text>
+              <Switch
+                value={iCloudEnabled}
+                onValueChange={handleICloudToggle}
+                disabled={isBackingUpToICloud || isRestoringFromICloud}
+                color={COLORS.PRIMARY[300]}
+              />
+            </View>
+            {iCloudBackupDate && (
+              <Text style={styles.lastBackupText}>
+                Last backup: {new Date(iCloudBackupDate).toLocaleString()}
+              </Text>
+            )}
+            <ButtonWrapper
+              vertical={[
+                <Button
+                  key="backup"
+                  color="primary"
+                  variant="filled"
+                  onPress={handleICloudBackup}
+                  disabled={isBackingUpToICloud || isRestoringFromICloud}
+                >
+                  {isBackingUpToICloud ? 'Backing up...' : 'Backup to iCloud'}
+                </Button>,
+                <Button
+                  key="restore"
+                  color="primary"
+                  variant="filled"
+                  onPress={handleRestoreFromICloud}
+                  disabled={isBackingUpToICloud || isRestoringFromICloud}
+                >
+                  {isRestoringFromICloud
+                    ? 'Restoring...'
+                    : 'Restore from iCloud'}
+                </Button>,
+              ]}
+            />
+          </View>
+        )}
+
         <View style={styles.section}>
-          <Typography variant="h2">Data Management</Typography>
+          <Typography variant="h2">Manual Backup</Typography>
           <Text style={styles.sectionDescription}>
             Export your data for backup or import from a previous backup.
           </Text>
@@ -259,6 +423,20 @@ const styles = StyleSheet.create({
   sectionDescription: {
     color: COLORS.NEUTRAL[400],
     marginTop: SPACING.XSMALL,
+    marginBottom: SPACING.MEDIUM,
+  },
+  toggleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: SPACING.SMALL,
+  },
+  toggleLabel: {
+    color: COLORS.NEUTRAL[200],
+    fontSize: 16,
+  },
+  lastBackupText: {
+    color: COLORS.NEUTRAL[400],
     marginBottom: SPACING.MEDIUM,
   },
   versionSection: {
