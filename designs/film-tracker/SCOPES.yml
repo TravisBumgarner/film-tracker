@@ -316,7 +316,7 @@ tasks:
       - Create delete query: photo() with filesystem cleanup
     depends_on: [5]
     effort: 1
-    status: implementing
+    status: completed
 
   - id: 19
     github_issue: 19
