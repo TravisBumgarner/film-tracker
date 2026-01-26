@@ -10,6 +10,7 @@ import migrations from '@/db/migrations/migrations'
 import { seedDatabase } from '@/db/seed'
 import Toast from '@/shared/components/Toast'
 import Context from '@/shared/context'
+import { performDailyBackupIfNeeded } from '@/shared/icloud'
 
 SplashScreen.preventAutoHideAsync()
 
@@ -40,9 +41,11 @@ const AppWrapper = () => {
 
   useEffect(() => {
     if (success) {
-      seedDatabase().then(() => {
-        SplashScreen.hideAsync()
-      })
+      seedDatabase()
+        .then(() => performDailyBackupIfNeeded())
+        .then(() => {
+          SplashScreen.hideAsync()
+        })
     }
   }, [success])
 

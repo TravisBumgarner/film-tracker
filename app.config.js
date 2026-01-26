@@ -43,7 +43,18 @@ const config = () => ({
       output: 'static',
       favicon: './assets/images/favicon.png',
     },
-    plugins: ['expo-router', 'expo-font', 'expo-sqlite', 'expo-image-picker'],
+    plugins: [
+      'expo-router',
+      'expo-font',
+      'expo-sqlite',
+      'expo-image-picker',
+      [
+        'react-native-cloud-storage',
+        {
+          iCloudContainerEnvironment: 'Production',
+        },
+      ],
+    ],
     experiments: {
       typedRoutes: true,
     },
@@ -52,7 +63,7 @@ const config = () => ({
         origin: false,
       },
       eas: {
-        projectId: '',
+        projectId: '499e5b8b-b2bb-46a4-a6fc-dafaa25c7049',
       },
     },
   },
