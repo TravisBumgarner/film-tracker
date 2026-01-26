@@ -164,7 +164,7 @@ tasks:
       - Load cameras from database on focus
     depends_on: [6, 7, 9]
     effort: 3
-    status: scoped
+    status: completed
 
   - id: 9
     github_issue: 9
@@ -179,7 +179,7 @@ tasks:
       - Handle empty state (no rolls)
     depends_on: [6]
     effort: 2
-    status: scoped
+    status: completed
 
   - id: 10
     github_issue: 10
@@ -194,7 +194,7 @@ tasks:
       - Show success toast and navigate back
     depends_on: [6, 7]
     effort: 2
-    status: scoped
+    status: completed
 
   - id: 11
     github_issue: 11
@@ -210,7 +210,7 @@ tasks:
       - Show success toast and navigate back
     depends_on: [6, 7]
     effort: 2
-    status: scoped
+    status: completed
 
   # Milestone 3: Roll Management
   - id: 12
@@ -226,7 +226,7 @@ tasks:
       - Create delete query: roll() (with cascade to photos)
     depends_on: [5]
     effort: 2
-    status: scoped
+    status: completed
 
   - id: 13
     github_issue: 13
@@ -240,7 +240,7 @@ tasks:
       - Add tap handler to navigate to roll detail
     depends_on: [3, 6]
     effort: 2
-    status: scoped
+    status: completed
 
   - id: 14
     github_issue: 14
@@ -256,7 +256,7 @@ tasks:
       - Show success toast and navigate back
     depends_on: [6, 12, 15]
     effort: 2
-    status: scoped
+    status: completed
 
   - id: 15
     github_issue: 15
@@ -286,7 +286,7 @@ tasks:
       - Show success toast and navigate back
     depends_on: [6, 12, 15]
     effort: 2
-    status: scoped
+    status: completed
 
   - id: 17
     github_issue: 17
@@ -301,7 +301,7 @@ tasks:
       - Placeholder for PhotoGrid (added in task #21)
     depends_on: [6, 12, 13]
     effort: 2
-    status: scoped
+    status: completed
 
   # Milestone 4: Photos & Settings
   - id: 18
@@ -330,7 +330,7 @@ tasks:
       - Handle permissions for camera and photo library
     depends_on: [1]
     effort: 2
-    status: scoped
+    status: completed
 
   - id: 20
     github_issue: 20
@@ -345,7 +345,7 @@ tasks:
       - Tap to view full size, long press to delete
     depends_on: [18, 19]
     effort: 2
-    status: scoped
+    status: completed
 
   - id: 21
     github_issue: 21
@@ -359,7 +359,7 @@ tasks:
       - Delete photos from database and filesystem when removed
     depends_on: [14, 16, 17, 20]
     effort: 2
-    status: scoped
+    status: completed
 
   - id: 22
     github_issue: 22
@@ -374,4 +374,4 @@ tasks:
       - Show appropriate toasts for success/error
     depends_on: [6, 7, 12]
     effort: 2
-    status: scoped
+    status: completed
