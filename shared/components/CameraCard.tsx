@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
 import { Text } from 'react-native-paper'
 
@@ -11,7 +12,7 @@ import {
 import { navigateWithParams } from '../utilities'
 import Button from './Button'
 import RollCard from './RollCard'
-import Typography from './Typography'
+import ButtonWrapper from './ButtonWrapper'
 
 type Camera = {
   id: string
@@ -23,28 +24,54 @@ type Props = {
   camera: Camera
   rolls: Roll[]
   onEditCamera: () => void
+  selectedStatuses: Set<RollStatusType>
+  onRefresh?: () => void
 }
 
 const STATUS_ORDER: RollStatusType[] = [
   RollStatus.EXPOSING,
-  RollStatus.IN_CAMERA,
   RollStatus.EXPOSED,
   RollStatus.DEVELOPED,
   RollStatus.ARCHIVED,
+  RollStatus.ABANDONED,
 ]
 
-const CameraCard: React.FC<Props> = ({ camera, rolls, onEditCamera }) => {
+const CameraCard: React.FC<Props> = ({
+  camera,
+  rolls,
+  onEditCamera,
+  selectedStatuses,
+  onRefresh,
+}) => {
+  // Sort rolls by date (most recent first) within each status group
+  const sortedRolls = [...rolls].sort((a, b) => {
+    const dateA = new Date(a.updatedAt || a.createdAt).getTime()
+    const dateB = new Date(b.updatedAt || b.createdAt).getTime()
+    return dateB - dateA
+  })
+
+  // Filter rolls by selected statuses
+  const filteredRolls = sortedRolls.filter(r => selectedStatuses.has(r.status))
+
+  // Find the most recently modified/created roll from filtered rolls
+  const mostRecentRollId = filteredRolls.length > 0 ? filteredRolls[0].id : null
+
+  // Track which roll is expanded (only one at a time)
+  const [expandedRollId, setExpandedRollId] = useState<string | null>(
+    mostRecentRollId
+  )
+
+  const handleToggleRoll = (rollId: string) => {
+    setExpandedRollId(expandedRollId === rollId ? null : rollId)
+  }
+
   const rollsByStatus = STATUS_ORDER.reduce(
     (acc, status) => {
-      acc[status] = rolls.filter(r => r.status === status)
+      acc[status] = filteredRolls.filter(r => r.status === status)
       return acc
     },
     {} as Record<RollStatusType, Roll[]>
   )
-
-  const handleRollPress = (rollId: string) => {
-    navigateWithParams('roll-detail', { rollId })
-  }
 
   const handleAddRoll = () => {
     navigateWithParams('add-roll', { cameraId: camera.id })
@@ -52,20 +79,6 @@ const CameraCard: React.FC<Props> = ({ camera, rolls, onEditCamera }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.headerText}>
-          <Typography variant="h2">{camera.name}</Typography>
-          {camera.notes && (
-            <Text style={styles.notes} numberOfLines={2}>
-              {camera.notes}
-            </Text>
-          )}
-        </View>
-        <Button color="primary" variant="link" onPress={onEditCamera}>
-          Edit
-        </Button>
-      </View>
-
       <ScrollView style={styles.rollsContainer}>
         {rolls.length === 0 ? (
           <View style={styles.emptyState}>
@@ -87,7 +100,9 @@ const CameraCard: React.FC<Props> = ({ camera, rolls, onEditCamera }) => {
                   <RollCard
                     key={roll.id}
                     roll={roll}
-                    onPress={() => handleRollPress(roll.id)}
+                    isExpanded={roll.id === expandedRollId}
+                    onToggle={() => handleToggleRoll(roll.id)}
+                    onStatusChange={onRefresh}
                   />
                 ))}
               </View>
@@ -97,9 +112,18 @@ const CameraCard: React.FC<Props> = ({ camera, rolls, onEditCamera }) => {
       </ScrollView>
 
       <View style={styles.footer}>
-        <Button color="primary" variant="filled" onPress={handleAddRoll}>
-          + Add Roll
-        </Button>
+        <ButtonWrapper
+          left={
+            <Button color="neutral" variant="link" onPress={onEditCamera}>
+              Edit Camera
+            </Button>
+          }
+          right={
+            <Button color="primary" variant="filled" onPress={handleAddRoll}>
+              + Add Roll
+            </Button>
+          }
+        />
       </View>
     </View>
   )
@@ -109,21 +133,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.NEUTRAL[800],
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    paddingVertical: SPACING.MEDIUM,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.NEUTRAL[700],
-  },
-  headerText: {
-    flex: 1,
-  },
-  notes: {
-    color: COLORS.NEUTRAL[400],
-    marginTop: SPACING.XXSMALL,
   },
   rollsContainer: {
     flex: 1,

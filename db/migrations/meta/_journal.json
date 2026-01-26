@@ -8,6 +8,20 @@
       "when": 1769401361749,
       "tag": "0000_late_zaladane",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1769401361750,
+      "tag": "0001_add_iso",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1769401361751,
+      "tag": "0002_status_dates",
+      "breakpoints": true
     }
   ]
 }

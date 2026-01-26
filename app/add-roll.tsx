@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams } from 'expo-router'
 import { useContext, useState } from 'react'
-import { ScrollView, StyleSheet } from 'react-native'
+import { ScrollView, StyleSheet, View } from 'react-native'
 
 import { insertRoll } from '@/db/queries'
 import {
@@ -19,8 +19,9 @@ import { generateId } from '@/shared/utilities'
 export default function AddRoll() {
   const { cameraId } = useLocalSearchParams<{ cameraId: string }>()
   const [filmStock, setFilmStock] = useState('')
-  const [status, setStatus] = useState<RollStatusType>(RollStatus.IN_CAMERA)
+  const [status, setStatus] = useState<RollStatusType>(RollStatus.EXPOSING)
   const [frameCount, setFrameCount] = useState(36)
+  const [iso, setIso] = useState('')
   const [notes, setNotes] = useState('')
   const { dispatch } = useContext(context)
 
@@ -41,9 +42,14 @@ export default function AddRoll() {
         filmStock: filmStock.trim(),
         status,
         frameCount,
+        iso: iso.trim() ? parseInt(iso.trim(), 10) : null,
         notes: notes.trim() || null,
         createdAt: now,
-        startedAt: status === RollStatus.EXPOSING ? now : null,
+        exposingAt: status === RollStatus.EXPOSING ? now : null,
+        exposedAt: status === RollStatus.EXPOSED ? now : null,
+        developedAt: status === RollStatus.DEVELOPED ? now : null,
+        archivedAt: status === RollStatus.ARCHIVED ? now : null,
+        abandonedAt: status === RollStatus.ABANDONED ? now : null,
       })
 
       dispatch({
@@ -73,8 +79,21 @@ export default function AddRoll() {
           color={COLORS.PRIMARY[300]}
           autoFocus
         />
-        <StatusPicker value={status} onChange={setStatus} />
-        <FrameCountPicker value={frameCount} onChange={setFrameCount} />
+        <View style={styles.row}>
+          <View style={styles.halfWidth}>
+            <StatusPicker value={status} onChange={setStatus} compact />
+          </View>
+          <View style={styles.halfWidth}>
+            <FrameCountPicker value={frameCount} onChange={setFrameCount} compact />
+          </View>
+        </View>
+        <TextInput
+          label="ISO (optional)"
+          value={iso}
+          onChangeText={setIso}
+          color={COLORS.NEUTRAL[500]}
+          keyboardType="numeric"
+        />
         <TextInput
           label="Notes (optional)"
           value={notes}
@@ -109,5 +128,12 @@ const styles = StyleSheet.create({
   form: {
     flex: 1,
     paddingTop: SPACING.MEDIUM,
+  },
+  row: {
+    flexDirection: 'row',
+    gap: SPACING.MEDIUM,
+  },
+  halfWidth: {
+    flex: 1,
   },
 })

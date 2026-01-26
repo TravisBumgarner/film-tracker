@@ -19,7 +19,7 @@ import {
   savePhotoToApp,
   takePhoto,
 } from '../photoUtils'
-import { BORDER_RADIUS, COLORS, SPACING } from '../theme'
+import { COLORS, SPACING } from '../theme'
 
 type Photo = {
   id: string
@@ -173,7 +173,6 @@ const styles = StyleSheet.create({
     width: PHOTO_SIZE,
     height: PHOTO_SIZE,
     backgroundColor: COLORS.NEUTRAL[900],
-    borderRadius: BORDER_RADIUS.MEDIUM,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
@@ -183,7 +182,6 @@ const styles = StyleSheet.create({
   photo: {
     width: PHOTO_SIZE,
     height: PHOTO_SIZE,
-    borderRadius: BORDER_RADIUS.MEDIUM,
   },
   modalOverlay: {
     flex: 1,

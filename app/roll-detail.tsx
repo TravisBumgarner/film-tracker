@@ -28,32 +28,34 @@ type RollWithCamera = {
   framesShot: number | null
   notes: string | null
   createdAt: string
-  startedAt: string | null
+  exposingAt: string | null
+  exposedAt: string | null
   developedAt: string | null
+  archivedAt: string | null
+  abandonedAt: string | null
   cameraName: string
 }
 
 const getNextStatus = (current: RollStatusType): RollStatusType | null => {
-  const order = [
-    RollStatus.IN_CAMERA,
+  const order: RollStatusType[] = [
     RollStatus.EXPOSING,
     RollStatus.EXPOSED,
     RollStatus.DEVELOPED,
     RollStatus.ARCHIVED,
   ]
   const currentIndex = order.indexOf(current)
-  if (currentIndex < order.length - 1) {
+  if (currentIndex >= 0 && currentIndex < order.length - 1) {
     return order[currentIndex + 1]
   }
   return null
 }
 
 const STATUS_ACTION_LABELS: Record<RollStatusType, string> = {
-  IN_CAMERA: 'Start Exposing',
   EXPOSING: 'Mark Exposed',
   EXPOSED: 'Mark Developed',
   DEVELOPED: 'Archive',
   ARCHIVED: '',
+  ABANDONED: '',
 }
 
 export default function RollDetail() {
@@ -77,8 +79,11 @@ export default function RollDetail() {
           framesShot: rollData.framesShot,
           notes: rollData.notes,
           createdAt: rollData.createdAt,
-          startedAt: rollData.startedAt,
+          exposingAt: rollData.exposingAt,
+          exposedAt: rollData.exposedAt,
           developedAt: rollData.developedAt,
+          archivedAt: rollData.archivedAt,
+          abandonedAt: rollData.abandonedAt,
           cameraName: camera?.name || 'Unknown Camera',
         })
       }
@@ -170,11 +175,20 @@ export default function RollDetail() {
           <InfoRow label="Camera" value={roll.cameraName} />
           <InfoRow label="Frames" value={`${roll.frameCount}`} />
           <InfoRow label="Added" value={formatDate(roll.createdAt)} />
-          {roll.startedAt && (
-            <InfoRow label="Started" value={formatDate(roll.startedAt)} />
+          {roll.exposingAt && (
+            <InfoRow label="Started" value={formatDate(roll.exposingAt)} />
+          )}
+          {roll.exposedAt && (
+            <InfoRow label="Exposed" value={formatDate(roll.exposedAt)} />
           )}
           {roll.developedAt && (
             <InfoRow label="Developed" value={formatDate(roll.developedAt)} />
+          )}
+          {roll.archivedAt && (
+            <InfoRow label="Archived" value={formatDate(roll.archivedAt)} />
+          )}
+          {roll.abandonedAt && (
+            <InfoRow label="Abandoned" value={formatDate(roll.abandonedAt)} />
           )}
         </View>
 
@@ -243,7 +257,6 @@ const styles = StyleSheet.create({
   },
   infoSection: {
     backgroundColor: COLORS.NEUTRAL[900],
-    borderRadius: 8,
     padding: SPACING.MEDIUM,
     marginBottom: SPACING.MEDIUM,
   },
@@ -260,7 +273,6 @@ const styles = StyleSheet.create({
   },
   notesSection: {
     backgroundColor: COLORS.NEUTRAL[900],
-    borderRadius: 8,
     padding: SPACING.MEDIUM,
     marginBottom: SPACING.MEDIUM,
   },
@@ -274,7 +286,6 @@ const styles = StyleSheet.create({
   },
   photoPlaceholder: {
     backgroundColor: COLORS.NEUTRAL[900],
-    borderRadius: 8,
     padding: SPACING.LARGE,
     alignItems: 'center',
     marginBottom: SPACING.MEDIUM,

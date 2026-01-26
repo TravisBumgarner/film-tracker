@@ -19,12 +19,13 @@ import { RollStatus, type RollStatusType } from '@/shared/types'
 export default function EditRoll() {
   const { rollId } = useLocalSearchParams<{ rollId: string }>()
   const [filmStock, setFilmStock] = useState('')
-  const [status, setStatus] = useState<RollStatusType>(RollStatus.IN_CAMERA)
+  const [status, setStatus] = useState<RollStatusType>(RollStatus.EXPOSING)
   const [frameCount, setFrameCount] = useState(36)
+  const [iso, setIso] = useState('')
   const [notes, setNotes] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [originalStatus, setOriginalStatus] = useState<RollStatusType>(
-    RollStatus.IN_CAMERA
+    RollStatus.EXPOSING
   )
   const { dispatch } = useContext(context)
 
@@ -38,6 +39,7 @@ export default function EditRoll() {
         setStatus(roll.status as RollStatusType)
         setOriginalStatus(roll.status as RollStatusType)
         setFrameCount(roll.frameCount)
+        setIso(roll.iso ? String(roll.iso) : '')
         setNotes(roll.notes || '')
       }
     } catch (_error) {
@@ -71,21 +73,23 @@ export default function EditRoll() {
         filmStock: filmStock.trim(),
         status,
         frameCount,
+        iso: iso.trim() ? parseInt(iso.trim(), 10) : null,
         notes: notes.trim() || null,
       }
 
       // Handle timestamp updates based on status changes
-      if (
-        status === RollStatus.EXPOSING &&
-        originalStatus !== RollStatus.EXPOSING
-      ) {
-        updates.startedAt = now
-      }
-      if (
-        status === RollStatus.DEVELOPED &&
-        originalStatus !== RollStatus.DEVELOPED
-      ) {
-        updates.developedAt = now
+      if (status !== originalStatus) {
+        if (status === RollStatus.EXPOSING) {
+          updates.exposingAt = now
+        } else if (status === RollStatus.EXPOSED) {
+          updates.exposedAt = now
+        } else if (status === RollStatus.DEVELOPED) {
+          updates.developedAt = now
+        } else if (status === RollStatus.ARCHIVED) {
+          updates.archivedAt = now
+        } else if (status === RollStatus.ABANDONED) {
+          updates.abandonedAt = now
+        }
       }
 
       await updateRoll(rollId!, updates)
@@ -155,8 +159,21 @@ export default function EditRoll() {
           onChangeText={setFilmStock}
           color={COLORS.PRIMARY[300]}
         />
-        <StatusPicker value={status} onChange={setStatus} />
-        <FrameCountPicker value={frameCount} onChange={setFrameCount} />
+        <View style={styles.row}>
+          <View style={styles.halfWidth}>
+            <StatusPicker value={status} onChange={setStatus} compact />
+          </View>
+          <View style={styles.halfWidth}>
+            <FrameCountPicker value={frameCount} onChange={setFrameCount} compact />
+          </View>
+        </View>
+        <TextInput
+          label="ISO (optional)"
+          value={iso}
+          onChangeText={setIso}
+          color={COLORS.NEUTRAL[500]}
+          keyboardType="numeric"
+        />
         <TextInput
           label="Notes (optional)"
           value={notes}
@@ -204,6 +221,13 @@ const styles = StyleSheet.create({
   form: {
     flex: 1,
     paddingTop: SPACING.MEDIUM,
+  },
+  row: {
+    flexDirection: 'row',
+    gap: SPACING.MEDIUM,
+  },
+  halfWidth: {
+    flex: 1,
   },
   loading: {
     flex: 1,

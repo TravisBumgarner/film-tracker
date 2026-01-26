@@ -21,8 +21,10 @@ export const updateRoll = async (
     frameCount?: number
     framesShot?: number | null
     notes?: string | null
-    startedAt?: string | null
+    exposingAt?: string | null
+    exposedAt?: string | null
     developedAt?: string | null
+    archivedAt?: string | null
   }
 ) => {
   return db
@@ -39,9 +41,15 @@ export const updateRollStatus = async (id: string, status: string) => {
   }
 
   if (status === 'EXPOSING') {
-    updates.startedAt = now
+    updates.exposingAt = now
+  } else if (status === 'EXPOSED') {
+    updates.exposedAt = now
   } else if (status === 'DEVELOPED') {
     updates.developedAt = now
+  } else if (status === 'ARCHIVED') {
+    updates.archivedAt = now
+  } else if (status === 'ABANDONED') {
+    updates.abandonedAt = now
   }
 
   return db.update(RollsTable).set(updates).where(eq(RollsTable.id, id))
