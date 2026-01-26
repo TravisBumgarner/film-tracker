@@ -1,5 +1,7 @@
-import { Pressable, StyleSheet, View } from 'react-native'
+import { useState } from 'react'
+import { Modal, Pressable, StyleSheet, View } from 'react-native'
 import { Text } from 'react-native-paper'
+
 import { BORDER_RADIUS, COLORS, ROLL_STATUS_COLORS, SPACING } from '../theme'
 import { ROLL_STATUS_LABELS, RollStatus, type RollStatusType } from '../types'
 
@@ -17,80 +19,132 @@ const STATUS_ORDER: RollStatusType[] = [
 ]
 
 const StatusPicker: React.FC<Props> = ({ value, onChange }) => {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.label}>Status</Text>
-      <View style={styles.optionsContainer}>
-        {STATUS_ORDER.map(status => {
-          const isSelected = status === value
-          const statusColor = ROLL_STATUS_COLORS[status]
+  const [modalVisible, setModalVisible] = useState(false)
 
-          return (
-            <Pressable
-              key={status}
-              style={[
-                styles.option,
-                isSelected && styles.optionSelected,
-                isSelected && { borderColor: statusColor },
-              ]}
-              onPress={() => onChange(status)}
-            >
-              <View
+  const handleSelect = (status: RollStatusType) => {
+    onChange(status)
+    setModalVisible(false)
+  }
+
+  return (
+    <>
+      <Pressable style={styles.trigger} onPress={() => setModalVisible(true)}>
+        <Text style={styles.label}>Status</Text>
+        <View
+          style={[
+            styles.selectedValue,
+            { backgroundColor: ROLL_STATUS_COLORS[value] },
+          ]}
+        >
+          <Text style={styles.selectedText}>{ROLL_STATUS_LABELS[value]}</Text>
+        </View>
+      </Pressable>
+
+      <Modal
+        visible={modalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <Pressable
+          style={styles.overlay}
+          onPress={() => setModalVisible(false)}
+        >
+          <View style={styles.modal}>
+            <Text style={styles.modalTitle}>Select Status</Text>
+            {STATUS_ORDER.map(status => (
+              <Pressable
+                key={status}
                 style={[
-                  styles.colorIndicator,
-                  { backgroundColor: statusColor },
+                  styles.option,
+                  status === value && styles.optionSelected,
                 ]}
-              />
-              <Text
-                style={[
-                  styles.optionText,
-                  isSelected && { color: statusColor },
-                ]}
+                onPress={() => handleSelect(status)}
               >
-                {ROLL_STATUS_LABELS[status]}
-              </Text>
-            </Pressable>
-          )
-        })}
-      </View>
-    </View>
+                <View
+                  style={[
+                    styles.statusDot,
+                    { backgroundColor: ROLL_STATUS_COLORS[status] },
+                  ]}
+                />
+                <Text
+                  style={[
+                    styles.optionText,
+                    status === value && styles.optionTextSelected,
+                  ]}
+                >
+                  {ROLL_STATUS_LABELS[status]}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+        </Pressable>
+      </Modal>
+    </>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
+  trigger: {
     paddingVertical: SPACING.MEDIUM,
   },
   label: {
     color: COLORS.NEUTRAL[400],
-    marginBottom: SPACING.SMALL,
+    paddingBottom: SPACING.MEDIUM,
   },
-  optionsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: SPACING.XSMALL,
+  selectedValue: {
+    paddingHorizontal: SPACING.MEDIUM,
+    paddingVertical: SPACING.SMALL,
+    borderRadius: BORDER_RADIUS.SMALL,
+    alignSelf: 'flex-start',
+  },
+  selectedText: {
+    color: COLORS.NEUTRAL[900],
+    fontWeight: 'bold',
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modal: {
+    backgroundColor: COLORS.NEUTRAL[800],
+    borderRadius: BORDER_RADIUS.LARGE,
+    padding: SPACING.MEDIUM,
+    width: '80%',
+    maxWidth: 300,
+  },
+  modalTitle: {
+    color: COLORS.NEUTRAL[200],
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: SPACING.MEDIUM,
+    textAlign: 'center',
   },
   option: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: SPACING.XSMALL,
+    paddingVertical: SPACING.SMALL,
     paddingHorizontal: SPACING.SMALL,
-    borderRadius: BORDER_RADIUS.MEDIUM,
-    borderWidth: 1,
-    borderColor: COLORS.NEUTRAL[700],
-    backgroundColor: COLORS.NEUTRAL[900],
+    borderRadius: BORDER_RADIUS.SMALL,
   },
   optionSelected: {
-    backgroundColor: COLORS.NEUTRAL[800],
+    backgroundColor: COLORS.NEUTRAL[700],
   },
-  colorIndicator: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginRight: SPACING.XSMALL,
+  statusDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginRight: SPACING.SMALL,
   },
   optionText: {
     color: COLORS.NEUTRAL[300],
+    fontSize: 16,
+  },
+  optionTextSelected: {
+    color: COLORS.NEUTRAL[100],
+    fontWeight: 'bold',
   },
 })
 
