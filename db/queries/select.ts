@@ -38,3 +38,11 @@ export const selectPhotosByRollId = async (rollId: string) => {
     .where(eq(RollPhotosTable.rollId, rollId))
     .orderBy(asc(RollPhotosTable.sortOrder))
 }
+
+export const selectPhotoById = async (id: string) => {
+  const results = await db
+    .select()
+    .from(RollPhotosTable)
+    .where(eq(RollPhotosTable.id, id))
+  return results[0] ?? null
+}

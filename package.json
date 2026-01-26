@@ -11,6 +11,8 @@
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",
     "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
     "device:register": "eas device:create",
     "build:ios:dev": "eas build -p ios --local --profile dev",
     "build:ios:internal": "eas build -p ios --local --profile internal",
@@ -58,11 +60,17 @@
   "devDependencies": {
     "@babel/core": "^7.28.0",
     "@biomejs/biome": "^2.3.12",
+    "@testing-library/jest-native": "^5.4.3",
+    "@testing-library/react-native": "^13.3.3",
+    "@types/jest": "^30.0.0",
     "@types/react": "~18.3.12",
     "@types/uuid": "^9.0.8",
     "babel-plugin-inline-import": "^3.0.0",
     "dotenv": "^16.6.1",
     "drizzle-kit": "^0.31.8",
+    "jest": "^29.7.0",
+    "jest-expo": "^54.0.16",
+    "react-test-renderer": "^18.3.1",
     "typescript": "~5.3.3"
   },
   "private": true
