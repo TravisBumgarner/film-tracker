@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "9190d457-d272-45e4-95b4-321b8f2d6543",
+  "id": "7ec3045c-74df-49f2-9786-a8e1c1015867",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "camera": {
@@ -163,7 +163,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "'IN_CAMERA'"
+          "default": "'EXPOSING'"
         },
         "frameCount": {
           "name": "frameCount",
@@ -175,6 +175,13 @@
         },
         "framesShot": {
           "name": "framesShot",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "iso": {
+          "name": "iso",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
@@ -201,8 +208,15 @@
           "notNull": false,
           "autoincrement": false
         },
-        "startedAt": {
-          "name": "startedAt",
+        "exposingAt": {
+          "name": "exposingAt",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "exposedAt": {
+          "name": "exposedAt",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -210,6 +224,20 @@
         },
         "developedAt": {
           "name": "developedAt",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "archivedAt": {
+          "name": "archivedAt",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "abandonedAt": {
+          "name": "abandonedAt",
           "type": "text",
           "primaryKey": false,
           "notNull": false,

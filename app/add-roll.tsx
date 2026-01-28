@@ -57,7 +57,8 @@ export default function AddRoll() {
         payload: { message: 'Roll added', variant: 'SUCCESS' },
       })
       router.back()
-    } catch (_error) {
+    } catch (error) {
+      console.error('Failed to add roll:', error)
       dispatch({
         type: 'TOAST',
         payload: { message: 'Failed to add roll', variant: 'ERROR' },
