@@ -22,14 +22,18 @@ CREATE TABLE `roll` (
 	`id` text PRIMARY KEY NOT NULL,
 	`cameraId` text NOT NULL,
 	`filmStock` text NOT NULL,
-	`status` text DEFAULT 'IN_CAMERA' NOT NULL,
+	`status` text DEFAULT 'EXPOSING' NOT NULL,
 	`frameCount` integer DEFAULT 36 NOT NULL,
 	`framesShot` integer,
+	`iso` integer,
 	`notes` text,
 	`createdAt` text NOT NULL,
 	`updatedAt` text,
-	`startedAt` text,
+	`exposingAt` text,
+	`exposedAt` text,
 	`developedAt` text,
+	`archivedAt` text,
+	`abandonedAt` text,
 	FOREIGN KEY (`cameraId`) REFERENCES `camera`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
