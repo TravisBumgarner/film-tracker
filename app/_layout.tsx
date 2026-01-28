@@ -41,7 +41,7 @@ const AppWrapper = () => {
 
   useEffect(() => {
     if (success) {
-      seedDatabase()
+      (__DEV__ ? seedDatabase() : Promise.resolve())
         .then(() => performDailyBackupIfNeeded())
         .then(() => {
           SplashScreen.hideAsync()
