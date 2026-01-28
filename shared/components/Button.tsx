@@ -3,11 +3,72 @@ import { StyleSheet, Text } from 'react-native'
 import { Button as ButtonRNP } from 'react-native-paper'
 import type { IconSource } from 'react-native-paper/lib/typescript/components/Icon'
 
-import { BORDER_RADIUS, COLORS } from '../theme'
+import { BORDER_RADIUS, BORDER_WIDTH, COLORS } from '../theme'
 
 const SHARED = {
   textColor: COLORS.NEUTRAL[100],
 } as const
+
+type ButtonVariant = 'filled' | 'outlined' | 'link'
+
+const COLOR_MAP = {
+  primary: COLORS.PRIMARY[300],
+  warning: COLORS.WARNING[300],
+  neutral: COLORS.NEUTRAL[600],
+} as const
+
+const getButtonStyle = (
+  color: 'primary' | 'warning' | 'neutral',
+  variant: ButtonVariant,
+  disabled?: boolean
+) => {
+  const colorValue = COLOR_MAP[color]
+
+  if (disabled) {
+    return {
+      button: {
+        ...buttonStyles.base,
+        backgroundColor: COLORS.NEUTRAL[700],
+        ...(variant === 'outlined'
+          ? {
+              backgroundColor: COLORS.MISC.TRANSPARENT,
+              borderWidth: BORDER_WIDTH.SMALL,
+              borderColor: COLORS.NEUTRAL[700],
+            }
+          : {}),
+      },
+      text: { color: COLORS.NEUTRAL[400] },
+    }
+  }
+
+  switch (variant) {
+    case 'filled':
+      return {
+        button: { ...buttonStyles.base, backgroundColor: colorValue },
+        text: { color: COLORS.NEUTRAL[900], fontWeight: 'bold' as const },
+      }
+    case 'outlined':
+      return {
+        button: {
+          ...buttonStyles.base,
+          backgroundColor: COLORS.MISC.TRANSPARENT,
+          borderWidth: BORDER_WIDTH.SMALL,
+          borderColor: colorValue,
+        },
+        text: { color: colorValue, fontWeight: 'bold' as const },
+      }
+    case 'link':
+      return {
+        button: {
+          ...buttonStyles.base,
+          backgroundColor: COLORS.MISC.TRANSPARENT,
+        },
+        text: {
+          color: color === 'neutral' ? COLORS.NEUTRAL[400] : colorValue,
+        },
+      }
+  }
+}
 
 const Button = ({
   children,
@@ -22,149 +83,27 @@ const Button = ({
   onPress: () => void
   disabled?: boolean
   icon?: IconSource
-  variant: 'filled' | 'link'
+  variant: ButtonVariant
 }): React.ReactElement => {
-  switch (color) {
-    case 'primary':
-      return (
-        <ButtonRNP
-          style={StyleSheet.flatten([
-            {
-              ...buttonStyles.base,
-              ...(variant === 'filled'
-                ? buttonStyles.primaryFilled
-                : buttonStyles.primaryLink),
-              ...(disabled ? { backgroundColor: COLORS.NEUTRAL[700] } : {}),
-            },
-          ])}
-          onPress={onPress}
-          disabled={disabled}
-          icon={icon}
-          {...SHARED}
-        >
-          <Text
-            style={{
-              ...(variant === 'filled'
-                ? textStyles.primaryFilled
-                : textStyles.primaryLink),
-              ...(disabled ? { color: COLORS.NEUTRAL[400] } : {}),
-            }}
-          >
-            {children}
-          </Text>
-        </ButtonRNP>
-      )
-    case 'warning':
-      return (
-        <ButtonRNP
-          style={StyleSheet.flatten([
-            {
-              ...buttonStyles.base,
-              ...(variant === 'filled'
-                ? buttonStyles.warningFilled
-                : buttonStyles.warningLink),
-              ...(disabled ? { backgroundColor: COLORS.NEUTRAL[700] } : {}),
-            },
-          ])}
-          {...SHARED}
-          onPress={onPress}
-          disabled={disabled}
-          icon={icon}
-        >
-          <Text
-            style={StyleSheet.flatten([
-              {
-                ...(variant === 'filled'
-                  ? textStyles.warningFilled
-                  : textStyles.warningLink),
-                ...(disabled ? { color: COLORS.NEUTRAL[400] } : {}),
-              },
-            ])}
-          >
-            {children}
-          </Text>
-        </ButtonRNP>
-      )
-    case 'neutral':
-      return (
-        <ButtonRNP
-          style={StyleSheet.flatten([
-            {
-              ...buttonStyles.base,
-              ...(variant === 'filled'
-                ? buttonStyles.neutralFilled
-                : buttonStyles.neutralLink),
-              ...(disabled ? { backgroundColor: COLORS.NEUTRAL[700] } : {}),
-            },
-          ])}
-          {...SHARED}
-          onPress={onPress}
-          disabled={disabled}
-          icon={icon}
-        >
-          <Text
-            style={StyleSheet.flatten([
-              {
-                ...(variant === 'filled'
-                  ? textStyles.neutralFilled
-                  : textStyles.neutralLink),
-                ...(disabled ? { color: COLORS.NEUTRAL[400] } : {}),
-              },
-            ])}
-          >
-            {children}
-          </Text>
-        </ButtonRNP>
-      )
-  }
+  const styles = getButtonStyle(color, variant, disabled)
+
+  return (
+    <ButtonRNP
+      style={StyleSheet.flatten([styles.button])}
+      onPress={onPress}
+      disabled={disabled}
+      icon={icon}
+      {...SHARED}
+    >
+      <Text style={StyleSheet.flatten([styles.text])}>{children}</Text>
+    </ButtonRNP>
+  )
 }
 
 const buttonStyles = StyleSheet.create({
   base: {
     borderRadius: BORDER_RADIUS.NONE,
     width: '100%',
-  },
-  primaryFilled: {
-    backgroundColor: COLORS.PRIMARY[300],
-  },
-  primaryLink: {
-    backgroundColor: COLORS.MISC.TRANSPARENT,
-  },
-  warningFilled: {
-    backgroundColor: COLORS.WARNING[300],
-  },
-  warningLink: {
-    backgroundColor: COLORS.MISC.TRANSPARENT,
-  },
-  neutralFilled: {
-    backgroundColor: COLORS.NEUTRAL[600],
-  },
-  neutralLink: {
-    backgroundColor: COLORS.MISC.TRANSPARENT,
-  },
-})
-
-const textStyles = StyleSheet.create({
-  primaryFilled: {
-    color: COLORS.NEUTRAL[900],
-    fontWeight: 'bold',
-  },
-  primaryLink: {
-    color: COLORS.PRIMARY[300],
-  },
-  warningFilled: {
-    color: COLORS.NEUTRAL[900],
-    fontWeight: 'bold',
-  },
-  warningLink: {
-    color: COLORS.WARNING[300],
-  },
-  neutralFilled: {
-    color: COLORS.NEUTRAL[100],
-    fontWeight: 'bold',
-  },
-  neutralLink: {
-    color: COLORS.NEUTRAL[400],
   },
 })
 

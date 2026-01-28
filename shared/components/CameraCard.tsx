@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
 import { Text } from 'react-native-paper'
 
+import { useTheme } from '@/shared/ThemeContext'
 import { COLORS, SPACING } from '../theme'
 import {
   ROLL_STATUS_LABELS,
@@ -11,8 +12,8 @@ import {
 } from '../types'
 import { navigateWithParams } from '../utilities'
 import Button from './Button'
-import RollCard from './RollCard'
 import ButtonWrapper from './ButtonWrapper'
+import RollCard from './RollCard'
 
 type Camera = {
   id: string
@@ -56,6 +57,8 @@ const CameraCard: React.FC<Props> = ({
   // Find the most recently modified/created roll from filtered rolls
   const mostRecentRollId = filteredRolls.length > 0 ? filteredRolls[0].id : null
 
+  const { colors } = useTheme()
+
   // Track which roll is expanded (only one at a time)
   const [expandedRollId, setExpandedRollId] = useState<string | null>(
     mostRecentRollId
@@ -78,7 +81,7 @@ const CameraCard: React.FC<Props> = ({
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView style={styles.rollsContainer}>
         {rolls.length === 0 ? (
           <View style={styles.emptyState}>
@@ -132,7 +135,6 @@ const CameraCard: React.FC<Props> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.NEUTRAL[800],
   },
   rollsContainer: {
     flex: 1,

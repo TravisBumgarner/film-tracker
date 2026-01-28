@@ -20,10 +20,34 @@ import { getValueFromKeyStore, saveValueToKeyStore } from './utilities'
 
 const ICLOUD_BACKUP_ENABLED_KEY = 'icloud_backup_enabled'
 const ICLOUD_LAST_BACKUP_KEY = 'icloud_last_backup_timestamp'
-const BACKUP_FILENAME = 'filmtracker-backup.json'
-const ONE_DAY_MS = 24 * 60 * 60 * 1000
+const ICLOUD_BACKUP_SLOT_KEY = 'icloud_backup_current_slot'
+const LEGACY_BACKUP_FILENAME = 'filmtracker-backup.json'
+const BACKUP_SLOTS = 7
+const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000
 
 export const isIOS = Platform.OS === 'ios'
+
+function getBackupFilename(slot: number): string {
+  return `filmtracker-backup-${slot}.json`
+}
+
+async function getCurrentSlot(): Promise<number> {
+  const value = await getValueFromKeyStore(ICLOUD_BACKUP_SLOT_KEY)
+  return value ? parseInt(value, 10) : 0
+}
+
+async function setCurrentSlot(slot: number): Promise<void> {
+  await saveValueToKeyStore(ICLOUD_BACKUP_SLOT_KEY, slot.toString())
+}
+
+export type ICloudBackupEntry = {
+  filename: string
+  backupDate: string
+  cameraCount: number
+  rollCount: number
+  photoCount: number
+  sizeBytes: number
+}
 
 export async function getICloudBackupEnabled(): Promise<boolean> {
   if (!isIOS) return false
@@ -55,7 +79,7 @@ export async function isBackupNeeded(): Promise<boolean> {
   if (!lastBackup) return true
 
   const now = Date.now()
-  return now - lastBackup >= ONE_DAY_MS
+  return now - lastBackup >= ONE_WEEK_MS
 }
 
 export async function checkICloudAvailable(): Promise<boolean> {
@@ -92,7 +116,12 @@ export async function backupToICloud(): Promise<{
       backupDate: new Date().toISOString(),
     })
 
-    await CloudStorage.writeFile(BACKUP_FILENAME, backupData)
+    const currentSlot = await getCurrentSlot()
+    const filename = getBackupFilename(currentSlot)
+    await CloudStorage.writeFile(filename, backupData)
+
+    const nextSlot = (currentSlot + 1) % BACKUP_SLOTS
+    await setCurrentSlot(nextSlot)
     await setLastBackupTimestamp(Date.now())
 
     return { success: true }
@@ -101,6 +130,74 @@ export async function backupToICloud(): Promise<{
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',
     }
+  }
+}
+
+export async function getAvailableICloudBackups(): Promise<
+  ICloudBackupEntry[]
+> {
+  if (!isIOS) return []
+
+  try {
+    const available = await CloudStorage.isCloudAvailable()
+    if (!available) return []
+
+    const entries: ICloudBackupEntry[] = []
+
+    // Check all slot files
+    for (let i = 0; i < BACKUP_SLOTS; i++) {
+      const filename = getBackupFilename(i)
+      try {
+        const exists = await CloudStorage.exists(filename)
+        if (exists) {
+          const content = await CloudStorage.readFile(filename)
+          const data = JSON.parse(content)
+          entries.push({
+            filename,
+            backupDate: data.backupDate || 'Unknown',
+            cameraCount: Array.isArray(data.cameras) ? data.cameras.length : 0,
+            rollCount: Array.isArray(data.rolls) ? data.rolls.length : 0,
+            photoCount: Array.isArray(data.rollPhotos)
+              ? data.rollPhotos.length
+              : 0,
+            sizeBytes: new Blob([content]).size,
+          })
+        }
+      } catch {
+        // Skip unreadable files
+      }
+    }
+
+    // Check legacy file
+    try {
+      const legacyExists = await CloudStorage.exists(LEGACY_BACKUP_FILENAME)
+      if (legacyExists) {
+        const content = await CloudStorage.readFile(LEGACY_BACKUP_FILENAME)
+        const data = JSON.parse(content)
+        entries.push({
+          filename: LEGACY_BACKUP_FILENAME,
+          backupDate: data.backupDate || 'Unknown',
+          cameraCount: Array.isArray(data.cameras) ? data.cameras.length : 0,
+          rollCount: Array.isArray(data.rolls) ? data.rolls.length : 0,
+          photoCount: Array.isArray(data.rollPhotos)
+            ? data.rollPhotos.length
+            : 0,
+          sizeBytes: new Blob([content]).size,
+        })
+      }
+    } catch {
+      // Skip legacy if unreadable
+    }
+
+    // Sort by backup date descending (newest first)
+    entries.sort(
+      (a, b) =>
+        new Date(b.backupDate).getTime() - new Date(a.backupDate).getTime()
+    )
+
+    return entries
+  } catch {
+    return []
   }
 }
 
@@ -114,29 +211,21 @@ export async function getICloudBackupInfo(): Promise<{
   }
 
   try {
-    const available = await CloudStorage.isCloudAvailable()
-    if (!available) {
-      return { exists: false, error: 'iCloud is not available' }
-    }
-
-    const fileExists = await CloudStorage.exists(BACKUP_FILENAME)
-    if (!fileExists) {
+    const entries = await getAvailableICloudBackups()
+    if (entries.length === 0) {
       return { exists: false }
     }
 
-    const content = await CloudStorage.readFile(BACKUP_FILENAME)
-    const data = JSON.parse(content)
-
     return {
       exists: true,
-      backupDate: data.backupDate,
+      backupDate: entries[0].backupDate,
     }
   } catch {
     return { exists: false }
   }
 }
 
-export async function restoreFromICloud(): Promise<{
+export async function restoreFromICloud(filename: string): Promise<{
   success: boolean
   error?: string
   restoredCameras?: number
@@ -153,12 +242,12 @@ export async function restoreFromICloud(): Promise<{
       return { success: false, error: 'iCloud is not available' }
     }
 
-    const fileExists = await CloudStorage.exists(BACKUP_FILENAME)
+    const fileExists = await CloudStorage.exists(filename)
     if (!fileExists) {
       return { success: false, error: 'No iCloud backup found' }
     }
 
-    const content = await CloudStorage.readFile(BACKUP_FILENAME)
+    const content = await CloudStorage.readFile(filename)
     const {
       cameras: rawCameras,
       rolls: rawRolls,
@@ -207,7 +296,7 @@ export async function restoreFromICloud(): Promise<{
   }
 }
 
-export async function performDailyBackupIfNeeded(): Promise<void> {
+export async function performWeeklyBackupIfNeeded(): Promise<void> {
   try {
     const needed = await isBackupNeeded()
     if (needed) {

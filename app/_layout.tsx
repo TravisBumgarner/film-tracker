@@ -3,20 +3,23 @@ import { Stack } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect } from 'react'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import { MD3DarkTheme, PaperProvider } from 'react-native-paper'
+import { PaperProvider } from 'react-native-paper'
 
 import { db } from '@/db/client'
 import migrations from '@/db/migrations/migrations'
 import { seedDatabase } from '@/db/seed'
 import Toast from '@/shared/components/Toast'
 import Context from '@/shared/context'
-import { performDailyBackupIfNeeded } from '@/shared/icloud'
+import { performWeeklyBackupIfNeeded } from '@/shared/icloud'
+import { ThemeProvider, useTheme } from '@/shared/ThemeContext'
 
 SplashScreen.preventAutoHideAsync()
 
 function App() {
+  const { paperTheme } = useTheme()
+
   return (
-    <PaperProvider theme={MD3DarkTheme}>
+    <PaperProvider theme={paperTheme}>
       <Context>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <Stack>
@@ -41,8 +44,8 @@ const AppWrapper = () => {
 
   useEffect(() => {
     if (success) {
-      (__DEV__ ? seedDatabase() : Promise.resolve())
-        .then(() => performDailyBackupIfNeeded())
+      ;(__DEV__ ? seedDatabase() : Promise.resolve())
+        .then(() => performWeeklyBackupIfNeeded())
         .then(() => {
           SplashScreen.hideAsync()
         })
@@ -53,7 +56,11 @@ const AppWrapper = () => {
     return null
   }
 
-  return <App />
+  return (
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>
+  )
 }
 
 export default AppWrapper

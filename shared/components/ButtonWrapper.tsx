@@ -47,11 +47,11 @@ const ButtonWrapper: React.FC<ButtonWrapperProps> = ({
 const styles = StyleSheet.create({
   buttonLeft: {
     flex: 1,
-    marginRight: SPACING.SMALL,
+    marginRight: SPACING.XXSMALL,
   },
   buttonRight: {
     flex: 1,
-    marginLeft: SPACING.SMALL,
+    marginLeft: SPACING.XXSMALL,
   },
   container: {
     flexDirection: 'row',

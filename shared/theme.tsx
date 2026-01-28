@@ -85,3 +85,60 @@ export const ROLL_STATUS_COLORS = {
   ARCHIVED: COLORS.SECONDARY[300],
   ABANDONED: COLORS.ERROR[300],
 } as const
+
+export type SemanticColors = {
+  background: string
+  surface: string
+  surfaceVariant: string
+  textPrimary: string
+  textSecondary: string
+  textDisabled: string
+  border: string
+  tabBar: string
+  tabBarLabel: string
+  tabBarActive: string
+  switchActive: string
+  primary: string
+  secondary: string
+  success: string
+  warning: string
+  error: string
+}
+
+export const DARK_THEME: SemanticColors = {
+  background: COLORS.NEUTRAL[800],
+  surface: COLORS.NEUTRAL[900],
+  surfaceVariant: COLORS.NEUTRAL[700],
+  textPrimary: COLORS.NEUTRAL[100],
+  textSecondary: COLORS.NEUTRAL[400],
+  textDisabled: COLORS.NEUTRAL[600],
+  border: COLORS.NEUTRAL[700],
+  tabBar: COLORS.NEUTRAL[900],
+  tabBarLabel: COLORS.NEUTRAL[400],
+  tabBarActive: COLORS.PRIMARY[300],
+  switchActive: COLORS.PRIMARY[300],
+  primary: COLORS.PRIMARY[300],
+  secondary: COLORS.SECONDARY[300],
+  success: COLORS.SUCCESS[300],
+  warning: COLORS.WARNING[300],
+  error: COLORS.ERROR[300],
+}
+
+export const LIGHT_THEME: SemanticColors = {
+  background: COLORS.NEUTRAL[100],
+  surface: COLORS.MISC.WHITE,
+  surfaceVariant: COLORS.NEUTRAL[200],
+  textPrimary: COLORS.NEUTRAL[900],
+  textSecondary: COLORS.NEUTRAL[600],
+  textDisabled: COLORS.NEUTRAL[400],
+  border: COLORS.NEUTRAL[300],
+  tabBar: COLORS.MISC.WHITE,
+  tabBarLabel: COLORS.NEUTRAL[500],
+  tabBarActive: COLORS.PRIMARY[400],
+  switchActive: COLORS.PRIMARY[400],
+  primary: COLORS.PRIMARY[400],
+  secondary: COLORS.SECONDARY[400],
+  success: COLORS.SUCCESS[400],
+  warning: COLORS.WARNING[400],
+  error: COLORS.ERROR[400],
+}

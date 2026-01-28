@@ -1,5 +1,5 @@
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Ionicons } from '@expo/vector-icons'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { router, useFocusEffect } from 'expo-router'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
@@ -20,7 +20,8 @@ import {
   PageWrapper,
   Typography,
 } from '@/shared/components'
-import { COLORS, ROLL_STATUS_COLORS, SPACING } from '@/shared/theme'
+import { useTheme } from '@/shared/ThemeContext'
+import { ROLL_STATUS_COLORS, SPACING } from '@/shared/theme'
 import {
   ROLL_STATUS_LABELS,
   type Roll,
@@ -44,6 +45,7 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window')
 type CameraWithRolls = SelectCamera & { rolls: Roll[] }
 
 export default function Index() {
+  const { colors } = useTheme()
   const [cameras, setCameras] = useState<CameraWithRolls[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const flatListRef = useRef<FlatList>(null)
@@ -147,11 +149,11 @@ export default function Index() {
 
   const renderAddCameraPage = () => (
     <View style={[styles.page, styles.addCameraPage]}>
-      <Ionicons name="camera-outline" size={64} color={COLORS.NEUTRAL[500]} />
+      <Ionicons name="camera-outline" size={64} color={colors.textSecondary} />
       <Typography variant="h2" style={styles.addCameraTitle}>
         Add a Camera
       </Typography>
-      <Text style={styles.addCameraText}>
+      <Text style={[styles.addCameraText, { color: colors.textSecondary }]}>
         Swipe right to see your cameras, or add a new one here
       </Text>
       <View style={styles.addCameraButton}>
@@ -192,7 +194,9 @@ export default function Index() {
             key={index}
             style={[
               styles.dot,
-              index === currentIndex ? styles.dotActive : styles.dotInactive,
+              index === currentIndex
+                ? { backgroundColor: colors.primary }
+                : { backgroundColor: colors.textDisabled },
             ]}
           />
         ))}
@@ -217,8 +221,8 @@ export default function Index() {
             size={24}
             color={
               selectedStatuses.size < STATUS_ORDER.length
-                ? COLORS.PRIMARY[300]
-                : COLORS.NEUTRAL[300]
+                ? colors.primary
+                : colors.textPrimary
             }
           />
         </Pressable>
@@ -226,7 +230,7 @@ export default function Index() {
           <Ionicons
             name="settings-outline"
             size={24}
-            color={COLORS.NEUTRAL[300]}
+            color={colors.textPrimary}
           />
         </Pressable>
       </View>
@@ -241,8 +245,10 @@ export default function Index() {
           style={styles.modalOverlay}
           onPress={() => setFilterModalVisible(false)}
         >
-          <View style={styles.modal}>
-            <Text style={styles.modalTitle}>Filter by Status</Text>
+          <View style={[styles.modal, { backgroundColor: colors.surface }]}>
+            <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
+              Filter by Status
+            </Text>
             {STATUS_ORDER.map(status => {
               const isSelected = selectedStatuses.has(status)
               return (
@@ -254,16 +260,26 @@ export default function Index() {
                   <View
                     style={[
                       styles.checkbox,
+                      { borderColor: colors.textSecondary },
                       isSelected && {
                         backgroundColor: ROLL_STATUS_COLORS[status],
                       },
                     ]}
                   >
                     {isSelected && (
-                      <Ionicons name="checkmark" size={14} color={COLORS.NEUTRAL[900]} />
+                      <Ionicons
+                        name="checkmark"
+                        size={14}
+                        color={colors.surface}
+                      />
                     )}
                   </View>
-                  <Text style={styles.filterOptionText}>
+                  <Text
+                    style={[
+                      styles.filterOptionText,
+                      { color: colors.textPrimary },
+                    ]}
+                  >
                     {ROLL_STATUS_LABELS[status]}
                   </Text>
                 </Pressable>
@@ -323,13 +339,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modal: {
-    backgroundColor: COLORS.NEUTRAL[800],
     padding: SPACING.MEDIUM,
     width: '80%',
     maxWidth: 300,
   },
   modalTitle: {
-    color: COLORS.NEUTRAL[200],
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: SPACING.MEDIUM,
@@ -343,13 +357,11 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderWidth: 2,
-    borderColor: COLORS.NEUTRAL[500],
     marginRight: SPACING.SMALL,
     justifyContent: 'center',
     alignItems: 'center',
   },
   filterOptionText: {
-    color: COLORS.NEUTRAL[200],
     fontSize: 16,
   },
   pager: {
@@ -369,7 +381,6 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.XSMALL,
   },
   addCameraText: {
-    color: COLORS.NEUTRAL[400],
     textAlign: 'center',
     marginBottom: SPACING.LARGE,
     paddingHorizontal: SPACING.XLARGE,
@@ -388,11 +399,5 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
     marginHorizontal: 4,
-  },
-  dotActive: {
-    backgroundColor: COLORS.PRIMARY[300],
-  },
-  dotInactive: {
-    backgroundColor: COLORS.NEUTRAL[600],
   },
 })

@@ -1,9 +1,10 @@
 import * as DocumentPicker from 'expo-document-picker'
 import * as FileSystem from 'expo-file-system'
+import * as Linking from 'expo-linking'
 import { router } from 'expo-router'
 import * as Sharing from 'expo-sharing'
 import { useContext, useEffect, useState } from 'react'
-import { Alert, StyleSheet, View } from 'react-native'
+import { Alert, ScrollView, StyleSheet, View } from 'react-native'
 import { Switch, Text } from 'react-native-paper'
 import {
   deleteAllData,
@@ -12,35 +13,46 @@ import {
   selectRollsByCameraId,
 } from '@/db/queries'
 import { insertCamera, insertRoll, insertRollPhoto } from '@/db/queries/insert'
+import { CHANGELOG, CURRENT_VERSION } from '@/shared/changelog'
 import {
   Button,
   ButtonWrapper,
+  ChangelogModal,
+  ICloudRestoreModal,
   PageWrapper,
   Typography,
 } from '@/shared/components'
 import { context } from '@/shared/context'
 import {
   backupToICloud,
+  getAvailableICloudBackups,
   getICloudBackupEnabled,
   getICloudBackupInfo,
+  type ICloudBackupEntry,
   isIOS,
   restoreFromICloud,
   setICloudBackupEnabled,
 } from '@/shared/icloud'
-import { COLORS, SPACING } from '@/shared/theme'
-
-const APP_VERSION = '1.0.0'
+import { type ThemeMode, useTheme } from '@/shared/ThemeContext'
+import { SPACING } from '@/shared/theme'
 
 export default function Settings() {
-  const [isExporting, setIsExporting] = useState(false)
-  const [isImporting, setIsImporting] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
   const [iCloudEnabled, setICloudEnabled] = useState(false)
   const [iCloudBackupDate, setICloudBackupDate] = useState<string | null>(null)
-  const [isBackingUpToICloud, setIsBackingUpToICloud] = useState(false)
-  const [isRestoringFromICloud, setIsRestoringFromICloud] = useState(false)
+  const [hasData, setHasData] = useState(false)
+  const [showChangelog, setShowChangelog] = useState(false)
+  const [showRestoreModal, setShowRestoreModal] = useState(false)
+  const [restoreEntries, setRestoreEntries] = useState<ICloudBackupEntry[]>([])
+  const [loadingBackups, setLoadingBackups] = useState(false)
   const { dispatch } = useContext(context)
+  const { colors, mode, setMode } = useTheme()
 
   useEffect(() => {
+    selectCameras().then(cameras => {
+      setHasData(cameras.length > 0)
+    })
+
     if (isIOS) {
       getICloudBackupEnabled().then(setICloudEnabled)
       getICloudBackupInfo().then(info => {
@@ -56,9 +68,9 @@ export default function Settings() {
     await setICloudBackupEnabled(enabled)
 
     if (enabled) {
-      setIsBackingUpToICloud(true)
+      setIsProcessing(true)
       const result = await backupToICloud()
-      setIsBackingUpToICloud(false)
+      setIsProcessing(false)
       if (result.success) {
         setICloudBackupDate(new Date().toISOString())
         dispatch({
@@ -80,7 +92,7 @@ export default function Settings() {
   }
 
   const handleICloudBackup = async () => {
-    setIsBackingUpToICloud(true)
+    setIsProcessing(true)
     try {
       const result = await backupToICloud()
       if (result.success) {
@@ -102,23 +114,35 @@ export default function Settings() {
         })
       }
     } finally {
-      setIsBackingUpToICloud(false)
+      setIsProcessing(false)
     }
   }
 
-  const handleRestoreFromICloud = () => {
+  const handleOpenRestoreModal = async () => {
+    setShowRestoreModal(true)
+    setLoadingBackups(true)
+    try {
+      const entries = await getAvailableICloudBackups()
+      setRestoreEntries(entries)
+    } finally {
+      setLoadingBackups(false)
+    }
+  }
+
+  const handleRestoreFromICloud = (filename: string) => {
+    setShowRestoreModal(false)
     Alert.alert(
       'Restore from iCloud',
-      'This will replace all existing data with data from your iCloud backup. Are you sure?',
+      'This will replace all existing data with data from this backup. Are you sure?',
       [
         { text: 'Cancel', style: 'cancel' },
         {
           text: 'Restore',
           style: 'destructive',
           onPress: async () => {
-            setIsRestoringFromICloud(true)
+            setIsProcessing(true)
             try {
-              const result = await restoreFromICloud()
+              const result = await restoreFromICloud(filename)
               if (result.success) {
                 dispatch({
                   type: 'TOAST',
@@ -137,7 +161,7 @@ export default function Settings() {
                 })
               }
             } finally {
-              setIsRestoringFromICloud(false)
+              setIsProcessing(false)
             }
           },
         },
@@ -146,7 +170,7 @@ export default function Settings() {
   }
 
   const handleExport = async () => {
-    setIsExporting(true)
+    setIsProcessing(true)
     try {
       const cameras = await selectCameras()
       const exportData: any = {
@@ -186,26 +210,25 @@ export default function Settings() {
         payload: { message: 'Failed to export data', variant: 'ERROR' },
       })
     } finally {
-      setIsExporting(false)
+      setIsProcessing(false)
     }
   }
 
   const handleImport = async () => {
-    setIsImporting(true)
+    setIsProcessing(true)
     try {
       const result = await DocumentPicker.getDocumentAsync({
         type: 'application/json',
       })
 
       if (result.canceled || !result.assets[0]) {
-        setIsImporting(false)
+        setIsProcessing(false)
         return
       }
 
       const content = await FileSystem.readAsStringAsync(result.assets[0].uri)
       const data = JSON.parse(content)
 
-      // Validate structure
       if (!data.cameras || !Array.isArray(data.cameras)) {
         throw new Error('Invalid backup format')
       }
@@ -217,7 +240,7 @@ export default function Settings() {
           {
             text: 'Cancel',
             style: 'cancel',
-            onPress: () => setIsImporting(false),
+            onPress: () => setIsProcessing(false),
           },
           {
             text: 'Import',
@@ -256,7 +279,7 @@ export default function Settings() {
                   },
                 })
               } finally {
-                setIsImporting(false)
+                setIsProcessing(false)
               }
             },
           },
@@ -267,7 +290,7 @@ export default function Settings() {
         type: 'TOAST',
         payload: { message: 'Failed to read backup file', variant: 'ERROR' },
       })
-      setIsImporting(false)
+      setIsProcessing(false)
     }
   }
 
@@ -283,6 +306,7 @@ export default function Settings() {
           onPress: async () => {
             try {
               await deleteAllData()
+              setHasData(false)
               dispatch({
                 type: 'TOAST',
                 payload: { message: 'All data deleted', variant: 'SUCCESS' },
@@ -303,88 +327,131 @@ export default function Settings() {
     router.back()
   }
 
+  const handleFeedback = () => {
+    Linking.openURL('https://travisbumgarner.dev/marketing/film-tracker')
+  }
+
+  const themeModes: { label: string; value: ThemeMode }[] = [
+    { label: 'System', value: 'system' },
+    { label: 'Light', value: 'light' },
+    { label: 'Dark', value: 'dark' },
+  ]
+
   return (
     <PageWrapper title="Settings">
-      <View style={styles.content}>
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        <View style={styles.section}>
+          <Typography variant="h2">Appearance</Typography>
+          <Text
+            style={[styles.sectionDescription, { color: colors.textSecondary }]}
+          >
+            Choose your preferred theme.
+          </Text>
+          <View style={styles.themeRow}>
+            {themeModes.map(({ label, value }) => (
+              <View key={value} style={styles.themeButtonWrapper}>
+                <Button
+                  color={mode === value ? 'primary' : 'neutral'}
+                  variant="outlined"
+                  onPress={() => setMode(value)}
+                >
+                  {label}
+                </Button>
+              </View>
+            ))}
+          </View>
+        </View>
+
         {isIOS && (
           <View style={styles.section}>
             <Typography variant="h2">iCloud Backup</Typography>
-            <Text style={styles.sectionDescription}>
-              Automatically backup your data to iCloud daily.
+            <Text
+              style={[
+                styles.sectionDescription,
+                { color: colors.textSecondary },
+              ]}
+            >
+              Automatically backup your data to iCloud weekly.
             </Text>
             <View style={styles.toggleRow}>
-              <Text style={styles.toggleLabel}>Auto-backup daily</Text>
+              <Text style={[styles.toggleLabel, { color: colors.textPrimary }]}>
+                Auto-backup weekly
+              </Text>
               <Switch
                 value={iCloudEnabled}
                 onValueChange={handleICloudToggle}
-                disabled={isBackingUpToICloud || isRestoringFromICloud}
-                color={COLORS.PRIMARY[300]}
+                disabled={isProcessing}
+                color={colors.switchActive}
               />
             </View>
             {iCloudBackupDate && (
-              <Text style={styles.lastBackupText}>
+              <Text
+                style={[styles.lastBackupText, { color: colors.textSecondary }]}
+              >
                 Last backup: {new Date(iCloudBackupDate).toLocaleString()}
               </Text>
             )}
             <ButtonWrapper
-              vertical={[
+              left={
                 <Button
-                  key="backup"
                   color="primary"
-                  variant="filled"
+                  variant="outlined"
                   onPress={handleICloudBackup}
-                  disabled={isBackingUpToICloud || isRestoringFromICloud}
+                  disabled={isProcessing || !hasData}
                 >
-                  {isBackingUpToICloud ? 'Backing up...' : 'Backup to iCloud'}
-                </Button>,
+                  {isProcessing ? 'Processing...' : 'Backup'}
+                </Button>
+              }
+              right={
                 <Button
-                  key="restore"
                   color="primary"
-                  variant="filled"
-                  onPress={handleRestoreFromICloud}
-                  disabled={isBackingUpToICloud || isRestoringFromICloud}
+                  variant="outlined"
+                  onPress={handleOpenRestoreModal}
+                  disabled={isProcessing}
                 >
-                  {isRestoringFromICloud
-                    ? 'Restoring...'
-                    : 'Restore from iCloud'}
-                </Button>,
-              ]}
+                  Restore
+                </Button>
+              }
             />
           </View>
         )}
 
         <View style={styles.section}>
           <Typography variant="h2">Manual Backup</Typography>
-          <Text style={styles.sectionDescription}>
+          <Text
+            style={[styles.sectionDescription, { color: colors.textSecondary }]}
+          >
             Export your data for backup or import from a previous backup.
           </Text>
           <ButtonWrapper
-            vertical={[
+            left={
               <Button
-                key="export"
                 color="primary"
-                variant="filled"
+                variant="outlined"
                 onPress={handleExport}
-                disabled={isExporting}
+                disabled={isProcessing || !hasData}
               >
-                {isExporting ? 'Exporting...' : 'Export Data'}
-              </Button>,
+                {isProcessing ? 'Processing...' : 'Export Data'}
+              </Button>
+            }
+            right={
               <Button
-                key="import"
                 color="primary"
                 variant="link"
                 onPress={handleImport}
-                disabled={isImporting}
+                disabled={isProcessing}
               >
-                {isImporting ? 'Importing...' : 'Import Data'}
-              </Button>,
-            ]}
+                Import Data
+              </Button>
+            }
           />
         </View>
 
         <View style={styles.section}>
           <Typography variant="h2">Danger Zone</Typography>
-          <Text style={styles.sectionDescription}>
+          <Text
+            style={[styles.sectionDescription, { color: colors.textSecondary }]}
+          >
             Permanently delete all data from the app.
           </Text>
           <ButtonWrapper
@@ -396,17 +463,53 @@ export default function Settings() {
           />
         </View>
 
-        <View style={styles.versionSection}>
-          <Text style={styles.versionText}>Film Tracker v{APP_VERSION}</Text>
+        <View style={styles.section}>
+          <Typography variant="h2">About</Typography>
+          <ButtonWrapper
+            left={
+              <Button
+                color="neutral"
+                variant="link"
+                onPress={() => setShowChangelog(true)}
+              >
+                Changelog
+              </Button>
+            }
+            right={
+              <Button color="neutral" variant="link" onPress={handleFeedback}>
+                Feedback
+              </Button>
+            }
+          />
         </View>
-      </View>
+
+        <View style={styles.versionSection}>
+          <Text style={[styles.versionText, { color: colors.textSecondary }]}>
+            Film Tracker v{CURRENT_VERSION}
+          </Text>
+        </View>
+      </ScrollView>
 
       <ButtonWrapper
         full={
-          <Button color="primary" variant="link" onPress={handleBack}>
+          <Button color="primary" variant="filled" onPress={handleBack}>
             Back
           </Button>
         }
+      />
+
+      <ChangelogModal
+        visible={showChangelog}
+        onDismiss={() => setShowChangelog(false)}
+        entries={CHANGELOG}
+      />
+
+      <ICloudRestoreModal
+        visible={showRestoreModal}
+        onDismiss={() => setShowRestoreModal(false)}
+        onRestore={handleRestoreFromICloud}
+        entries={restoreEntries}
+        loading={loadingBackups}
       />
     </PageWrapper>
   )
@@ -421,7 +524,6 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.XLARGE,
   },
   sectionDescription: {
-    color: COLORS.NEUTRAL[400],
     marginTop: SPACING.XSMALL,
     marginBottom: SPACING.MEDIUM,
   },
@@ -432,18 +534,23 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.SMALL,
   },
   toggleLabel: {
-    color: COLORS.NEUTRAL[200],
     fontSize: 16,
   },
   lastBackupText: {
-    color: COLORS.NEUTRAL[400],
     marginBottom: SPACING.MEDIUM,
+  },
+  themeRow: {
+    flexDirection: 'row',
+    gap: SPACING.XSMALL,
+  },
+  themeButtonWrapper: {
+    flex: 1,
   },
   versionSection: {
     alignItems: 'center',
     paddingVertical: SPACING.LARGE,
   },
   versionText: {
-    color: COLORS.NEUTRAL[500],
+    fontSize: 13,
   },
 })

@@ -9,7 +9,8 @@ import {
   type ViewStyle,
 } from 'react-native'
 
-import { COLORS, SPACING } from '@/shared/theme'
+import { useTheme } from '@/shared/ThemeContext'
+import { SPACING } from '@/shared/theme'
 
 import Typography from './Typography'
 
@@ -18,12 +19,18 @@ const PageWrapper: React.FC<{
   title?: string
   children?: React.ReactNode
 }> = ({ title, children, style }) => {
-  const styleSheet = StyleSheet.flatten([styles.container, style])
+  const { colors } = useTheme()
+
+  const containerStyle = StyleSheet.flatten([
+    styles.container,
+    { backgroundColor: colors.background },
+    style,
+  ])
 
   return (
-    <SafeAreaView style={styleSheet}>
+    <SafeAreaView style={containerStyle}>
       <KeyboardAvoidingView
-        style={styleSheet}
+        style={containerStyle}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         {title && <Typography variant="h1">{title}</Typography>}
@@ -35,7 +42,6 @@ const PageWrapper: React.FC<{
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: COLORS.NEUTRAL[800],
     flex: 1,
     paddingHorizontal: SPACING.SMALL,
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
