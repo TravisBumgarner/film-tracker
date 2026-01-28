@@ -5,7 +5,7 @@ const config = () => ({
     icon: './assets/images/icon.png',
     name: process.env.EXPO_APP_NAME || 'Film Tracker',
     slug: 'film-tracker',
-    version: '1.0.0',
+    version: '1.0.1',
     orientation: 'portrait',
     scheme: 'filmtracker',
     userInterfaceStyle: 'automatic',

@@ -4,8 +4,9 @@ import { Pressable, StyleSheet, TextInput, View } from 'react-native'
 import { Text } from 'react-native-paper'
 
 import { updateRoll, updateRollStatus } from '@/db/queries'
-import { COLORS, SPACING } from '../theme'
-import { RollStatus, type Roll, type RollStatusType } from '../types'
+import { useTheme } from '@/shared/ThemeContext'
+import { SPACING } from '../theme'
+import { type Roll, RollStatus, type RollStatusType } from '../types'
 import { formatDate, navigateWithParams } from '../utilities'
 
 type Props = {
@@ -36,6 +37,7 @@ const RollCard: React.FC<Props> = ({
   onToggle,
   onStatusChange,
 }) => {
+  const { colors } = useTheme()
   const [notes, setNotes] = useState(roll.notes || '')
   const nextStatus = getNextStatus(roll.status)
 
@@ -85,23 +87,33 @@ const RollCard: React.FC<Props> = ({
   const statusDate = getStatusDate(roll.status)
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.surface }]}>
       <Pressable onPress={handlePress}>
         <View style={styles.header}>
-          <Text style={styles.filmStock}>{roll.filmStock}</Text>
+          <Text style={[styles.filmStock, { color: colors.textPrimary }]}>
+            {roll.filmStock}
+          </Text>
           <Pressable onPress={handleEdit} style={styles.editRow}>
             <Ionicons
               name="pencil-outline"
               size={14}
-              color={COLORS.NEUTRAL[600]}
+              color={colors.textDisabled}
             />
-            <Text style={styles.editHint}>Edit</Text>
+            <Text style={[styles.editHint, { color: colors.textDisabled }]}>
+              Edit
+            </Text>
           </Pressable>
         </View>
         <View style={styles.details}>
-          <Text style={styles.detailText}>{roll.frameCount} frames</Text>
-          {roll.iso && <Text style={styles.detailText}>ISO {roll.iso}</Text>}
-          <Text style={styles.detailText}>
+          <Text style={[styles.detailText, { color: colors.textSecondary }]}>
+            {roll.frameCount} frames
+          </Text>
+          {roll.iso && (
+            <Text style={[styles.detailText, { color: colors.textSecondary }]}>
+              ISO {roll.iso}
+            </Text>
+          )}
+          <Text style={[styles.detailText, { color: colors.textSecondary }]}>
             {formatDate(roll.updatedAt || roll.createdAt)}
           </Text>
         </View>
@@ -109,32 +121,42 @@ const RollCard: React.FC<Props> = ({
           <Ionicons
             name={notes ? 'document-text' : 'document-text-outline'}
             size={14}
-            color={notes ? COLORS.NEUTRAL[400] : COLORS.NEUTRAL[600]}
+            color={notes ? colors.textSecondary : colors.textDisabled}
           />
-          <Text style={styles.notesHint}>
+          <Text style={[styles.notesHint, { color: colors.textDisabled }]}>
             {notes ? 'View details' : 'Add details'}
           </Text>
         </View>
       </Pressable>
       {isExpanded && (
-        <View style={styles.expandedSection}>
+        <View
+          style={[styles.expandedSection, { borderTopColor: colors.border }]}
+        >
           {statusDate && (
-            <Text style={styles.statusDate}>
+            <Text style={[styles.statusDate, { color: colors.textSecondary }]}>
               Since {formatDate(statusDate)}
             </Text>
           )}
           <TextInput
-            style={styles.notesInput}
+            style={[styles.notesInput, { color: colors.textPrimary }]}
             value={notes}
             onChangeText={handleNotesChange}
             onBlur={handleNotesBlur}
             placeholder="Add notes..."
-            placeholderTextColor={COLORS.NEUTRAL[600]}
+            placeholderTextColor={colors.textDisabled}
             multiline
           />
           {nextStatus && (
-            <Pressable style={styles.quickAction} onPress={handleQuickAction}>
-              <Text style={styles.quickActionText}>{nextStatus.label}</Text>
+            <Pressable
+              style={[
+                styles.quickAction,
+                { backgroundColor: colors.surfaceVariant },
+              ]}
+              onPress={handleQuickAction}
+            >
+              <Text style={[styles.quickActionText, { color: colors.primary }]}>
+                {nextStatus.label}
+              </Text>
             </Pressable>
           )}
         </View>
@@ -145,7 +167,6 @@ const RollCard: React.FC<Props> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: COLORS.NEUTRAL[900],
     padding: SPACING.SMALL,
     marginBottom: SPACING.XSMALL,
   },
@@ -156,7 +177,6 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.XXSMALL,
   },
   filmStock: {
-    color: COLORS.NEUTRAL[100],
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -166,7 +186,6 @@ const styles = StyleSheet.create({
     gap: SPACING.SMALL,
   },
   detailText: {
-    color: COLORS.NEUTRAL[500],
     fontSize: 13,
   },
   notesRow: {
@@ -176,7 +195,6 @@ const styles = StyleSheet.create({
     marginTop: SPACING.XSMALL,
   },
   notesHint: {
-    color: COLORS.NEUTRAL[600],
     fontSize: 12,
   },
   editRow: {
@@ -185,22 +203,18 @@ const styles = StyleSheet.create({
     gap: SPACING.XSMALL,
   },
   editHint: {
-    color: COLORS.NEUTRAL[600],
     fontSize: 12,
   },
   expandedSection: {
     marginTop: SPACING.XSMALL,
     borderTopWidth: 1,
-    borderTopColor: COLORS.NEUTRAL[800],
     paddingTop: SPACING.XSMALL,
   },
   statusDate: {
-    color: COLORS.NEUTRAL[500],
     fontSize: 12,
     marginBottom: SPACING.XSMALL,
   },
   notesInput: {
-    color: COLORS.NEUTRAL[300],
     fontSize: 14,
     paddingVertical: SPACING.XSMALL,
     paddingHorizontal: 0,
@@ -211,11 +225,9 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     paddingVertical: SPACING.XSMALL,
     paddingHorizontal: SPACING.SMALL,
-    backgroundColor: COLORS.NEUTRAL[800],
     marginTop: SPACING.XSMALL,
   },
   quickActionText: {
-    color: COLORS.PRIMARY[300],
     fontSize: 13,
     fontWeight: '500',
   },
